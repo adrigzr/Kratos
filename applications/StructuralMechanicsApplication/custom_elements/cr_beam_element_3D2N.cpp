@@ -114,6 +114,7 @@ namespace Kratos
 		if (this->mIterationCount == 0)
 		{
 			this->mNodalForces = ZeroVector(local_size * 2);
+			this->CalculateInitialLocalCS();
 		}
 		KRATOS_CATCH("")
 	}
@@ -207,20 +208,36 @@ namespace Kratos
 		KRATOS_CATCH("")
 	}
 
-	Matrix CrBeamElement3D2N::CreateElementStiffnessMatrix_Geometry(
-		const Vector qe) {
+	Matrix CrBeamElement3D2N::CreateElementStiffnessMatrix_Geometry() {
 
-		KRATOS_TRY
-			const int number_of_nodes = this->GetGeometry().PointsNumber();
+		KRATOS_TRY;
+		const int number_of_nodes = this->GetGeometry().PointsNumber();
 		const int dimension = this->GetGeometry().WorkingSpaceDimension();
-		const unsigned int local_size = number_of_nodes * dimension * 2;
+		const unsigned int size = number_of_nodes * dimension;
+		const unsigned int local_size = size * 2;
 
-		const double N = qe[6];
-		const double Mt = qe[9];
-		const double my_A = qe[4];
-		const double mz_A = qe[5];
-		const double my_B = qe[10];
-		const double mz_B = qe[11];
+		//deformation modes
+		Vector elementForces_t = ZeroVector(size);
+		elementForces_t = this->CalculateElementForces();
+
+		//Nodal element forces local
+		Vector nodalForcesLocal_qe = ZeroVector(local_size);
+		Matrix TransformationMatrixS = ZeroMatrix(local_size, size);
+		TransformationMatrixS = this->CalculateTransformationS();
+		nodalForcesLocal_qe = prod(TransformationMatrixS, elementForces_t);
+
+		//save local nodal forces
+		this->mNodalForces = ZeroVector(local_size);
+		this->mNodalForces = nodalForcesLocal_qe;
+
+
+
+		const double N = nodalForcesLocal_qe[6];
+		const double Mt = nodalForcesLocal_qe[9];
+		const double my_A = nodalForcesLocal_qe[4];
+		const double mz_A = nodalForcesLocal_qe[5];
+		const double my_B = nodalForcesLocal_qe[10];
+		const double mz_B = nodalForcesLocal_qe[11];
 
 		const double L = this->CalculateCurrentLength();
 		const double Qy = -1.00 * (mz_A + mz_B) / L;
@@ -344,7 +361,7 @@ namespace Kratos
 		const double G = this->CalculateShearModulus();
 		const double A = this->GetProperties()[CROSS_AREA];
 		const double L = this->CalculateReferenceLength();
-
+		
 		Vector inertia = this->GetProperties()[LOCAL_INERTIA_VECTOR];
 		const double J = inertia[0];
 		const double Iy = inertia[1];
@@ -448,6 +465,11 @@ namespace Kratos
 		this->mRotationMatrix0 = ZeroMatrix(local_size);
 		element_axis.CalculateRotationMatrix(Temp);
 		this->AssembleSmallInBigMatrix(Temp, this->mRotationMatrix0);
+
+		//provide Initial Rotation Matrix for strategies that dont call 'CalculateLocalSystem'
+		this->mRotationMatrix = ZeroMatrix(local_size);
+		this->mRotationMatrix = this->mRotationMatrix0;
+
 		KRATOS_CATCH("")
 	}
 
@@ -822,7 +844,14 @@ namespace Kratos
 			Matrix RotationMatrix = ZeroMatrix(MatSize);
 			Matrix aux_matrix = ZeroMatrix(MatSize);
 
-			RotationMatrix = this->mRotationMatrix;
+			if (this->mIsLinearElement == true)
+			{
+				RotationMatrix = this->mRotationMatrix0;
+			}
+			else
+			{
+				RotationMatrix = this->mRotationMatrix;
+			}
 			aux_matrix = prod(RotationMatrix, rMassMatrix);
 			rMassMatrix = prod(aux_matrix,
 				Matrix(trans(RotationMatrix)));
@@ -1096,11 +1125,11 @@ namespace Kratos
 	void CrBeamElement3D2N::CalculateLeftHandSide(MatrixType& rLeftHandSideMatrix,
 		ProcessInfo& rCurrentProcessInfo) {
 
-		KRATOS_TRY
-			const int NumNodes = this->GetGeometry().PointsNumber();
+		KRATOS_TRY;
+		const int NumNodes = this->GetGeometry().PointsNumber();
 		const int dimension = this->GetGeometry().WorkingSpaceDimension();
 		const int size = NumNodes * dimension;
-		const int LocalSize = NumNodes * dimension * 2;
+		const int LocalSize = size * 2;
 
 		//update displacement_delta
 		this->UpdateIncrementDeformation();
@@ -1111,19 +1140,7 @@ namespace Kratos
 		this->mRotationMatrix = ZeroMatrix(LocalSize);
 		this->mRotationMatrix = TransformationMatrix;
 
-		//deformation modes
-		Vector elementForces_t = ZeroVector(size);
-		elementForces_t = this->CalculateElementForces();
 
-		//Nodal element forces local
-		Vector nodalForcesLocal_qe = ZeroVector(LocalSize);
-		Matrix TransformationMatrixS = ZeroMatrix(LocalSize, size);
-		TransformationMatrixS = this->CalculateTransformationS();
-		nodalForcesLocal_qe = prod(TransformationMatrixS, elementForces_t);
-
-		//save local nodal forces
-		this->mNodalForces = ZeroVector(LocalSize);
-		this->mNodalForces = nodalForcesLocal_qe;
 
 		//resizing the matrices + create memory for LHS
 		rLeftHandSideMatrix = ZeroMatrix(LocalSize, LocalSize);
@@ -1131,7 +1148,7 @@ namespace Kratos
 		rLeftHandSideMatrix +=
 			this->CreateElementStiffnessMatrix_Material();
 		rLeftHandSideMatrix +=
-			this->CreateElementStiffnessMatrix_Geometry(nodalForcesLocal_qe);
+			this->CreateElementStiffnessMatrix_Geometry();
 
 
 		Matrix aux_matrix = ZeroMatrix(LocalSize);
@@ -1797,6 +1814,15 @@ namespace Kratos
 			KRATOS_ERROR << "LOCAL_INERTIA_VECTOR not provided for this element" << this->Id()
 				<< std::endl;
 		}
+		else
+		{
+			Vector inertia = this->GetProperties()[LOCAL_INERTIA_VECTOR];
+			if (inertia.size() != 3)
+			{
+				KRATOS_ERROR << "LOCAL_INERTIA_VECTOR must be of size 3 in element:" << this->Id()
+				<< std::endl;
+			}
+		}
 
 		return 0;
 
@@ -1932,6 +1958,32 @@ namespace Kratos
 	}
 
 
+	void CrBeamElement3D2N::CalculateGeometricStiffnessMatrix(MatrixType& rGeometricStiffnessMatrix,
+		ProcessInfo& rCurrentProcessInfo)
+	{
+		KRATOS_TRY;
+		const int number_of_nodes = this->GetGeometry().PointsNumber();
+		const int dimension = this->GetGeometry().WorkingSpaceDimension();
+		const unsigned int local_size = number_of_nodes * dimension * 2;
+		rGeometricStiffnessMatrix = ZeroMatrix(local_size, local_size);
+		rGeometricStiffnessMatrix = this->CreateElementStiffnessMatrix_Geometry();
+		KRATOS_CATCH("")
+	}
+
+	void CrBeamElement3D2N::CalculateElasticStiffnessMatrix(MatrixType& rElasticStiffnessMatrix,
+		ProcessInfo& rCurrentProcessInfo)
+	{
+		KRATOS_TRY;
+		const int number_of_nodes = this->GetGeometry().PointsNumber();
+		const int dimension = this->GetGeometry().WorkingSpaceDimension();
+		const unsigned int local_size = number_of_nodes * dimension * 2;
+		rElasticStiffnessMatrix = ZeroMatrix(local_size, local_size);
+		rElasticStiffnessMatrix = this->CreateElementStiffnessMatrix_Material();
+		KRATOS_CATCH("")
+	}
+
+
+
 	void CrBeamElement3D2N::save(Serializer& rSerializer) const
 	{
 		KRATOS_SERIALIZE_SAVE_BASE_CLASS(rSerializer, Element);
@@ -1977,5 +2029,4 @@ namespace Kratos
 	}
 
 } // namespace Kratos.
-
 

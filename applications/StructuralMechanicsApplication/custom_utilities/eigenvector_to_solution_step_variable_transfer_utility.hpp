@@ -84,13 +84,28 @@ public:
 
     void Transfer(ModelPart& rModelPart, int iEigenMode, int step=0)
     {
+        std::cout << "transfer utility" << std::endl;
+        KRATOS_WATCH(rModelPart);
         for (auto itNode = rModelPart.NodesBegin(); itNode!= rModelPart.NodesEnd(); itNode++)
         {
+            KRATOS_WATCH(itNode->Id());
             ModelPart::NodeType::DofsContainerType& rNodeDofs = itNode->GetDofs();
             Matrix& rNodeEigenvectors = itNode->GetValue(EIGENVECTOR_MATRIX);
+            if (rNodeDofs.size() != rNodeEigenvectors.size2())
+            continue;
+
+            if (iEigenMode >= rNodeEigenvectors.size1())
+                KRATOS_ERROR << "invalid iEigenMode = " << iEigenMode << std::endl;
+            KRATOS_WATCH(rNodeEigenvectors.size1());
+            KRATOS_WATCH(rNodeEigenvectors.size2());
+            KRATOS_WATCH(iEigenMode);
+            KRATOS_WATCH(rNodeEigenvectors);
             std::size_t j=0;
             for (auto itDof = std::begin(rNodeDofs); itDof != std::end(rNodeDofs); itDof++)
+            {
+                KRATOS_WATCH(j);
                 itDof->GetSolutionStepValue(step) = rNodeEigenvectors(iEigenMode,j++);
+            }
         }
     }
 

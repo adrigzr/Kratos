@@ -310,18 +310,22 @@ public:
         SparseVectorType b;
         SparseSpaceType::Resize(b,SparseSpaceType::Size1(rMassMatrix));
         SparseSpaceType::Set(b,0.0);
-
+        std::cout << "EigensolverStrategy ModelPart:" << std::endl;
+        KRATOS_WATCH(rModelPart);
         // Generate lhs matrix. the factor 1 is chosen to preserve
         // SPD property
         rModelPart.GetProcessInfo()[BUILD_LEVEL] = 1;
         this->pGetBuilderAndSolver()->Build(pScheme,rModelPart,rMassMatrix,b);
         this->ApplyDirichletConditions(rMassMatrix, 1.0);
 
+
+
         // Generate rhs matrix. the factor -1 is chosen to make
         // Eigenvalues corresponding to fixed dofs negative
         rModelPart.GetProcessInfo()[BUILD_LEVEL] = 2;
         this->pGetBuilderAndSolver()->Build(pScheme,rModelPart,rStiffnessMatrix,b);
         ApplyDirichletConditions(rStiffnessMatrix,-1.0);
+
 
         // Eigenvector matrix and eigenvalue vector are initialized by the solver
         DenseVectorType Eigenvalues;
@@ -692,6 +696,7 @@ private:
 
         for (ModelPart::NodeIterator itNode = rModelPart.NodesBegin(); itNode!= rModelPart.NodesEnd(); itNode++)
         {
+            KRATOS_WATCH(itNode->Id());
             ModelPart::NodeType::DofsContainerType& NodeDofs = itNode->GetDofs();
             const std::size_t NumNodeDofs = NodeDofs.size();
             Matrix& rNodeEigenvectors = itNode->GetValue(EIGENVECTOR_MATRIX);
@@ -699,7 +704,9 @@ private:
             {
                 rNodeEigenvectors.resize(NumEigenvalues,NumNodeDofs,false);
             }
-
+            KRATOS_WATCH(rNodeEigenvectors.size1());
+            KRATOS_WATCH(rNodeEigenvectors.size2());
+            
             // the jth column index of EIGENVECTOR_MATRIX corresponds to the jth nodal dof. therefore,
             // the dof ordering must not change.
             if (NodeDofs.IsSorted() == false)
@@ -714,6 +721,7 @@ private:
                     auto itDof = std::begin(NodeDofs) + j;
                     rNodeEigenvectors(i,j) = rEigenvectors(i,itDof->EquationId());
                 }
+                KRATOS_WATCH(rNodeEigenvectors);
         }
     }
 

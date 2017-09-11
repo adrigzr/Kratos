@@ -67,7 +67,7 @@ namespace Kratos
 		void Initialize() override;
 
 		Matrix CreateElementStiffnessMatrix_Material();
-		Matrix CreateElementStiffnessMatrix_Geometry(const Vector qe);
+		Matrix CreateElementStiffnessMatrix_Geometry();
 		Matrix CalculateDeformationStiffness();
 		Matrix CalculateTransformationS();
 
@@ -103,6 +103,14 @@ namespace Kratos
 
 		void CalculateConsistentMassMatrix(
 			MatrixType& rMassMatrix,
+			ProcessInfo& rCurrentProcessInfo);
+
+		void CalculateGeometricStiffnessMatrix(
+			MatrixType& rGeometricStiffnessMatrix,
+			ProcessInfo& rCurrentProcessInfo);
+
+		void CalculateElasticStiffnessMatrix(
+			MatrixType& rElasticStiffnessMatrix,
 			ProcessInfo& rCurrentProcessInfo);
 
 		void BuildSingleMassMatrix(

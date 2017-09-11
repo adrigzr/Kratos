@@ -104,6 +104,8 @@ class MechanicalSolver(object):
         self.main_model_part.AddNodalSolutionStepVariable(StructuralMechanicsApplication.LINE_LOAD)
         self.main_model_part.AddNodalSolutionStepVariable(StructuralMechanicsApplication.SURFACE_LOAD)
         self.main_model_part.AddNodalSolutionStepVariable(KratosMultiphysics.VOLUME_ACCELERATION)
+        self.main_model_part.AddNodalSolutionStepVariable(KratosMultiphysics.VELOCITY)
+        self.main_model_part.AddNodalSolutionStepVariable(KratosMultiphysics.ACCELERATION)
         if self.settings["rotation_dofs"].GetBool():
             # Add specific variables for the problem (rotation dofs).
             self.main_model_part.AddNodalSolutionStepVariable(KratosMultiphysics.ROTATION)

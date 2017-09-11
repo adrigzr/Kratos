@@ -20,6 +20,9 @@ def CreateSolver(main_model_part, custom_settings):
 
         elif (solver_type == "Static"):
             solver_module_name = "structural_mechanics_static_solver"
+    
+        elif (solver_type == "structural_mechanics_eigensolver"):
+            solver_module_name = "structural_mechanics_eigensolver"
 
         else:
             raise Exception("the requested solver type is not in the python solvers wrapper")
