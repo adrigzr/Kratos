@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gid version="12.2">
+  <pre>
+    <layer_to_use name="Layer0"/>
+    <groups>
+      <group id="1" name="Parts Auto1" color="#ff00ffff"/>
+      <group id="2" name="Velocity Auto1" color="#008000ff"/>
+    </groups>
+    <entities_groups>
+      <entities_group name="lines">
+        <vector name="entity_ids" length="1" type="integer">4</vector>
+        <vector name="entity_num_groups" length="1" type="ushort">1</vector>
+        <vector name="entity_groups" length="1" type="ushort">2</vector>
+      </entities_group>
+      <entities_group name="surfaces">
+        <vector name="entity_ids" length="1" type="integer">1</vector>
+        <vector name="entity_num_groups" length="1" type="ushort">1</vector>
+        <vector name="entity_groups" length="1" type="ushort">1</vector>
+      </entities_group>
+      <entities_group name="nodes">
+        <vector name="entity_ids" length="1049" type="integer">1:1049</vector>
+        <vector name="entity_num_groups" length="1049" type="ushort">2 1 2 1x3 2 1x4 2 1x6 2 1x7 2 1x11 2 1x11 2 1x14 2 1x16 2 1x16 2 1x18 2 1x930</vector>
+        <vector name="entity_groups" length="1061" type="ushort">2 1 1 2 1x4 2 1x5 2 1x7 2 1x8 2 1x12 2 1x12 2 1x15 2 1x17 2 1x17 2 1x19 2 1x931</vector>
+      </entities_group>
+      <entities_group name="elements">
+        <vector name="entity_ids" length="1933" type="integer">1:1933</vector>
+        <vector name="entity_num_groups" length="1933" type="ushort">1x1933</vector>
+        <vector name="entity_groups" length="1933" type="ushort">1x1922 2x11</vector>
+      </entities_group>
+    </entities_groups>
+  </pre>
+</gid>
