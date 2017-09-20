@@ -47,6 +47,8 @@ class AdjointVMSMonolithicSolver:
         import linear_solver_factory
         self.linear_solver = linear_solver_factory.ConstructSolver(self.settings["linear_solver_settings"])
 
+        self.numerical_diffusion_iterations = int(custom_settings["scheme_settings"]["numerical_diffusion"]["iterations"].GetDouble())
+
         print("Construction of AdjointVMSMonolithicSolver finished")
 
     def GetMinimumBufferSize(self):
@@ -216,16 +218,10 @@ class AdjointVMSMonolithicSolver:
         self.solver.FinalizeSolutionStep()
 
     def Solve(self):
-        maximum_iterations = 5
+        maximum_iterations = self.numerical_diffusion_iterations
         for itr in range(0, maximum_iterations):
-            maximum_error_ratio = 0.0
             self.solver.Solve()
-            for node in self.main_model_part.Nodes:
-                if maximum_error_ratio < node.GetValue(KratosMultiphysics.ERROR_RATIO):
-                    maximum_error_ratio = node.GetValue(KratosMultiphysics.ERROR_RATIO)
-            print('--- Numerical diffusion iteration %3d, maximum error ratio %e' % (itr+1, maximum_error_ratio))                    
-            if maximum_error_ratio == 1.0:
-                break
+            print('--- Numerical diffusion iteration %3d' % (itr+1))                    
     def SetEchoLevel(self, level):
         self.solver.SetEchoLevel(level)
 

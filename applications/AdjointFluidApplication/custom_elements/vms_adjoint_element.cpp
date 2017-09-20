@@ -301,6 +301,73 @@ void VMSAdjointElement<3>::AddViscousTerm(
 }
 
 template<>
+void VMSAdjointElement<2>::AddNumericalDiffusionTerm(
+    MatrixType& rResult,
+    const VMSAdjointElement<2>::ShapeFunctionDerivativesType& rDN_DX,
+    const double Weight)
+{
+  const SizeType NumNodes = 3;
+
+  IndexType FirstRow(0), FirstCol(0);
+
+  for (IndexType j = 0; j < NumNodes; ++j)
+  {
+    for (IndexType i = 0; i < NumNodes; ++i)
+    {
+      // First Row
+      rResult(FirstRow,FirstCol) += Weight
+          * (rDN_DX(i,0) * rDN_DX(j,0) + rDN_DX(i,1) * rDN_DX(j,1));
+
+      // Second Row
+      rResult(FirstRow+1,FirstCol+1) += Weight
+          * (rDN_DX(i,0) * rDN_DX(j,0) + rDN_DX(i,1) * rDN_DX(j,1));
+
+      // Update Counter
+      FirstRow += 3;
+    }
+    FirstRow = 0;
+    FirstCol += 3;
+  }
+}
+
+template<>
+void VMSAdjointElement<3>::AddNumericalDiffusionTerm(
+    MatrixType& rResult,
+    const VMSAdjointElement<3>::ShapeFunctionDerivativesType& rDN_DX,
+    const double Weight)
+{
+  const unsigned int NumNodes = 4;
+
+  unsigned int FirstRow(0), FirstCol(0);
+
+  for (unsigned int j = 0; j < NumNodes; ++j)
+  {
+    for (unsigned int i = 0; i < NumNodes; ++i)
+    {
+      // (dN_i/dx_k dN_j/dx_k)
+      const double Diag = rDN_DX(i,0) * rDN_DX(j,0)
+          + rDN_DX(i,1) * rDN_DX(j,1) + rDN_DX(i,2) * rDN_DX(j,2);
+
+      // First Row
+      rResult(FirstRow,FirstCol) += Weight
+          * (Diag);
+      // Second Row
+      rResult(FirstRow + 1, FirstCol + 1) += Weight
+          * (Diag);
+
+      // Third Row
+      rResult(FirstRow+2,FirstCol+2) += Weight
+          * (Diag);
+
+      // Update Counter
+      FirstRow += 4;
+    }
+    FirstRow = 0;
+    FirstCol += 4;
+  }
+}
+
+template<>
 void VMSAdjointElement<2>::AddViscousTermDerivative(
     boost::numeric::ublas::bounded_matrix< double, 9, 9 >& rResult,
     const VMSAdjointElement<2>::ShapeFunctionDerivativesType& rDN_DX,

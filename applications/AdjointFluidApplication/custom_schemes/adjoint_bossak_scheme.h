@@ -126,7 +126,11 @@ public:
             "boundary_model_part_name": "PLEASE_SPECIFY_MODEL_PART",
             "alpha_bossak": -0.3,
             "adjoint_start_time": 0.0,
-            "adjoint_end_time": 1.0
+            "adjoint_end_time": 1.0,
+            "numerical_diffusion": {
+                "factor"                : 1.0,
+                "iterations"            : 1
+	        }
         })");
 
         rParameters.ValidateAndAssignDefaults(DefaultParams);
@@ -138,6 +142,8 @@ public:
         mInvGammaMinusOne = 1.0 / (mGammaNewmark - 1.0);
         mAdjointStartTime = rParameters["adjoint_start_time"].GetDouble();
         mAdjointEndTime = rParameters["adjoint_end_time"].GetDouble();
+        mNumericalDiffusionFactor = rParameters["numerical_diffusion"]["factor"].GetDouble();
+        mMaximumViscosityRatio = rParameters["numerical_diffusion"]["max_multiplier"].GetDouble();
 
         if (mAdjointStartTime >= mAdjointEndTime)
             KRATOS_THROW_ERROR(
@@ -176,7 +182,7 @@ public:
         KRATOS_TRY
 
         BaseType::Initialize(rModelPart);
-        mOutputFileStream.open("Adjoint_Energy.data");
+        mOutputFileStream.open("Adjoint_Energy_" + std::to_string(mNumericalDiffusionFactor) +  ".data");
         mOutputFileStream<<"time,adjoint_energy"<<std::endl;
 
         // check domain dimension and element
@@ -246,12 +252,14 @@ public:
 
         for (auto it = rModelPart.NodesBegin(); it != rModelPart.NodesEnd(); ++it) {
             it->GetValue(NODAL_AREA) = 0.0; // todo: define application variable
-            it->GetValue(ERROR_RATIO) = 1.0; // todo: define application variable
         }
 
-        for (auto it = rModelPart.ElementsBegin(); it != rModelPart.ElementsEnd(); ++it)
+        for (auto it = rModelPart.ElementsBegin(); it != rModelPart.ElementsEnd(); ++it) {
+            it->SetValue(INITIAL_PENALTY, mNumericalDiffusionFactor);
+            it->SetValue(LAMBDA, mMaximumViscosityRatio);
             for (unsigned int iNode = 0; iNode < it->GetGeometry().PointsNumber(); ++iNode)
                 it->GetGeometry()[iNode].GetValue(NODAL_AREA) += 1.0;
+        }
 
         rModelPart.GetCommunicator().AssembleNonHistoricalData(NODAL_AREA);
 
@@ -606,6 +614,8 @@ private:
     double mMass1Switch;
     double mAdjointStartTime;
     double mAdjointEndTime;
+    double mNumericalDiffusionFactor;
+    double mMaximumViscosityRatio;
     ObjectiveFunction::Pointer mpObjectiveFunction;
     std::vector<LocalSystemVectorType> mAdjointVelocity;
     std::vector<LocalSystemVectorType> mAdjointAcceleration;

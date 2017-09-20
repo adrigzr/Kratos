@@ -480,7 +480,7 @@ protected:
 
         if (eigen_values[TDim-1] >= 0.0)
         {
-            rGeom[0].GetValue(ERROR_RATIO) = 1.0;
+            this->SetValue(ERROR_RATIO, 0.0);
             return Viscosity;            
         }
 
@@ -490,7 +490,8 @@ protected:
             if (eigen_values[i] < 0.0) {
                 array_1d<double, TDim> eigen_vector;
                 Eigen<TDim>::Calculate_EigenVector(Symmetric_GradVel, eigen_values[i], eigen_vector);
-                energy_production += std::abs(eigen_values[i]*Eigen<TDim>::Calculate_DotProduct(rVel_Adjoint, eigen_vector));
+                double adjoint_velocity_dot_eigen_vector = inner_prod(eigen_vector, rVel_Adjoint);
+                energy_production += -eigen_values[i]*adjoint_velocity_dot_eigen_vector*adjoint_velocity_dot_eigen_vector;
             }
 
         boost::numeric::ublas::bounded_matrix< double, TDim, TDim > rAdjointGradVel;
@@ -519,15 +520,24 @@ protected:
         // std::cout<<"Production: "<<energy_production<<", dissipation: "<<energy_dissipation<<std::endl;
 
         if (energy_production == 0.0 && energy_dissipation == 0.0) {
-            rGeom[0].GetValue(ERROR_RATIO) = 2.0;
-            return Viscosity;
+            this->SetValue(ERROR_RATIO, 0.0);
+            return 0.0;
         }
 
         double alpha = energy_production/energy_dissipation;
         if (alpha < 1.0)
-            alpha = 1.0;
-        rGeom[0].GetValue(ERROR_RATIO) = alpha;
-        return Viscosity*alpha;
+            alpha = 0.0;
+
+        double beta = this->GetValue(INITIAL_PENALTY);
+        double numerical_viscosity = beta*Viscosity*(alpha);
+        double max_ratio = this->GetValue(LAMBDA);
+        if (numerical_viscosity/Viscosity > max_ratio)
+            numerical_viscosity = Viscosity*max_ratio;
+
+
+        this->SetValue(ERROR_RATIO, numerical_viscosity);
+
+        return numerical_viscosity;
     }
 
     double CalculateDiffusion_RatioMethod()
@@ -536,7 +546,7 @@ protected:
         array_1d< double, TNumNodes > N;
         double Volume;
         double Viscosity;
-        IndexType step = 1;
+        IndexType step = 0;
         GeometryType& rGeom = this->GetGeometry();
 
         GeometryUtils::CalculateGeometryData(this->GetGeometry(),DN_DX,N,Volume);
@@ -555,7 +565,7 @@ protected:
         array_1d< double, TDim > GradVel_rVel_Adjoint;
         noalias(GradVel_rVel_Adjoint) = prod(Symmetric_GradVel,rVel_Adjoint);
 
-        double energy_production = Eigen<TDim>::Calculate_DotProduct(GradVel_rVel_Adjoint, rVel_Adjoint);
+        double energy_production = inner_prod(GradVel_rVel_Adjoint, rVel_Adjoint);
 
         boost::numeric::ublas::bounded_matrix< double, TDim, TDim > rAdjointGradVel;
 
@@ -591,7 +601,8 @@ protected:
         if (energy_production > energy_dissipation){
             double alpha = energy_production/energy_dissipation;
             rGeom[0].GetValue(ERROR_RATIO) = alpha;
-            return Viscosity*alpha;
+            double numerical_diffusion = Viscosity*(alpha-1.0);
+            return Viscosity + rGeom[0].GetValue(INITIAL_PENALTY)*numerical_diffusion;
         }
         else {
             return Viscosity;
@@ -638,8 +649,8 @@ protected:
         this->EvaluateInPoint(Density,DENSITY,N,Step);
 
         // Dynamic viscosity
-        double Viscosity = CalculateDiffusion();
-        // this->EvaluateInPoint(Viscosity,VISCOSITY,N,Step);
+        double Viscosity;
+        this->EvaluateInPoint(Viscosity,VISCOSITY,N,Step);
         Viscosity *= Density;
 
         // u
@@ -746,8 +757,8 @@ protected:
         this->EvaluateInPoint(Density,DENSITY,N);
 
         // Dynamic viscosity
-        double Viscosity = CalculateDiffusion();
-        // this->EvaluateInPoint(Viscosity,VISCOSITY,N);
+        double Viscosity;
+        this->EvaluateInPoint(Viscosity,VISCOSITY,N);
         Viscosity *= Density;
 
         // u
@@ -884,8 +895,8 @@ protected:
         this->EvaluateInPoint(Density,DENSITY,N);
 
         // Dynamic viscosity
-        double Viscosity = CalculateDiffusion();
-        // this->EvaluateInPoint(Viscosity,VISCOSITY,N);
+        double Viscosity;
+        this->EvaluateInPoint(Viscosity,VISCOSITY,N);
         Viscosity *= Density;
 
         // u
@@ -1058,8 +1069,8 @@ protected:
         this->EvaluateInPoint(Density,DENSITY,N);
 
         // Dynamic viscosity
-        double Viscosity = CalculateDiffusion();
-        // this->EvaluateInPoint(Viscosity,VISCOSITY,N);
+        double Viscosity;
+        this->EvaluateInPoint(Viscosity,VISCOSITY,N);
         Viscosity *= Density;
 
         // u
@@ -1250,6 +1261,9 @@ protected:
         // Viscous term
         this->AddViscousTerm(rAdjointMatrix,DN_DX,Viscosity * Volume);
 
+        double NumericalDiffusion = this->CalculateDiffusion();
+        this->AddNumericalDiffusionTerm(rAdjointMatrix, DN_DX, NumericalDiffusion * Volume);
+
         // change the sign for consistency with definition
         noalias(rAdjointMatrix) = -rAdjointMatrix;
 
@@ -1295,8 +1309,8 @@ protected:
         this->EvaluateInPoint(Density,DENSITY,N);
 
         // Dynamic viscosity
-        double Viscosity = CalculateDiffusion();
-        // this->EvaluateInPoint(Viscosity,VISCOSITY,N);
+        double Viscosity;
+        this->EvaluateInPoint(Viscosity,VISCOSITY,N);
         Viscosity *= Density;
 
         // u
@@ -1489,9 +1503,8 @@ protected:
 
                 RHS[i*TBlockSize+TDim] += VolumeDeriv * valp + Volume * dvalp;
             } // Node block rows
-
             this->AddViscousTermDerivative(LHS,DN_DX,DN_DX_Deriv,Viscosity * Volume,
-                    Viscosity * VolumeDeriv);
+                Viscosity * VolumeDeriv);
 
             // Assign the derivative of the residual w.r.t this coordinate to the
             // shape derivatives matrix.
@@ -1680,6 +1693,10 @@ protected:
     void AddViscousTerm(MatrixType& rResult,
             const ShapeFunctionDerivativesType& rDN_DX,
             const double Weight);
+
+    void AddNumericalDiffusionTerm(MatrixType& rResult,
+        const ShapeFunctionDerivativesType& rDN_DX,
+        const double Weight);
 
     /**
      * @brief Adds derivative of viscous term w.r.t a node's coordinate.
