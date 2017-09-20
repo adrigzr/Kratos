@@ -1,13 +1,13 @@
 // ==============================================================================
-//  ChimeraApplication
+//  KratosAdjointFluidApplication
 //
-//  License:         BSD License
-//                   license: ChimeraApplication/license.txt
+//  License:		 BSD License
+//					 license: AdjointFluidApplication/license.txt
 //
-//  Main authors:    Aditya Ghantasala, https://github.com/adityaghantasala
+//  Main authors:    Michael Andre, https://github.com/msandre
+//                   Suneth Warnakulasuriya
 //
-//
-//  Reference :      This class is adapted from applications/ShapeOptimizationapplication/custom_utilities/input_output/vtk_file_io.h
+//  Reference :      This class is adapted from applications/ChimeraApplication/custom_utilities/input_output/vtk_output.h
 // ==============================================================================
 
 #if !defined(VTK_OUTPUT_H)
