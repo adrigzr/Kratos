@@ -11,6 +11,7 @@
 #include "geometries/tetrahedra_3d_4.h"
 #include "includes/serializer.h"
 #include "utilities/geometry_utilities.h"
+#include "utilities/math_utils.h"
 
 namespace Kratos {
     template< unsigned int TDim >
@@ -29,121 +30,6 @@ namespace Kratos {
         {
             return matrix(0,0) + matrix(1,1);
         }
-        
-        double static Calculate_DotProduct(
-            const array_1d<double, TDim>& vec1,
-            const array_1d<double, TDim>& vec2
-        )
-        {
-            KRATOS_TRY
-            
-            if (TDim == 2)
-                return Calculate_DotProduct2(vec1, vec2);
-            else if (TDim == 3)
-                return Calculate_DotProduct3(vec1, vec2);
-            else
-                KRATOS_THROW_ERROR(std::runtime_error,
-                    "Eigen decomposition only supports 2D and 3D.","")
-            
-            KRATOS_CATCH("")
-
-            return 0.0;
-        }
-
-        double static Calculate_DotProduct3(
-            const array_1d<double, TDim>& vec1,
-            const array_1d<double, TDim>& vec2
-        )
-        {
-            return vec1[0]*vec2[0] + vec1[1]*vec2[1] + vec1[2]*vec2[2];
-        }
-
-        double static Calculate_DotProduct2(
-            const array_1d<double, TDim>& vec1,
-            const array_1d<double, TDim>& vec2
-        )
-        {
-            return vec1[0]*vec2[0] + vec1[1]*vec2[1];
-        }
-
-        void static Calculate_CrossProduct3(
-            array_1d<double, TDim>& result,
-            const array_1d<double, TDim>& vec1,
-            const array_1d<double, TDim>& vec2
-        )
-        {
-            result[0] = vec1[1]*vec2[2] - vec1[2]*vec2[1];
-            result[1] = vec1[2]*vec2[0] - vec1[0]*vec2[2];
-            result[2] = vec1[0]*vec2[1] - vec1[1]*vec2[0];
-        }
-
-        void static Calculate_CrossProduct2(
-            array_1d<double, TDim>& result,
-            const array_1d<double, TDim>& v1,
-            const array_1d<double, TDim>& v2
-        )
-        {
-            array_1d<double, 3> vec1;
-            array_1d<double, 3> vec2;
-
-            vec1[0] = v1[0];
-            vec1[1] = v1[1];
-            vec1[2] = 0.0;
-
-            vec2[0] = v2[0];
-            vec2[1] = v2[1];
-            vec2[2] = 0.0;
-
-            Calculate_CrossProduct3(result, vec1, vec2);
-        }
-
-        double static Calculate_MatrixDet3(
-            const boost::numeric::ublas::bounded_matrix< double, TDim, TDim> a
-        )
-        {
-            return a(0,0)*(a(1,1)*a(2,2) - a(1,2)*a(2,1)) - 
-                a(0,1)*(a(1,0)*a(2,2) - a(2,0)*a(1,2)) +
-                a(0,2)*(a(1,0)*a(2,1) - a(1,1)*a(2,0));
-        }
-
-        double static Calculate_MatrixDet2(
-            const boost::numeric::ublas::bounded_matrix< double, TDim, TDim> a
-        )
-        {
-            return a(0,0)*a(1,1) - a(0,1)*a(1,0);
-        }
-
-        void static Calculate_MatrixProduct3(
-            boost::numeric::ublas::bounded_matrix< double, TDim, TDim>& result,
-            const boost::numeric::ublas::bounded_matrix< double, TDim, TDim> a,
-            const boost::numeric::ublas::bounded_matrix< double, TDim, TDim> b
-        )
-        {
-            result(0,0) = a(0,0)*b(0,0) + a(0,1)*b(1,0) + a(0,2)*b(2,0);
-            result(0,1) = a(0,0)*b(0,1) + a(0,1)*b(1,1) + a(0,2)*b(2,1);
-            result(0,2) = a(0,0)*b(0,2) + a(0,1)*b(1,2) + a(0,2)*b(2,2);
-
-            result(1,0) = a(1,0)*b(0,0) + a(1,1)*b(1,0) + a(1,2)*b(2,0);
-            result(1,1) = a(1,0)*b(0,1) + a(1,1)*b(1,1) + a(1,2)*b(2,1);
-            result(1,2) = a(1,0)*b(0,2) + a(1,1)*b(1,2) + a(1,2)*b(2,2);
-
-            result(2,0) = a(2,0)*b(0,0) + a(2,1)*b(1,0) + a(2,2)*b(2,0);
-            result(2,1) = a(2,0)*b(0,1) + a(2,1)*b(1,1) + a(2,2)*b(2,1);
-            result(2,2) = a(2,0)*b(0,2) + a(2,1)*b(1,2) + a(2,2)*b(2,2);
-        }
-
-        void static Calculate_MatrixProduct2(
-            boost::numeric::ublas::bounded_matrix< double, TDim, TDim>& result,
-            const boost::numeric::ublas::bounded_matrix< double, TDim, TDim> a,
-            const boost::numeric::ublas::bounded_matrix< double, TDim, TDim> b
-        )
-        {
-            result(0,0) = a(0,0)*b(0,0) + a(0,1)*b(1,0);
-            result(0,1) = a(0,0)*b(0,1) + a(0,1)*b(1,1);
-
-            result(1,0) = a(1,0)*b(0,0) + a(1,1)*b(1,0);
-            result(1,1) = a(1,0)*b(0,1) + a(1,1)*b(1,1);
-        }        
 
         void static Calculate_EigenValues2(
             const boost::numeric::ublas::bounded_matrix< double, TDim, TDim> symm_matrix,
@@ -188,12 +74,12 @@ namespace Kratos {
             boost::numeric::ublas::bounded_matrix< double, TDim, TDim> temp;
             boost::numeric::ublas::bounded_matrix< double, TDim, TDim> result;
             temp = symm_matrix - q*identity_matrix;
-            Calculate_MatrixProduct3(result,temp,temp);
+            noalias(result) = prod(temp,temp);
 
             double p = std::sqrt(Calculate_MatrixTrace3(result)/6);
             noalias(temp) = (symm_matrix-q*identity_matrix)/p;
             
-            double theta = std::acos(Calculate_MatrixDet3(temp)/2)/3;
+            double theta = std::acos(MathUtils<double>::Det(temp)/2)/3;
 
             double t1 = p*2*std::cos(theta)+q;
             double t2 = p*2*std::cos(theta + 2.0*M_PI/3.0)+q;
@@ -266,13 +152,13 @@ namespace Kratos {
             array_1d<double, TDim> r0xr2;
             array_1d<double, TDim> r1xr2;
 
-            Calculate_CrossProduct3(r0xr1, row0, row1);
-            Calculate_CrossProduct3(r0xr2, row0, row2);
-            Calculate_CrossProduct3(r1xr2, row1, row2);
+            r0xr1 = MathUtils<double>::CrossProduct(row0, row1);
+            r0xr2 = MathUtils<double>::CrossProduct(row0, row2);
+            r1xr2 = MathUtils<double>::CrossProduct(row1, row2);            
 
-            double d0 = Calculate_DotProduct3(r0xr1, r0xr1);
-            double d1 = Calculate_DotProduct3(r0xr2, r0xr2);
-            double d2 = Calculate_DotProduct3(r0xr1, r0xr2);
+            double d0 = inner_prod(r0xr1, r0xr1);
+            double d1 = inner_prod(r0xr2, r0xr2);
+            double d2 = inner_prod(r0xr1, r0xr2);
 
             double dmax = d0;
             int imax = 0;
