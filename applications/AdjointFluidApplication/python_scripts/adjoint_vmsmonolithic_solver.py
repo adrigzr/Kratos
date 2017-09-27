@@ -219,9 +219,26 @@ class AdjointVMSMonolithicSolver:
 
     def Solve(self):
         maximum_iterations = self.numerical_diffusion_iterations
-        for itr in range(0, maximum_iterations):
-            self.solver.Solve()
-            print('--- Numerical diffusion iteration %3d' % (itr+1))                    
+        # for itr in range(0, maximum_iterations):
+        self.solver.Solve()
+            # import os
+            # residual = float(os.popen('cat Residual.data').read().strip())
+            # max_change_percentage = 0.0
+            # max_diffusion = 0.0
+            # for elem in self.main_model_part.Elements:
+            #     # current_change =  elem.GetValue(KratosMultiphysics.AUX_MESH_VAR)
+            #     current_diffusion =  elem.GetValue(KratosMultiphysics.ERROR_RATIO)
+            #     # if max_change_percentage < current_change:
+            #     #     max_change_percentage = current_change
+            #     if max_diffusion < current_diffusion:
+            #         max_diffusion = current_diffusion
+            
+            # print('--- Numerical diffusion iteration %3d, maximum diffusion %e, residual %e' % (itr+1, max_diffusion, residual))                    
+            # if residual < 1e-9:
+            #     print('--- Solution converged.')
+            #     break                    
+
+            # print('--- Numerical diffusion iteration %3d ' % (itr+1))                    
     def SetEchoLevel(self, level):
         self.solver.SetEchoLevel(level)
 

@@ -1,0 +1,282 @@
+ |  /           |             
+ ' /   __| _` | __|  _ \   __|
+ . \  |   (   | |   (   |\__ \ 
+_|\_\_|  \__,_|\__|\___/ ____/
+           Multi-Physics 5.0.0-b256d97
+Initializing KratosFluidDynamicsApplication... 
+Initializing KratosExternalSolversApplication... 
+Initializing Kratos MeshingApplication... 
+Initializing KratosAdjointFluidApplication... 
+  [Reading Nodes    : 302 nodes read]
+  [Reading Elements : 1140 elements read] [Type: Element3D4N]
+  [Reading Conditions : 22 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 58 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 288 conditions read] [Type: WallCondition3D3N]
+  [Total Lines Read : 3928]
+mSettings.PrettyPrintJsonString() : {
+    "element_name": "VMS3D4N",
+    "condition_name": "MonolithicWallCondition3D"
+}
+No inverted elements found
+Mesh orientation check found 368 inverted conditions.
+  [Reading Nodes    : 302 nodes read]
+  [Reading Elements : 1140 elements read] [Type: Element3D4N]
+  [Reading Conditions : 22 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 58 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 288 conditions read] [Type: WallCondition3D3N]
+  [Total Lines Read : 3928]
+mSettings.PrettyPrintJsonString() : {
+    "element_name": "VMSAdjointElement3D",
+    "condition_name": "SurfaceCondition3D3N"
+}
+No inverted elements found
+Mesh orientation check found 368 inverted conditions.
+  [Reading Nodes    : 302 nodes read]
+  [Reading Elements : 1140 elements read] [Type: Element3D4N]
+  [Reading Conditions : 22 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 58 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 288 conditions read] [Type: WallCondition3D3N]
+  [Total Lines Read : 3928]
+mSettings.PrettyPrintJsonString() : {
+    "element_name": "VMS3D4N",
+    "condition_name": "MonolithicWallCondition3D"
+}
+No inverted elements found
+Mesh orientation check found 368 inverted conditions.
+  [Reading Nodes    : 302 nodes read]
+  [Reading Elements : 1140 elements read] [Type: Element3D4N]
+  [Reading Conditions : 22 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 58 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 288 conditions read] [Type: WallCondition3D3N]
+  [Total Lines Read : 3928]
+mSettings.PrettyPrintJsonString() : {
+    "element_name": "VMS3D4N",
+    "condition_name": "MonolithicWallCondition3D"
+}
+No inverted elements found
+Mesh orientation check found 368 inverted conditions.
+  [Reading Nodes    : 302 nodes read]
+  [Reading Elements : 1140 elements read] [Type: Element3D4N]
+  [Reading Conditions : 22 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 58 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 288 conditions read] [Type: WallCondition3D3N]
+  [Total Lines Read : 3928]
+mSettings.PrettyPrintJsonString() : {
+    "element_name": "VMS3D4N",
+    "condition_name": "MonolithicWallCondition3D"
+}
+No inverted elements found
+Mesh orientation check found 368 inverted conditions.
+  [Reading Nodes    : 302 nodes read]
+  [Reading Elements : 1140 elements read] [Type: Element3D4N]
+  [Reading Conditions : 22 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 58 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 288 conditions read] [Type: WallCondition3D3N]
+  [Total Lines Read : 3928]
+mSettings.PrettyPrintJsonString() : {
+    "element_name": "VMS3D4N",
+    "condition_name": "MonolithicWallCondition3D"
+}
+No inverted elements found
+Mesh orientation check found 368 inverted conditions.
+  [Reading Nodes    : 302 nodes read]
+  [Reading Elements : 1140 elements read] [Type: Element3D4N]
+  [Reading Conditions : 22 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 58 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 288 conditions read] [Type: WallCondition3D3N]
+  [Total Lines Read : 3928]
+mSettings.PrettyPrintJsonString() : {
+    "element_name": "VMS3D4N",
+    "condition_name": "MonolithicWallCondition3D"
+}
+No inverted elements found
+Mesh orientation check found 368 inverted conditions.
+  [Reading Nodes    : 302 nodes read]
+  [Reading Elements : 1140 elements read] [Type: Element3D4N]
+  [Reading Conditions : 22 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 58 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 288 conditions read] [Type: WallCondition3D3N]
+  [Total Lines Read : 3928]
+mSettings.PrettyPrintJsonString() : {
+    "element_name": "VMS3D4N",
+    "condition_name": "MonolithicWallCondition3D"
+}
+No inverted elements found
+Mesh orientation check found 368 inverted conditions.
+  [Reading Nodes    : 302 nodes read]
+  [Reading Elements : 1140 elements read] [Type: Element3D4N]
+  [Reading Conditions : 22 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 58 conditions read] [Type: WallCondition3D3N]
+  [Reading Conditions : 288 conditions read] [Type: WallCondition3D3N]
+  [Total Lines Read : 3928]
+mSettings.PrettyPrintJsonString() : {
+    "element_name": "VMS3D4N",
+    "condition_name": "MonolithicWallCondition3D"
+}
+Importing    KratosFluidDynamicsApplication
+Importing    KratosExternalSolversApplication
+Importing    KratosMeshingApplication
+Importing    KratosAdjointFluidApplication
+Construction of NavierStokesSolver_VMSMonolithic finished
+Base class fluid solver variables added correctly
+Monolithic fluid solver variables added correctly
+adding nodes and elements to fluid_computational_model_part
+-fluid_computational_model_part- model part
+    Number of tables : 0
+    Number of sub model parts : 0
+
+    Mesh 0 : 
+        Number of Nodes      : 302
+        Number of Properties : 0
+        Number of Elements   : 1140
+        Number of Conditions : 368
+
+
+Base class model reading finished.
+Base class fluid solver DOFs added correctly.
+Monolithic solver initialization finished.
+Construction of AdjointVMSMonolithicSolver finished
+variables for the adjoint fluid solver added correctly
+adding nodes and elements to fluid_computational_model_part
+-fluid_computational_model_part- model part
+    Number of tables : 0
+    Number of sub model parts : 0
+
+    Mesh 0 : 
+        Number of Nodes      : 302
+        Number of Properties : 0
+        Number of Elements   : 1140
+        Number of Conditions : 368
+
+
+Model reading finished.
+DOFs for the VMS adjoint solver added correctly.
+Adjoint solver initialization finished.
+Construction of NavierStokesSolver_VMSMonolithic finished
+Base class fluid solver variables added correctly
+Monolithic fluid solver variables added correctly
+adding nodes and elements to fluid_computational_model_part
+-fluid_computational_model_part- model part
+    Number of tables : 0
+    Number of sub model parts : 0
+
+    Mesh 0 : 
+        Number of Nodes      : 302
+        Number of Properties : 0
+        Number of Elements   : 1140
+        Number of Conditions : 368
+
+
+Base class model reading finished.
+Base class fluid solver DOFs added correctly.
+Monolithic solver initialization finished.
+Construction of NavierStokesSolver_VMSMonolithic finished
+Base class fluid solver variables added correctly
+Monolithic fluid solver variables added correctly
+adding nodes and elements to fluid_computational_model_part
+-fluid_computational_model_part- model part
+    Number of tables : 0
+    Number of sub model parts : 0
+
+    Mesh 0 : 
+        Number of Nodes      : 302
+        Number of Properties : 0
+        Number of Elements   : 1140
+        Number of Conditions : 368
+
+
+Base class model reading finished.
+Base class fluid solver DOFs added correctly.
+Monolithic solver initialization finished.
+Construction of NavierStokesSolver_VMSMonolithic finished
+Base class fluid solver variables added correctly
+Monolithic fluid solver variables added correctly
+adding nodes and elements to fluid_computational_model_part
+-fluid_computational_model_part- model part
+    Number of tables : 0
+    Number of sub model parts : 0
+
+    Mesh 0 : 
+        Number of Nodes      : 302
+        Number of Properties : 0
+        Number of Elements   : 1140
+        Number of Conditions : 368
+
+
+Base class model reading finished.
+Base class fluid solver DOFs added correctly.
+Monolithic solver initialization finished.
+Construction of NavierStokesSolver_VMSMonolithic finished
+Base class fluid solver variables added correctly
+Monolithic fluid solver variables added correctly
+adding nodes and elements to fluid_computational_model_part
+-fluid_computational_model_part- model part
+    Number of tables : 0
+    Number of sub model parts : 0
+
+    Mesh 0 : 
+        Number of Nodes      : 302
+        Number of Properties : 0
+        Number of Elements   : 1140
+        Number of Conditions : 368
+
+
+Base class model reading finished.
+Base class fluid solver DOFs added correctly.
+Monolithic solver initialization finished.
+Construction of NavierStokesSolver_VMSMonolithic finished
+Base class fluid solver variables added correctly
+Monolithic fluid solver variables added correctly
+adding nodes and elements to fluid_computational_model_part
+-fluid_computational_model_part- model part
+    Number of tables : 0
+    Number of sub model parts : 0
+
+    Mesh 0 : 
+        Number of Nodes      : 302
+        Number of Properties : 0
+        Number of Elements   : 1140
+        Number of Conditions : 368
+
+
+Base class model reading finished.
+Base class fluid solver DOFs added correctly.
+Monolithic solver initialization finished.
+Construction of NavierStokesSolver_VMSMonolithic finished
+Base class fluid solver variables added correctly
+Monolithic fluid solver variables added correctly
+adding nodes and elements to fluid_computational_model_part
+-fluid_computational_model_part- model part
+    Number of tables : 0
+    Number of sub model parts : 0
+
+    Mesh 0 : 
+        Number of Nodes      : 302
+        Number of Properties : 0
+        Number of Elements   : 1140
+        Number of Conditions : 368
+
+
+Base class model reading finished.
+Base class fluid solver DOFs added correctly.
+Monolithic solver initialization finished.
+Construction of NavierStokesSolver_VMSMonolithic finished
+Base class fluid solver variables added correctly
+Monolithic fluid solver variables added correctly
+adding nodes and elements to fluid_computational_model_part
+-fluid_computational_model_part- model part
+    Number of tables : 0
+    Number of sub model parts : 0
+
+    Mesh 0 : 
+        Number of Nodes      : 302
+        Number of Properties : 0
+        Number of Elements   : 1140
+        Number of Conditions : 368
+
+
+Base class model reading finished.
+Base class fluid solver DOFs added correctly.
+Monolithic solver initialization finished.
+No inverted elements found
+Mesh orientation check found 368 inverted conditions.

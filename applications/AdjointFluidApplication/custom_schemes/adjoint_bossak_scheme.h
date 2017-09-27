@@ -144,6 +144,7 @@ public:
         mAdjointEndTime = rParameters["adjoint_end_time"].GetDouble();
         mNumericalDiffusionFactor = rParameters["numerical_diffusion"]["factor"].GetDouble();
         mMaximumViscosityRatio = rParameters["numerical_diffusion"]["max_multiplier"].GetDouble();
+        mBeta = rParameters["numerical_diffusion"]["factor"].GetDouble();
 
         if (mAdjointStartTime >= mAdjointEndTime)
             KRATOS_THROW_ERROR(
@@ -255,8 +256,8 @@ public:
         }
 
         for (auto it = rModelPart.ElementsBegin(); it != rModelPart.ElementsEnd(); ++it) {
-            it->SetValue(INITIAL_PENALTY, mNumericalDiffusionFactor);
-            it->SetValue(LAMBDA, mMaximumViscosityRatio);
+            // it->SetValue(INITIAL_PENALTY, mNumericalDiffusionFactor);
+            // it->SetValue(LAMBDA, mMaximumViscosityRatio);
             for (unsigned int iNode = 0; iNode < it->GetGeometry().PointsNumber(); ++iNode)
                 it->GetGeometry()[iNode].GetValue(NODAL_AREA) += 1.0;
         }
@@ -288,6 +289,31 @@ public:
         KRATOS_CATCH("")
     }
 
+    void CalculateResidual(
+        SystemMatrixType& rA,
+        SystemVectorType& rDx,
+        SystemVectorType& rb        
+    )
+    {
+        SystemVectorType result;
+
+        result = prod(rA, rDx) - rb;
+        mResidual = norm_2(result);
+
+        std::ofstream mOutputFileStream;
+        mOutputFileStream.open("Residual.data");
+        mOutputFileStream<<mResidual<<std::endl;
+        mOutputFileStream.close();
+    }
+
+    double GetResidual(
+        SystemMatrixType& rA,
+        SystemVectorType& rDx,
+        SystemVectorType& rb)
+    {
+        return mResidual;
+    }
+
     /// Update adjoint and adjoint acceleration.
     virtual void Update(ModelPart& rModelPart,
                         DofsArrayType& rDofSet,
@@ -296,6 +322,8 @@ public:
                         SystemVectorType& rb) override
     {
         KRATOS_TRY
+
+        // CalculateResidual(rA, rDx, rb);
 
         ProcessInfo& rCurrentProcessInfo = rModelPart.GetProcessInfo();
         const unsigned int DomainSize =
@@ -496,6 +524,10 @@ public:
         pCurrentElement->GetFirstDerivativesVector(mAdjointVelocity[ThreadId]);
         noalias(rRHS_Contribution) -= prod(rLHS_Contribution, mAdjointVelocity[ThreadId]);
 
+        //adding numerical diffusion to stabilize adjoint fields
+        pCurrentElement->Calculate(ADJOINT_DIFFUSION_MATRIX, mAdjointMassMatrix[ThreadId], rCurrentProcessInfo);
+        noalias(rLHS_Contribution) -= mBeta * mAdjointMassMatrix[ThreadId];
+        
         pCurrentElement->EquationIdVector(rEquationId, rCurrentProcessInfo);
 
         KRATOS_CATCH("")
@@ -611,11 +643,13 @@ private:
     double mInvDt;
     double mInvGamma;
     double mInvGammaMinusOne;
+    double mBeta;
     double mMass1Switch;
     double mAdjointStartTime;
     double mAdjointEndTime;
     double mNumericalDiffusionFactor;
     double mMaximumViscosityRatio;
+    double mResidual;
     ObjectiveFunction::Pointer mpObjectiveFunction;
     std::vector<LocalSystemVectorType> mAdjointVelocity;
     std::vector<LocalSystemVectorType> mAdjointAcceleration;

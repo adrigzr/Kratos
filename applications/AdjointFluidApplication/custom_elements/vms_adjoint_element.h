@@ -26,6 +26,16 @@
 #include "utilities/geometry_utilities.h"
 #include "custom_utilities/eigen_decomposition.h"
 
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+#include <boost/numeric/ublas/io.hpp>
+#include <boost/numeric/bindings/lapack/lapack_names.h>
+#include <boost/numeric/bindings/lapack/gesvd.hpp>
+#include <boost/numeric/bindings/traits/ublas_matrix.hpp>
+#include <boost/numeric/bindings/traits/ublas_vector.hpp>
+#include <boost/numeric/bindings/traits/ublas_vector2.hpp>
+
+
 // Application includes
 #include "adjoint_fluid_application_variables.h"
 
@@ -385,6 +395,10 @@ public:
             this->AddPrimalGradientOfVMSMassTerm(rOutput,ACCELERATION,-1.0,rCurrentProcessInfo);
             rOutput = trans(rOutput); // transpose
         }
+        else if (rVariable == ADJOINT_DIFFUSION_MATRIX)
+        {
+            this->CalculateDiffusion(rOutput,rCurrentProcessInfo);
+        }
         else if (rVariable == SHAPE_DERIVATIVE_MATRIX_1)
         {
             this->CalculateShapeGradientOfVMSSteadyTerm(rOutput,rCurrentProcessInfo);
@@ -444,11 +458,94 @@ protected:
      * The VMS-stabilized mass matrix is computed at the given step.
      * We assume that the mesh does not move between steps.
      */
-     
-    double CalculateDiffusion()
+    void CalculateDiffusion(
+        MatrixType& rAdjointMatrix,
+        const ProcessInfo& rCurrentProcessInfo)
     {
+        KRATOS_TRY
+
+        if (rAdjointMatrix.size1() != TFluidLocalSize || rAdjointMatrix.size2() != TFluidLocalSize)
+            rAdjointMatrix.resize(TFluidLocalSize,TFluidLocalSize,false);
+
+        for (IndexType i=0; i < TFluidLocalSize; i++)
+            for (IndexType j=0; j < TFluidLocalSize; j++)
+                rAdjointMatrix(i,j) = 0.0;
+
+        // Get shape functions, shape function gradients and element volume (area in
+        // 2D). Only one integration point is used so the volume is its weight.
+        ShapeFunctionDerivativesType DN_DX;
+        array_1d< double, TNumNodes > N;
+        double Volume;
+
+        GeometryUtils::CalculateGeometryData(this->GetGeometry(),DN_DX,N,Volume);     
+
         // return CalculateDiffusion_RatioMethod();
-        return CalculateDiffusion_EigenMethod();
+        // return CalculateDiffusion_EigenMethod();
+        double numerical_diffusion = CalculateDiffusion_SVMethod();
+        // double numerical_diffusion = CalculateDiffusion_EigenMethod();
+        this->AddNumericalDiffusionTerm(rAdjointMatrix, DN_DX, numerical_diffusion * Volume);
+        
+        KRATOS_CATCH("")
+    }
+
+    double CalculateDiffusion_SVMethod()
+    {
+        ShapeFunctionDerivativesType DN_DX;
+        array_1d< double, TNumNodes > N;
+        double Volume;
+        double Viscosity;
+        IndexType step = 0;
+        GeometryType& rGeom = this->GetGeometry();
+
+        GeometryUtils::CalculateGeometryData(rGeom,DN_DX,N,Volume);
+
+        this->EvaluateInPoint(Viscosity,VISCOSITY,N);
+
+        boost::numeric::ublas::bounded_matrix< double, TDim, TDim > GradVel;
+        this->CalculateVelocityGradient(GradVel,DN_DX);
+
+        double velocity_divergence = 0.0;
+        for (IndexType i=0;i<TDim; i++)
+            velocity_divergence += GradVel(i,i);
+        
+        boost::numeric::ublas::matrix<double, boost::numeric::ublas::column_major> M( TDim + 1, TDim + 1);
+        for (IndexType i=0; i < TDim; i++)
+            M(i,i) = 0.5 * velocity_divergence - GradVel(i,i);
+        for (IndexType i=0; i < TDim; i++)
+            for (IndexType j=i+1; j < TDim; j++)
+            {
+                M(i,j) = -GradVel(i,j);
+                M(j,i) = -GradVel(j,i);
+            }
+        for (IndexType i=0; i < TDim + 1; i++)
+        {
+            M(TDim, i) = 0.0;
+            M(i, TDim) = 0.0;
+        }
+        M(TDim, TDim) = 0.5 * velocity_divergence;
+
+        boost::numeric::ublas::vector<double> S(TDim + 1);
+        int ierr = boost::numeric::bindings::lapack::gesvd(M, S);
+
+        double numerical_viscosity;
+        if (ierr == 0) {
+            numerical_viscosity = S(0);
+            // double max_ratio = this->GetValue(LAMBDA);
+
+            // double old_numerical_viscosity = this->GetValue(ERROR_RATIO);
+            // double percentage_change = (numerical_viscosity/old_numerical_viscosity - 1.0);
+
+            // if (numerical_viscosity/Viscosity > max_ratio)
+                // numerical_viscosity = Viscosity*max_ratio;
+
+            // this->SetValue(AUX_MESH_VAR, percentage_change);
+        }
+        else
+            numerical_viscosity = 0.0;
+
+        this->SetValue(ERROR_RATIO, numerical_viscosity);
+        return numerical_viscosity;
+
     }
 
     double CalculateDiffusion_EigenMethod()
@@ -528,14 +625,13 @@ protected:
         if (alpha < 1.0)
             alpha = 0.0;
 
-        double beta = this->GetValue(INITIAL_PENALTY);
-        double numerical_viscosity = beta*Viscosity*(alpha);
-        double max_ratio = this->GetValue(LAMBDA);
-        if (numerical_viscosity/Viscosity > max_ratio)
-            numerical_viscosity = Viscosity*max_ratio;
+        double numerical_viscosity = Viscosity*(alpha);
 
+        // double old_numerical_viscosity = this->GetValue(ERROR_RATIO);
+        // double percentage_change = (numerical_viscosity/old_numerical_viscosity - 1.0);
 
         this->SetValue(ERROR_RATIO, numerical_viscosity);
+        // this->SetValue(AUX_MESH_VAR, percentage_change);
 
         return numerical_viscosity;
     }
@@ -1260,9 +1356,6 @@ protected:
 
         // Viscous term
         this->AddViscousTerm(rAdjointMatrix,DN_DX,Viscosity * Volume);
-
-        double NumericalDiffusion = this->CalculateDiffusion();
-        this->AddNumericalDiffusionTerm(rAdjointMatrix, DN_DX, NumericalDiffusion * Volume);
 
         // change the sign for consistency with definition
         noalias(rAdjointMatrix) = -rAdjointMatrix;

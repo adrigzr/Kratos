@@ -3,6 +3,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 message("**** configuring KratosAdjointFluidApplication ****")
 
 include_directories( ${CMAKE_SOURCE_DIR}/kratos )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/external_includes )
 
 ## generate variables with the sources
 set( KRATOS_ADJOINT_FLUID_APPLICATION_SOURCES
@@ -19,10 +20,16 @@ set( KRATOS_ADJOINT_FLUID_APPLICATION_SOURCES
 find_package(HDF5 REQUIRED COMPONENTS CXX)
 include_directories( ${HDF5_INCLUDE_DIRS} )
 
+find_package(BLAS)
+find_package(LAPACK)
+if(LAPACK_FOUND AND BLAS_FOUND)
+   set(lapackblas_libraries ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES})
+endif()
+
 ###############################################################
 ## define library which defines the basic python interface
 add_library(KratosAdjointFluidApplication SHARED ${KRATOS_ADJOINT_FLUID_APPLICATION_SOURCES})
-target_link_libraries(KratosAdjointFluidApplication KratosCore KratosFluidDynamicsApplication ${HDF5_CXX_LIBRARIES})
+target_link_libraries(KratosAdjointFluidApplication KratosCore KratosFluidDynamicsApplication ${HDF5_CXX_LIBRARIES} ${lapackblas_libraries})
 set_target_properties(KratosAdjointFluidApplication PROPERTIES PREFIX "")
 
 # changing the .dll suffix to .pyd 

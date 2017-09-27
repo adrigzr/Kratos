@@ -43,6 +43,12 @@
         "typeinfo": "cpp",
         "utility": "cpp",
         "valarray": "cpp",
-        "recycle.c": "cpp"
-    }
+        "recycle.c": "cpp",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "thread": "cpp",
+        "*.ipp": "cpp"
+    },
+    "C_Cpp.intelliSenseEngine": "Default"
 }

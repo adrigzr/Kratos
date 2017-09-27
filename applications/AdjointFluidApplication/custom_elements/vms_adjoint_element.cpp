@@ -314,13 +314,21 @@ void VMSAdjointElement<2>::AddNumericalDiffusionTerm(
   {
     for (IndexType i = 0; i < NumNodes; ++i)
     {
+      // (dN_i/dx_k dN_j/dx_k)
+      const double Diag = rDN_DX(i,0) * rDN_DX(j,0)
+      + rDN_DX(i,1) * rDN_DX(j,1);
+
       // First Row
       rResult(FirstRow,FirstCol) += Weight
-          * (rDN_DX(i,0) * rDN_DX(j,0) + rDN_DX(i,1) * rDN_DX(j,1));
+          * (Diag);
 
       // Second Row
       rResult(FirstRow+1,FirstCol+1) += Weight
-          * (rDN_DX(i,0) * rDN_DX(j,0) + rDN_DX(i,1) * rDN_DX(j,1));
+          * (Diag);
+
+      // Third Row
+      rResult(FirstRow+2,FirstCol+2) += Weight
+      * (Diag);
 
       // Update Counter
       FirstRow += 3;
@@ -358,6 +366,10 @@ void VMSAdjointElement<3>::AddNumericalDiffusionTerm(
       // Third Row
       rResult(FirstRow+2,FirstCol+2) += Weight
           * (Diag);
+
+      // Fourth Row
+      rResult(FirstRow+3,FirstCol+3) += Weight
+      * (Diag);
 
       // Update Counter
       FirstRow += 4;
