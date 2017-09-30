@@ -58,8 +58,8 @@ namespace Python
 	AddCustomUtilitiesToPython();
 	AddCustomConstitutiveLawsToPython();
 	AddCustomProcessesToPython();
-	//registering variables in python
 
+	//registering variables in python
 	KRATOS_REGISTER_IN_PYTHON_VARIABLE(DAMAGE_EDGE1);
 	KRATOS_REGISTER_IN_PYTHON_VARIABLE(DAMAGE_EDGE2);
 	KRATOS_REGISTER_IN_PYTHON_VARIABLE(DAMAGE_EDGE3);
