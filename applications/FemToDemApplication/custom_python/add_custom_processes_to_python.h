@@ -6,11 +6,13 @@
 // System includes
 
 
-// External includes
+// External includes 
+#include "boost/smart_ptr.hpp"
 
 
 // Project includes
 #include "includes/define.h"
+
 
 
 namespace Kratos
@@ -18,8 +20,9 @@ namespace Kratos
 
 	namespace Python
 	{
-
 		void AddCustomProcessesToPython();
+
+
 
 	}  // namespace Python.
 

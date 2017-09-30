@@ -7,7 +7,7 @@
 //  License:		 BSD License
 //					 Kratos default license: kratos/license.txt
 //
-//  Main author:    Alejandro Cornejo Velázquez
+//  Main author:    Alejandro Cornejo Velï¿½zquez
 //
 
 
@@ -70,9 +70,6 @@ void KratosFemToDemApplication::Register()
  	// calling base class register to register Kratos components
  	KratosApplication::Register();
 	
-	
-	
-
 	//REGISTER VARIABLES FEM2DEM
 	KRATOS_REGISTER_VARIABLE(DAMAGE_EDGE1)
 	KRATOS_REGISTER_VARIABLE(DAMAGE_EDGE2)
@@ -92,10 +89,10 @@ void KratosFemToDemApplication::Register()
 	KRATOS_REGISTER_VARIABLE(SMOOTHING)
 	KRATOS_REGISTER_VARIABLE(IS_DAMAGED)
 	KRATOS_REGISTER_VARIABLE(TANGENT_CONSTITUTIVE_TENSOR)
+
 	//Register element
 	KRATOS_REGISTER_ELEMENT("ZaratipitoElement", mZaratipitoElement)
 	KRATOS_REGISTER_ELEMENT("AleCornVelElement", mAleCornVelElement)
-
 			
 	//Register Constitutive Laws
 	Serializer::Register("ZarateLaw", mZarateLaw);
