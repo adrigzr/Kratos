@@ -4,27 +4,18 @@
 //   Date:                $Date:  $
 //   Revision:            $Revision: $
 
-// Project includes
+// External includes
 #include <boost/python.hpp>
-#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
+// Project includes
 #include "includes/define.h"
+#include "includes/model_part.h"
 #include "processes/process.h"
-#include "spaces/ublas_space.h"
-
 #include "custom_python/add_custom_processes_to_python.h"
+#include "spaces/ublas_space.h"
+#include "includes/kratos_parameters.h"
 
 #include "processes/find_elements_neighbours_process.h"
-#include "includes/model_part.h"
-#include "includes/kratos_parameters.h"
-#include "includes/node.h"
-//#include "includes/define.h"
-//#include "processes/process.h"
-// #include "spaces/ublas_space.h"
-#include "linear_solvers/linear_solver.h"
-#include "custom_python/add_custom_processes_to_python.h"
-#include "containers/flags.h"
-
 #include "custom_processes/adaptive_mesh_refinement_process.hpp"
 //#include "custom_processes/mapping_variables_process.hpp"  //TODO when p.type done uncomment
 
