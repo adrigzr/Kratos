@@ -155,7 +155,7 @@ namespace Kratos
 		//get the shape functions [N] (for the order of the default integration method)
 		const Matrix& Ncontainer = GetGeometry().ShapeFunctionsValues(mThisIntegrationMethod);
 
-		//get the shape functions parent coodinates derivative [dN/d£] (for the order of the default integration method)
+		//get the shape functions parent coodinates derivative [dN/dï¿½] (for the order of the default integration method)
 		const GeometryType::ShapeFunctionsGradientsType& DN_De = GetGeometry().ShapeFunctionsLocalGradients(mThisIntegrationMethod);
 
 		//calculate delta position (here coincides with the current displacement)
@@ -163,7 +163,7 @@ namespace Kratos
 		noalias(DeltaPosition) = ZeroMatrix(number_of_nodes, dimension);
 		DeltaPosition = this->CalculateDeltaPosition(DeltaPosition);
 
-		//calculating the reference jacobian from cartesian coordinates to parent coordinates for all integration points [dx_n/d£]
+		//calculating the reference jacobian from cartesian coordinates to parent coordinates for all integration points [dx_n/dï¿½]
 		GeometryType::JacobiansType J;
 		J.resize(1, false);
 		J[0].resize(dimension, dimension, false);
@@ -212,7 +212,7 @@ namespace Kratos
 
 			//CALL THE CONSTITUTIVE LAW (for this integration point)
 			//(after calling the constitutive law StressVector and ConstitutiveMatrix are set and can be used)
-			mConstitutiveLawVector[PointNumber]->CalculateMaterialResponseCauchy(Values);
+			mConstitutiveLawVector[PointNumber]->CalculateMaterialResponseCauchy(Values);  // TODO -> must be independent from CL
 			//this->SetStressVector(Values.GetStressVector());
 			this->SetValue(STRESS_VECTOR, Values.GetStressVector());
 
@@ -255,8 +255,8 @@ namespace Kratos
 		{
 			const Matrix& Ncontainer = GetGeometry().ShapeFunctionsValues(mThisIntegrationMethod);
 			Vector N = row(Ncontainer, PointNumber);
-		//	Matrix InvJ(dimension, dimension);
-			//noalias(InvJ) = ZeroMatrix(dimension, dimension);
+		    //	Matrix InvJ(dimension, dimension);
+			//  noalias(InvJ) = ZeroMatrix(dimension, dimension);
 			double detJ = 0;
 			Matrix InvJ(dimension, dimension);
 			noalias(InvJ) = ZeroMatrix(dimension, dimension);
@@ -471,20 +471,20 @@ namespace Kratos
 		//get the shape functions [N] (for the order of the default integration method)
 		const Matrix& Ncontainer = GetGeometry().ShapeFunctionsValues(mThisIntegrationMethod);
 
-		//get the shape functions parent coordinates derivative [dN/d£] (for the order of the default integration method)
+		//get the shape functions parent coordinates derivative [dN/dï¿½] (for the order of the default integration method)
 		const GeometryType::ShapeFunctionsGradientsType& DN_De = GetGeometry().ShapeFunctionsLocalGradients(mThisIntegrationMethod);
 		//calculate delta position (here coincides with the current displacement)
 		Matrix DeltaPosition = ZeroMatrix(number_of_nodes, dimension);
 		DeltaPosition = this->CalculateDeltaPosition(DeltaPosition);
 		//KRATOS_WATCH(DeltaPosition)
-		//calculating the reference jacobian from cartesian coordinates to parent coordinates for all integration points [dx_n/d£]
+		//calculating the reference jacobian from cartesian coordinates to parent coordinates for all integration points [dx_n/dï¿½]
 		GeometryType::JacobiansType J;
 		J.resize(1, false);
 		J[0] = ZeroMatrix(1, 1);
 		J = GetGeometry().Jacobian(J, mThisIntegrationMethod, DeltaPosition);
 		//a.-compute element kinematics
 
-		//calculating the inverse of the jacobian for this integration point[d£/dx_n]
+		//calculating the inverse of the jacobian for this integration point[dï¿½/dx_n]
 		Matrix InvJ = ZeroMatrix(dimension, dimension);
 		double detJ = 0;
 		MathUtils<double>::InvertMatrix(J[PointNumber], InvJ, detJ);
@@ -1041,7 +1041,7 @@ namespace Kratos
 		Gt = this->GetProperties()[FRAC_ENERGY_T];
 
 		// Check input variables 
-		if (friction_angle < 1e-24) { friction_angle = 32 * 3.14159 / 180; std::cout << "Friction Angle not defined, assumed equal to 32º " << std::endl; }
+		if (friction_angle < 1e-24) { friction_angle = 32 * 3.14159 / 180; std::cout << "Friction Angle not defined, assumed equal to 32ï¿½ " << std::endl; }
 		if (sigma_c < 1e-24) { KRATOS_ERROR << " ERROR: Yield stress in compression not defined, include YIELD_STRESS_C in .mdpa "; }
 		if (sigma_t < 1e-24) { KRATOS_ERROR << " ERROR: Yield stress in tension not defined, include YIELD_STRESS_T in .mdpa "; }
 		if (Gt < 1e-24) { KRATOS_ERROR << " ERROR: Fracture Energy not defined in the model part, include FRAC_ENERGY_T in .mdpa "; }
@@ -1125,7 +1125,7 @@ namespace Kratos
 		Gt = this->GetProperties()[FRAC_ENERGY_T];
 
 		// Check input variables 
-		if (friction_angle < 1e-24) { friction_angle = 32 * 3.14159 / 180; std::cout << "Friction Angle not defined, assumed equal to 32º " << std::endl; }
+		if (friction_angle < 1e-24) { friction_angle = 32 * 3.14159 / 180; std::cout << "Friction Angle not defined, assumed equal to 32ï¿½ " << std::endl; }
 		if (sigma_c < 1e-24) { KRATOS_ERROR << " ERROR: Yield stress in compression not defined, include YIELD_STRESS_C in .mdpa "; }
 		if (sigma_t < 1e-24) { KRATOS_ERROR << " ERROR: Yield stress in tension not defined, include YIELD_STRESS_T in .mdpa "; }
 		if (Gt < 1e-24) { KRATOS_ERROR << " ERROR: Fracture Energy not defined in the model part, include FRAC_ENERGY_T in .mdpa "; }
@@ -1236,7 +1236,7 @@ namespace Kratos
 		Gt = this->GetProperties()[FRAC_ENERGY_T];
 
 		// Check input variables 
-		if (friction_angle < 1e-24) { friction_angle = 32 * 3.14159 / 180; std::cout << "Friction Angle not defined, assumed equal to 32º " << std::endl; }
+		if (friction_angle < 1e-24) { friction_angle = 32 * 3.14159 / 180; std::cout << "Friction Angle not defined, assumed equal to 32ï¿½ " << std::endl; }
 		if (sigma_c < 1e-24) { KRATOS_ERROR << " ERROR: Yield stress in compression not defined, include YIELD_STRESS_C in .mdpa "; }
 		if (sigma_t < 1e-24) { KRATOS_ERROR << " ERROR: Yield stress in tension not defined, include YIELD_STRESS_T in .mdpa "; }
 		if (Gt < 1e-24) { KRATOS_ERROR << " ERROR: Fracture Energy not defined in the model part, include FRAC_ENERGY_T in .mdpa "; }

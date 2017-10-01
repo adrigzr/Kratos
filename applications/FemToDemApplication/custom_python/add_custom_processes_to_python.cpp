@@ -6,6 +6,7 @@
 
 // External includes
 #include <boost/python.hpp>
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 // Project includes
 #include "includes/define.h"
@@ -37,9 +38,10 @@ namespace Kratos
 				("FindElementalNeighboursProcess", init<ModelPart&, int, unsigned int>())
 				.def("Execute", &FindElementalNeighboursProcess::Execute);
 				
-			// Adaptive Mesh Refinement Process
+			//Adaptive Mesh Refinement Process
 			class_<AdaptiveMeshRefinementProcessType, bases< ProcessBaseType >, boost::noncopyable >
-				("AdaptiveMeshRefinementProcess", init < ModelPart&, std::string, std::string, std::string, std::string, double, int >());
+				("AdaptiveMeshRefinementProcess",
+			     init < ModelPart&, std::string, std::string, std::string, std::string, double, int >());
 				//.def("Execute", &AdaptiveMeshRefinementProcess::Execute);
 				
 			// // Mapping Variables Process

@@ -32,6 +32,7 @@
 #include "custom_constitutive\zarate_law.hpp"
 #include "custom_elements\alecornvel_element.hpp"
 
+#include "fem_to_dem_application_variables.h"
 
 namespace Kratos {
 
