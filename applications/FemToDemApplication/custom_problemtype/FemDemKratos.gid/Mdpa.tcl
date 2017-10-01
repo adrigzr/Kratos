@@ -69,7 +69,7 @@ proc WriteMdpa { basename dir problemtypedir } {
 		WriteElements FileVar [lindex $Groups $i] triangle AleCornVelElement $BodyElemsProp Triangle2D3Connectivities
 	}
 	
-	## Conditions
+	## TODO Conditions line 365 problem de POROMECH
 	
 	
 	

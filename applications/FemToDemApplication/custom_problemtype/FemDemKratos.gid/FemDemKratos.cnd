@@ -54,7 +54,7 @@ QUESTION: Fix_X#CB#(true,false)
 VALUE: true
 HELP: Fixed: it is not a DOF, it is an imposed value. Unfixed: it is an initial value for the DOF
 DEPENDENCIES: (false,HIDE,Imposed_Displacement_X,Constant)(true,RESTORE,Imposed_Displacement_X,#CURRENT#)
-QUESTION: Imposed_Displacement_X#CB#(Constant,Table_Interpolation)
+QUESTION: Imposed_Displacement_X#CB#(Constant,Table_Interpolation,Function)
 VALUE: Constant
 DEPENDENCIES: (Constant,HIDE,Displacement_X_Table,#CURRENT#)(Table_Interpolation,RESTORE,Displacement_X_Table,#CURRENT#)
 QUESTION: Displacement_X_Table(Time,Displacement_X)
