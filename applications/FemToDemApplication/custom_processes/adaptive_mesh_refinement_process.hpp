@@ -14,8 +14,8 @@
 #include "includes/model_part.h"
 #include "processes/process.h"
 
-#include "fem_to_dem_application.h"
-#include "fem_to_dem_application.cpp"
+#include "fem_to_dem_application_variables.h"
+//#include "fem_to_dem_application.cpp"
 
 namespace Kratos
 {
@@ -49,7 +49,8 @@ public:
     
     // Constructor
     AdaptiveMeshRefinementProcess(ModelPart& r_model_part,std::string plane_state,std::string problem_name,std::string problem_path,
-                                std::string mesh_optimality_criteria,double permissible_error, int number_of_refinements) : mr_model_part(r_model_part)
+                                std::string mesh_optimality_criteria,double permissible_error, int number_of_refinements) 
+                                : mr_model_part(r_model_part)
     {
         mNNodes = mr_model_part.NumberOfNodes();
         mNElements = mr_model_part.NumberOfElements();

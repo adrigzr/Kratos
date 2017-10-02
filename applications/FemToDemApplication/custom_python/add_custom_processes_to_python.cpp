@@ -32,7 +32,7 @@ namespace Kratos
 		{
 			typedef Process                           ProcessBaseType;
 			typedef AdaptiveMeshRefinementProcess     AdaptiveMeshRefinementProcessType;
-			//typedef MappingVariablesProcess           MappingVariablesProcessType;
+		//	typedef MappingVariablesProcess           MappingVariablesProcessType;
 
 			class_<FindElementalNeighboursProcess, bases<ProcessBaseType>, boost::noncopyable >
 				("FindElementalNeighboursProcess", init<ModelPart&, int, unsigned int>())
@@ -44,9 +44,10 @@ namespace Kratos
 			     init < ModelPart&, std::string, std::string, std::string, std::string, double, int >());
 				//.def("Execute", &AdaptiveMeshRefinementProcess::Execute);
 				
-			// // Mapping Variables Process
-			// class_< MappingVariablesProcessType, bases< ProcessBaseType >, boost::noncopyable > ( "MappingVariablesProcess",
-			// 	init < ModelPart&,ModelPart&,std::string >());
+			// Mapping Variables Process
+			//  class_< MappingVariablesProcessType, bases< ProcessBaseType >, boost::noncopyable >
+			//   ( "MappingVariablesProcess",
+			//  	init < ModelPart&,ModelPart&,std::string >());
 
 
 		}
