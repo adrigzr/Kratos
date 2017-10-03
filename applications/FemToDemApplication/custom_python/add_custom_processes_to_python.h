@@ -21,9 +21,6 @@ namespace Kratos
 	namespace Python
 	{
 		void AddCustomProcessesToPython();
-
-
-
 	}  // namespace Python.
 
 }  // namespace Kratos.

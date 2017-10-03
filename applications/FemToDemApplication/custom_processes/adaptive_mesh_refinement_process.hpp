@@ -1,8 +1,8 @@
 //
 //   Project Name:        KratosDamageApplication $
-//   Last modified by:    $Author: Ignasi de Pouplana Sardà $
-//   Date:                $Date:                  July 2014 $
-//   Revision:            $Revision:                    0.0 $
+//   Last modified by:    $Author: Ignasi de Pouplana Sardà & Alejandro Cornejo $
+//   Date:                $Date:                                    Oct 2017    $
+//   Revision:            $Revision:                                        0.0 $
 //
 
 #if !defined(KRATOS_ADAPTIVE_MESH_REFINEMENT_PROCESS )

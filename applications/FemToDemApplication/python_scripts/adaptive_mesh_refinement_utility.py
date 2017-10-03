@@ -4,10 +4,13 @@ from KratosMultiphysics import *
 from KratosMultiphysics.FemToDemApplication  import *
 CheckForPreviousImport()
 
+def Wait():
+    input("Press Something")
 
 class AdaptiveMeshRefinementUtility:
 
-    def __init__(self, ProjectParameters, starting_time, solver_constructor, constitutive_law_utility, gid_output_utility, conditions_util):
+    def __init__(self, ProjectParameters, starting_time, solver_constructor, constitutive_law_utility,
+     gid_output_utility, conditions_util, ProblemPath):
         
         ## Parameters and utilities
         self.ProjectParameters = ProjectParameters
@@ -17,18 +20,18 @@ class AdaptiveMeshRefinementUtility:
         
         self.conditions_util = conditions_util
         
-        self.problem_path = ProjectParameters.problem_path
+        self.problem_path = ProblemPath
         self.AMR_files_path = str(self.problem_path)+"/AMR_Files"
         
         self.n_refinements = 0
         self.last_refinement_id = 1 #Same as the initial current_id
         
         ## Time operations initialization
-        self.ending_time = ProjectParameters.ending_time
-        self.delta_time = ProjectParameters.delta_time
+        self.ending_time = ProjectParameters["problem_data"]["end_time"].GetDouble()
+        self.delta_time  = ProjectParameters["problem_data"]["time_step"].GetDouble()
         
         # set AMR frequency
-        self.amr_frequency = ProjectParameters.refinement_frequency
+        self.amr_frequency = ProjectParameters["AMR_data"]["refinement_frequency"].GetDouble()
         if(self.amr_frequency < self.delta_time):
             self.amr_frequency = self.delta_time
 
@@ -41,9 +44,15 @@ class AdaptiveMeshRefinementUtility:
 
     def Initialize(self):
         
-        self.gid_path = self.ProjectParameters.gid_path
-        self.gid_path = self.gid_path[:-8]
+        self.gid_path = self.ProjectParameters["AMR_data"]["gid_path"]
+        print("gid", self.gid_path)
+        print(len(str(self.gid_path)))
+        print("lera",str(self.gid_path)[0])
         
+
+        self.gid_path = str(self.gid_path)[:-10]
+        print("gid", self.gid_path)
+        Wait()
         activate_AMR = True
         
         if(self.amr_frequency > self.ending_time):
