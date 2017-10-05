@@ -4,14 +4,14 @@
         "plane_state"                          : "Plane_Stress",
         "mesh_optimality_criteria_criteria"    : "Global_Error_Equidistribution",
         "permissible_error"                    : 0.09,
-        "refinement_frequency"                 : 20,
+        "refinement_frequency"                 : 1.0,
         "gid_path"                             : "C:/Program Files/GiD/GiD 13.0.1/gid.exe"
         },
     "problem_data"             : {
         "problem_name"    : "pruebasDyn",
         "model_part_name" : "Structure",
         "domain_size"     : 2,
-        "time_step"       : 0.1,
+        "time_step"       : 1.0,
         "start_time"      : 0.0,
         "end_time"        : 5.0,
         "echo_level"      : 1

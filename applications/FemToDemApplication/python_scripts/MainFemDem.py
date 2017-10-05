@@ -229,9 +229,10 @@ class FEM_Solution(MainSolidFEM.Solution):
 
 
 		self.activate_AMR = self.ProjectParameters["AMR_data"]["activate_AMR"].GetBool()
+		self.current_id = 1
 
 
-# aki
+		# Initialize the AMR_util
 		if(self.activate_AMR):
 			self.AMR_util = adaptive_mesh_refinement_utility.AdaptiveMeshRefinementUtility(self.ProjectParameters,
 				                                                                           self.start_time,
@@ -241,8 +242,8 @@ class FEM_Solution(MainSolidFEM.Solution):
 				                                                                           self.conditions_util,
 				                                                                           self.problem_path)
 			self.activate_AMR = self.AMR_util.Initialize() # check the amr criteria
-			print("point 2")
-			Wait()
+			#print("point alex 223333", self.activate_AMR)
+			#Wait()
 
 
 
@@ -316,18 +317,25 @@ class FEM_Solution(MainSolidFEM.Solution):
 		#print("*************************************")
 		
 		#print(activate_AMR)
-		print("fjfjfjjfjfj  ",self.activate_AMR)
-		Wait()
-		# Adaptive Mesh Refinement
-		if(self.activate_AMR):
-			refine, last_mesh = AMR_util.CheckAMR(current_time)
-			if(refine):
-				model_part,main_step_solver,gid_output_util = AMR_util.Execute(model_part,main_step_solver,gid_output_util,current_time,current_id)
-			elif(last_mesh):
-				AMR_util.Finalize(model_part,current_id)
-
-
+		#print("fjfjfjjfjfj  ",self.activate_AMR)
 		#Wait()
+		# Adaptive Mesh Refinement
+		#print("solve sol step",self.activate_AMR )
+		#Wait()
+		if(self.activate_AMR):
+			self.refine, self.last_mesh = self.AMR_util.CheckAMR(self.time)
+			if(self.refine):
+				# aqui estamos
+				self.main_model_part,self.main_step_solver,self.gid_output_util = self.AMR_util.Execute(self.main_model_part,
+					                                                                 self.solver,
+					                                                                 self.gid_output_util,
+					                                                                 self.time,
+					                                                                 self.current_id)
+			elif(self.last_mesh):
+				self.AMR_util.Finalize(model_part,current_id)
+
+		print("despues de solve sol step  / execute")
+		Wait()
 
 		self.StopTimeMeasuring(self.clock_time,"Solving", False);
 

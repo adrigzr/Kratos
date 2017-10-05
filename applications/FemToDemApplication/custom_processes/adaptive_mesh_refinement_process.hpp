@@ -48,9 +48,9 @@ public:
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
     // Constructor
-    AdaptiveMeshRefinementProcess(ModelPart& r_model_part,std::string plane_state,std::string problem_name,std::string problem_path,
-                                std::string mesh_optimality_criteria,double permissible_error, int number_of_refinements) 
-                                : mr_model_part(r_model_part)
+    AdaptiveMeshRefinementProcess(ModelPart& r_model_part,std::string plane_state,std::string problem_name,
+        std::string problem_path,std::string mesh_optimality_criteria,double permissible_error,
+         int number_of_refinements) : mr_model_part(r_model_part)
     {
         mNNodes = mr_model_part.NumberOfNodes();
         mNElements = mr_model_part.NumberOfElements();

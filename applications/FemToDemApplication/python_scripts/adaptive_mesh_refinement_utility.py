@@ -45,22 +45,23 @@ class AdaptiveMeshRefinementUtility:
     def Initialize(self):
         
         self.gid_path = self.ProjectParameters["AMR_data"]["gid_path"]
-        print("gid", self.gid_path)
-        print(len(str(self.gid_path)))
-        print("lera",str(self.gid_path)[0])
+        #print("gid", self.gid_path)
+        #print(len(str(self.gid_path)))
+        #print("lera",str(self.gid_path)[0])
         
 
         self.gid_path = str(self.gid_path)[:-10]
-        print("gid", self.gid_path)
-        Wait()
+        #print("gid", self.gid_path)
+        #Wait()
         activate_AMR = True
         
         if(self.amr_frequency > self.ending_time):
             activate_AMR = False
         
+        # creates the AMR_Files folder
         if not os.path.isdir(self.AMR_files_path):
             os.makedirs(str(self.AMR_files_path))
-        else:
+        else:  # must be corrected to windows TODO
             os.system("rm -r "+str(self.AMR_files_path))
             os.makedirs(str(self.AMR_files_path))
 
@@ -88,37 +89,50 @@ class AdaptiveMeshRefinementUtility:
         
         ## Previous definitions ---------------------------------------------------------------------------------------------
         
-        problem_name = self.ProjectParameters.problem_name
-        GidOutputConfiguration = self.ProjectParameters.GidOutputConfiguration
-        output_mode = GidOutputConfiguration.GiDPostMode
-        output_multiple_files = GidOutputConfiguration.GiDPostFiles
-        plane_state = self.ProjectParameters.plane_state
-        mesh_optimality_criteria = self.ProjectParameters.mesh_optimality_criteria
-        permissible_error = self.ProjectParameters.permissible_error
+        problem_name = self.ProjectParameters["problem_data"]["problem_name"].GetString()
+        #GidOutputConfiguration = self.ProjectParameters.GidOutputConfiguration
+        output_mode = self.ProjectParameters["output_configuration"]["result_file_configuration"]["gidpost_flags"]["GiDPostMode"].GetString()
+        output_multiple_files = self.ProjectParameters["output_configuration"]["result_file_configuration"]["gidpost_flags"]["MultiFileFlag"].GetString()
+        plane_state = self.ProjectParameters["AMR_data"]["plane_state"].GetString()
+        mesh_optimality_criteria = self.ProjectParameters["AMR_data"]["mesh_optimality_criteria_criteria"].GetString()
+        permissible_error = self.ProjectParameters["AMR_data"]["permissible_error"].GetDouble()
 
         ## Finalize previous post results -----------------------------------------------------------------------------------
+        print("dentro de execute1")
+        i = 69
+        print(str("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "))
+        Wait()
+
+
 
         gid_output_util.finalize_results()
         
-        if(output_mode=="Binary"):
-            if(output_multiple_files=="Multiples"):
+        if(output_mode=="GiD_PostBinary"):
+            if(output_multiple_files=="MultipleFiles"):
                 for i in range(self.last_refinement_id,current_id+1):
-                    os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.bin "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.bin")
+                    os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.bin "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.bin")
             else:
-                os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+".post.bin "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.bin")
+                os.system("move "+str(self.problem_path)+"/"+str(problem_name)+".post.bin "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.bin")
         else:
-            if(output_multiple_files=="Multiples"):
+            if(output_multiple_files=="MultipleFiles"):
                 for i in range(self.last_refinement_id,current_id+1):
-                    os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.msh")
-                    os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.res")
+                    os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.msh")
+                    os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.res")
             else:
-                os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.msh")
-                os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.res")
+                os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.msh")
+                os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.res")
         
-        os.system("cp "+str(self.problem_path)+"/"+str(problem_name)+".mdpa "+str(self.AMR_files_path)+"/"+str(problem_name)+"_mesh_"+str(self.n_refinements)+".mdpa")
+
+
+
+        print("antes de copy")   #cornejo
+        Wait()        
+        os.system("copy "+str(self.problem_path)+"/"+str(problem_name)+".mdpa "+str(self.AMR_files_path)+"/"+str(problem_name)+"_mesh_"+str(self.n_refinements)+".mdpa")
         
         ## MESH LOOP --------------------------------------------------------------------------------------------------------
-
+        print("dentro de execute2")   #cornejo
+        Wait()
+        
         print("--------------------------------")
         print("START MESH REFINEMENT ITERATIONS")
         print("--------------------------------")
