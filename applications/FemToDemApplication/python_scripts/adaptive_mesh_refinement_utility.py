@@ -20,9 +20,14 @@ class AdaptiveMeshRefinementUtility:
         
         self.conditions_util = conditions_util
         
-        self.problem_path = ProblemPath
-        self.AMR_files_path = str(self.problem_path)+"/AMR_Files"
+        # TODO
+        self.problem_path = self.ProjectParameters["AMR_data"]["problem_path"].GetString()
+        #problem_path = os.getcwd()
+        self.AMR_files_path = self.problem_path+"/AMR_Files"
         
+        #print("path", self.problem_path)
+        print("path amr!", self.AMR_files_path)
+        Wait()
         self.n_refinements = 0
         self.last_refinement_id = 1 #Same as the initial current_id
         
@@ -98,10 +103,10 @@ class AdaptiveMeshRefinementUtility:
         permissible_error = self.ProjectParameters["AMR_data"]["permissible_error"].GetDouble()
 
         ## Finalize previous post results -----------------------------------------------------------------------------------
-        print("dentro de execute1")
-        i = 69
-        print(str("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "))
-        Wait()
+        #print("dentro de execute1", os.getcwd())
+        #i = 69
+        #print(str("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "))
+        #Wait()
 
 
 
@@ -116,8 +121,14 @@ class AdaptiveMeshRefinementUtility:
         else:
             if(output_multiple_files=="MultipleFiles"):
                 for i in range(self.last_refinement_id,current_id+1):
-                    os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.msh")
-                    os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.res")
+                    #os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.msh")
+                    #os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.res")
+                    # Modified Acornejo
+                    print("move " + str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh AMR_Files")
+                    #os.system("move " + str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh AMR_Files")
+                    #os.system("move " + str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.res AMR_Files")
+
+                    #print(str("move " + str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh AMR_Files"))
             else:
                 os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.msh")
                 os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.res")
@@ -125,10 +136,10 @@ class AdaptiveMeshRefinementUtility:
 
 
 
-        print("antes de copy")   #cornejo
+        print("antes de copy  ")   #cornejo
         Wait()        
         os.system("copy "+str(self.problem_path)+"/"+str(problem_name)+".mdpa "+str(self.AMR_files_path)+"/"+str(problem_name)+"_mesh_"+str(self.n_refinements)+".mdpa")
-        
+        Wait() 
         ## MESH LOOP --------------------------------------------------------------------------------------------------------
         print("dentro de execute2")   #cornejo
         Wait()
@@ -149,12 +160,26 @@ class AdaptiveMeshRefinementUtility:
             ## Generate files for new mesh ----------------------------------------------------------------------------------
             
             if(iteration_number==1):
-                AdaptiveMeshRefinementProcess(model_part,plane_state,problem_name,self.problem_path,mesh_optimality_criteria,permissible_error,self.n_refinements).Execute()
-                os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.msh")
-                os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.res")
+                self.AdaptiveMeshRefinementProcess(model_part,
+                                                   plane_state,
+                                                   problem_name,
+                                                   self.problem_path,
+                                                   mesh_optimality_criteria,
+                                                   permissible_error,
+                                                   self.n_refinements).Execute()
+
+               # os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.msh")
+               # os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.res")
             else:
-                AdaptiveMeshRefinementProcess(model_part,plane_state,problem_name,self.problem_path,mesh_optimality_criteria,permissible_error,self.n_refinements).ExecuteAfterOutputStep()
+                self.AdaptiveMeshRefinementProcess(model_part,
+                                                   plane_state,
+                                                   problem_name,
+                                                   self.problem_path,
+                                                   mesh_optimality_criteria,
+                                                   permissible_error,
+                                                   self.n_refinements).ExecuteAfterOutputStep()
             
+            Wait()
             os.system("cd "+str(self.gid_path)+" && ./gid -b "+str(self.problem_path)+"/"+str(problem_name)+".bch -n")
             os.system("cd && mv "+str(self.problem_path)+"/"+str(problem_name)+".dat "+str(self.problem_path)+"/"+str(problem_name)+".mdpa && rm "+str(self.problem_path)+"/"+str(problem_name)+"-1.dat")
             

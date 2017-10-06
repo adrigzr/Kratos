@@ -4,8 +4,9 @@
         "plane_state"                          : "Plane_Stress",
         "mesh_optimality_criteria_criteria"    : "Global_Error_Equidistribution",
         "permissible_error"                    : 0.09,
-        "refinement_frequency"                 : 1.0,
-        "gid_path"                             : "C:/Program Files/GiD/GiD 13.0.1/gid.exe"
+        "refinement_frequency"                 : 2.0,
+        "gid_path"                             : "C:/Program Files/GiD/GiD 13.0.1/gid.exe",
+		"problem_path"                         : "D:/FemDem/applications/FemToDemApplication/examples/pruebasDyn.gid"
         },
     "problem_data"             : {
         "problem_name"    : "pruebasDyn",

@@ -83,7 +83,8 @@ class FEM_Solution(MainSolidFEM.Solution):
 		self.solver   = solver_module.CreateSolver(self.main_model_part, self.ProjectParameters["solver_settings"])
 
 		#### Output settings start ####
-		self.problem_path = os.getcwd()
+		#self.problem_path = os.getcwd()
+		self.problem_path = self.ProjectParameters["AMR_data"]["problem_path"]
 		self.problem_name = self.ProjectParameters["problem_data"]["problem_name"].GetString()
 
 		
