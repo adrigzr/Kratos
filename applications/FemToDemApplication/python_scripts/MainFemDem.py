@@ -335,8 +335,8 @@ class FEM_Solution(MainSolidFEM.Solution):
 			elif(self.last_mesh):
 				self.AMR_util.Finalize(model_part,current_id)
 
-		print("despues de solve sol step  / execute")
-		Wait()
+		#print("despues de solve sol step  / execute")
+		#Wait()
 
 		self.StopTimeMeasuring(self.clock_time,"Solving", False);
 

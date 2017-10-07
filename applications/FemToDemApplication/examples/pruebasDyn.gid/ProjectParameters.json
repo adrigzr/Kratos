@@ -6,7 +6,7 @@
         "permissible_error"                    : 0.09,
         "refinement_frequency"                 : 2.0,
         "gid_path"                             : "C:/Program Files/GiD/GiD 13.0.1/gid.exe",
-		"problem_path"                         : "D:/FemDem/applications/FemToDemApplication/examples/pruebasDyn.gid"
+		"problem_path"                         : "F:/Kratos/applications/FemToDemApplication/examples/pruebasDyn.gid"
         },
     "problem_data"             : {
         "problem_name"    : "pruebasDyn",

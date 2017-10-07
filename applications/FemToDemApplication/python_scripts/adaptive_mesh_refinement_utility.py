@@ -136,13 +136,13 @@ class AdaptiveMeshRefinementUtility:
 
 
 
-        print("antes de copy  ")   #cornejo
-        Wait()        
+        #print("antes de copy  ")   #cornejo
+        #Wait()        
         os.system("copy "+str(self.problem_path)+"/"+str(problem_name)+".mdpa "+str(self.AMR_files_path)+"/"+str(problem_name)+"_mesh_"+str(self.n_refinements)+".mdpa")
-        Wait() 
+        #Wait() 
         ## MESH LOOP --------------------------------------------------------------------------------------------------------
-        print("dentro de execute2")   #cornejo
-        Wait()
+        #print("dentro de execute2")   #cornejo
+        #Wait()
         
         print("--------------------------------")
         print("START MESH REFINEMENT ITERATIONS")
@@ -158,20 +158,23 @@ class AdaptiveMeshRefinementUtility:
             print("MESH ITERATION ",iteration_number)
             
             ## Generate files for new mesh ----------------------------------------------------------------------------------
-            
+            print("aqui peta")
+            Wait()
+
             if(iteration_number==1):
-                self.AdaptiveMeshRefinementProcess(model_part,
+                AdaptiveMeshRefinementProcess(model_part,
                                                    plane_state,
                                                    problem_name,
                                                    self.problem_path,
                                                    mesh_optimality_criteria,
                                                    permissible_error,
                                                    self.n_refinements).Execute()
+                Wait()
 
                # os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.msh")
                # os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.res")
             else:
-                self.AdaptiveMeshRefinementProcess(model_part,
+                AdaptiveMeshRefinementProcess(model_part,
                                                    plane_state,
                                                    problem_name,
                                                    self.problem_path,

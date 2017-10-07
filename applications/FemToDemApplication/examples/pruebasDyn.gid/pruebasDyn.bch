@@ -1,0 +1,15 @@
+Mescape Files Read
+F:/Kratos/applications/FemToDemApplication/examples/pruebasDyn.gid
+Mescape Meshing AssignSizes BackgMesh
+Yes
+escape
+Mescape Meshing AssignSizes BackgMesh
+F:/Kratos/applications/FemToDemApplication/examples/pruebasDyn.gid/pruebasDyn.bgm
+Mescape Meshing Generate
+Yes
+0.206494 MeshingParametersFrom=Preferences
+Mescape Meshing MeshView
+Mescape Files WriteCalcFile
+F:/Kratos/applications/FemToDemApplication/examples/pruebasDyn.gid/pruebasDyn.dat
+escape escape escape escape escape Quit
+No
