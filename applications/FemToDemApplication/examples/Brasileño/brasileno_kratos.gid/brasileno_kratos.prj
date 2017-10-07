@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gid version="12.2">
+  <pre>
+    <layer_to_use name="Layer0"/>
+    <groups>
+      <group id="1" name="Parts Auto1" color="#ff00ffff"/>
+      <group id="2" name="Displacement Auto1" color="#008000ff"/>
+      <group id="3" name="Displacement Auto2" color="#ffff00ff"/>
+      <group id="4" name="Displacement Auto3" color="#ffa500ff"/>
+    </groups>
+    <entities_groups>
+      <entities_group name="lines">
+        <vector name="entity_ids" length="2" type="integer">18 23</vector>
+        <vector name="entity_num_groups" length="2" type="ushort">1 2</vector>
+        <vector name="entity_groups" length="3" type="ushort">3 2 4</vector>
+      </entities_group>
+      <entities_group name="surfaces">
+        <vector name="entity_ids" length="1" type="integer">1</vector>
+        <vector name="entity_num_groups" length="1" type="ushort">1</vector>
+        <vector name="entity_groups" length="1" type="ushort">1</vector>
+      </entities_group>
+      <entities_group name="nodes">
+        <vector name="entity_ids" length="2687" type="integer">1:2687</vector>
+        <vector name="entity_num_groups" length="2687" type="ushort">1x135 2 1x13 2 1x15 2 1x17 2 1x15 2 1x19 2 1x18 2 1x21 2 1x18 2 1x20 2 1x22 2 1x18 2 1x26 2 1x16 2 1x2178 3 1x6 3 1x4 3 1x5 3 1x5 3 1x10 3 1x4 3 1x5 3 1x6 3 1x5 3 1x3 3 1x5 3 1x6 3 1x5 3 1x39</vector>
+        <vector name="entity_groups" length="2729" type="ushort">1x135 3 1x14 3 1x16 3 1x18 3 1x16 3 1x20 3 1x19 3 1x22 3 1x19 3 1x21 3 1x23 3 1x19 3 1x27 3 1x17 3 1x2179 2 4 1x7 2 4 1x5 2 4 1x6 2 4 1x6 2 4 1x11 2 4 1x5 2 4 1x6 2 4 1x7 2 4 1x6 2 4 1x4 2 4 1x6 2 4 1x7 2 4 1x6 2 4 1x40</vector>
+      </entities_group>
+      <entities_group name="elements">
+        <vector name="entity_ids" length="5090" type="integer">1:5090</vector>
+        <vector name="entity_num_groups" length="5090" type="ushort">1x5077 2x13</vector>
+        <vector name="entity_groups" length="5103" type="ushort">1x5064 3x13 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4 2 4</vector>
+      </entities_group>
+    </entities_groups>
+  </pre>
+</gid>

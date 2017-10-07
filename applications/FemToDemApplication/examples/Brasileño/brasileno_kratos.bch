@@ -1,0 +1,15 @@
+Mescape Files Read
+F:/PhD/KRATOS_FemDem/Ejemplos/Ejemplos/28_05_2017/AMR/brasileno_kratos.gid/calc2
+Mescape Meshing AssignSizes BackgMesh
+Yes
+escape
+Mescape Meshing AssignSizes BackgMesh
+F:/PhD/KRATOS_FemDem/Ejemplos/Ejemplos/28_05_2017/AMR/brasileno_kratos.gid/calc2/brasileno_kratos.bgm
+Mescape Meshing Generate
+Yes
+0.00554257 MeshingParametersFrom=Preferences
+Mescape Meshing MeshView
+Mescape Files WriteCalcFile
+F:/PhD/KRATOS_FemDem/Ejemplos/Ejemplos/28_05_2017/AMR/brasileno_kratos.gid/calc2/brasileno_kratos.dat
+escape escape escape escape escape Quit
+No

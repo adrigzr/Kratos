@@ -328,12 +328,12 @@ class FEM_Solution(MainSolidFEM.Solution):
 			if(self.refine):
 				# aqui estamos
 				self.main_model_part,self.main_step_solver,self.gid_output_util = self.AMR_util.Execute(self.main_model_part,
-					                                                                 self.solver,
-					                                                                 self.gid_output_util,
-					                                                                 self.time,
-					                                                                 self.current_id)
+					                                                                                    self.solver,
+					                                                                                    self.gid_output_util,
+					                                                                                    self.time,
+					                                                                                    self.current_id)
 			elif(self.last_mesh):
-				self.AMR_util.Finalize(model_part,current_id)
+				self.AMR_util.Finalize(self.model_part,self.current_id)
 
 		#print("despues de solve sol step  / execute")
 		#Wait()

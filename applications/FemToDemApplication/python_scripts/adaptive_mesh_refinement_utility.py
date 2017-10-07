@@ -7,6 +7,7 @@ CheckForPreviousImport()
 def Wait():
     input("Press Something")
 
+#============================================================================================================================
 class AdaptiveMeshRefinementUtility:
 
     def __init__(self, ProjectParameters, starting_time, solver_constructor, constitutive_law_utility,
@@ -46,7 +47,7 @@ class AdaptiveMeshRefinementUtility:
         # set time operation tolerance
         self.tolerance = self.delta_time * 1e-10;
 
-
+#============================================================================================================================
     def Initialize(self):
         
         self.gid_path = self.ProjectParameters["AMR_data"]["gid_path"]
@@ -75,7 +76,7 @@ class AdaptiveMeshRefinementUtility:
         
         return activate_AMR
         
-
+#============================================================================================================================
     def CheckAMR(self, current_time):
         
         refine = False
@@ -89,7 +90,7 @@ class AdaptiveMeshRefinementUtility:
 
         return refine, last_mesh
         
-        
+#============================================================================================================================       
     def Execute(self, model_part, main_step_solver, gid_output_util, current_time, current_id):
         
         ## Previous definitions ---------------------------------------------------------------------------------------------
@@ -183,8 +184,9 @@ class AdaptiveMeshRefinementUtility:
                                                    self.n_refinements).ExecuteAfterOutputStep()
             
             Wait()
-            os.system("cd "+str(self.gid_path)+" && ./gid -b "+str(self.problem_path)+"/"+str(problem_name)+".bch -n")
-            os.system("cd && mv "+str(self.problem_path)+"/"+str(problem_name)+".dat "+str(self.problem_path)+"/"+str(problem_name)+".mdpa && rm "+str(self.problem_path)+"/"+str(problem_name)+"-1.dat")
+            # GID GENERATE THE NEW MESH BASED ON THE BACKGROUND MESH
+            # os.system("cd "+str(self.gid_path)+" && ./gid -b "+str(self.problem_path)+"/"+str(problem_name)+".bch -n")
+            # os.system("cd && mv "+str(self.problem_path)+"/"+str(problem_name)+".dat "+str(self.problem_path)+"/"+str(problem_name)+".mdpa && rm "+str(self.problem_path)+"/"+str(problem_name)+"-1.dat")
             
             ## Finalize previous mesh ---------------------------------------------------------------------------------------
             
@@ -268,7 +270,7 @@ class AdaptiveMeshRefinementUtility:
         
         return model_part, main_step_solver, gid_output_util
 
-
+#============================================================================================================================
     def Finalize(self, model_part, current_id):
         
         ## Previous definitions ---------------------------------------------------------------------------------------------
@@ -308,4 +310,4 @@ class AdaptiveMeshRefinementUtility:
         os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.res")
 
         os.system("mv "+str(self.problem_path)+"/AMR_info.txt "+str(self.AMR_files_path))
-        
+#============================================================================================================================        
