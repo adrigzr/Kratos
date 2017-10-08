@@ -8,7 +8,16 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     set FileVar [open $filename w]
     
     puts $FileVar "\{"
-        
+
+    ## AMR data
+    puts $FileVar "    \"AMR_data\": \{"
+    puts $FileVar "        \"activate_AMR\":                    [GiD_AccessValue get gendata Activate_AMR],"
+    puts $FileVar "        \"plane_state\":                     [GiD_AccessValue get gendata Plane_state],"
+    puts $FileVar "        \"mesh_optimality_criteria\":        [GiD_AccessValue get gendata Mesh_Optimality_Criteria],"
+    puts $FileVar "        \"permissible_error\":               [GiD_AccessValue get gendata Permissible_Error],"
+    puts $FileVar "        \"refinement_frequency\":            [GiD_AccessValue get gendata Refinement_Frequency],"
+    puts $FileVar "        \"gid_path\":                        [GiD_AccessValue get gendata gid_path],"
+
     ## problem_data
     puts $FileVar "    \"problem_data\": \{"
     puts $FileVar "        \"problem_name\":         \"$basename\","
@@ -17,15 +26,7 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     puts $FileVar "        \"start_time\":           [GiD_AccessValue get gendata Start_Time],"
     puts $FileVar "        \"end_time\":             [GiD_AccessValue get gendata End_Time],"
     puts $FileVar "        \"time_step\":            [GiD_AccessValue get gendata Delta_Time],"
-    #puts $FileVar "        \"parallel_type\":        \"[GiD_AccessValue get gendata Parallel_Configuration]\","
-    #puts $FileVar "        \"number_of_threads\":    [GiD_AccessValue get gendata Number_of_threads],"
-	puts $FileVar "        \"echo_level\":            [GiD_AccessValue get gendata Echo_Level],"
-    #if {[GiD_AccessValue get gendata Parallel_Configuration] eq "MPI"} {
-    #    puts $FileVar "        \"fracture_propagation\": false"
-    #} else {
-    #    puts $FileVar "        \"fracture_propagation\": [GiD_AccessValue get gendata Fracture_Propagation]"
-    #}
-    #puts $FileVar "    \},"
+	puts $FileVar "        \"echo_level\":           [GiD_AccessValue get gendata Echo_Level],"
     
     ## solver_settings
     puts $FileVar "    \"solver_settings\": \{"
@@ -52,89 +53,24 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
    # set IsPeriodic [GiD_AccessValue get gendata Periodic_Interface_Conditions]
    puts $FileVar "             \"line_search\":                        \"false\","
    puts $FileVar "             \"convergence_criterion\":              \"[GiD_AccessValue get gendata Convergence_Criterion]\","
-   puts $FileVar "             \"displacement_relative_tolerance\":    [GiD_AccessValue get gendata Displacement_Relative_Tolerance],"
-   puts $FileVar "             \"displacement_absolute_tolerance\":    [GiD_AccessValue get gendata Displacement_Absolute_Tolerance],"
-   puts $FileVar "             \"residual_relative_tolerance\":        [GiD_AccessValue get gendata Residual_Relative_Tolerance],"
-   puts $FileVar "             \"residual_absolute_tolerance\":        [GiD_AccessValue get gendata Residual_Absolute_Tolerance],"
-   puts $FileVar "             \"max_iteration\":                      [GiD_AccessValue get gendata Max_Iterations],"	
-	
-	
-	
-	
-	
-	
-	
-	
-	#if {$IsPeriodic eq true} {
-   #    puts $FileVar "        \"periodic_interface_conditions\":      true,"
-   #    puts $FileVar "        \"reform_dofs_at_each_step\":           true,"
-   #} else {
-   #    puts $FileVar "        \"periodic_interface_conditions\":      false,"
-   #    puts $FileVar "        \"reform_dofs_at_each_step\":           [GiD_AccessValue get gendata Reform_Dofs_At_Each_Step],"
-   #}
-   #puts $FileVar "        \"block_builder\":                      [GiD_AccessValue get gendata Block_Builder],"
-   #puts $FileVar "        \"solution_type\":                      \"[GiD_AccessValue get gendata Solution_Type]\","
-   #puts $FileVar "        \"scheme_type\":                        \"[GiD_AccessValue get gendata Scheme_Type]\","
-   #
-   #
-   #puts $FileVar "        \"strategy_type\":                      \"[GiD_AccessValue get gendata Strategy_Type]\","
+   puts $FileVar "             \"displacement_relative_tolerance\":      [GiD_AccessValue get gendata Displacement_Relative_Tolerance],"
+   puts $FileVar "             \"displacement_absolute_tolerance\":      [GiD_AccessValue get gendata Displacement_Absolute_Tolerance],"
+   puts $FileVar "             \"residual_relative_tolerance\":          [GiD_AccessValue get gendata Residual_Relative_Tolerance],"
+   puts $FileVar "             \"residual_absolute_tolerance\":          [GiD_AccessValue get gendata Residual_Absolute_Tolerance],"
+   puts $FileVar "             \"max_iteration\":                        [GiD_AccessValue get gendata Max_Iterations],"
 
-
-
-   #if {[GiD_AccessValue get gendata Parallel_Configuration] eq "MPI"} {
-   #    puts $FileVar "        \"nonlocal_damage\":                    false,"
-   #} else {
-   #    puts $FileVar "        \"nonlocal_damage\":                    [GiD_AccessValue get gendata Non-local_Damage],"
-   #}
-   #puts $FileVar "        \"characteristic_length\":              [GiD_AccessValue get gendata Characteristic_Length],"
-    ## linear_solver_settings
-    puts $FileVar "        \"linear_solver_settings\":             \{"
-    #if {[GiD_AccessValue get gendata Parallel_Configuration] eq "MPI"} {
-    #    if {[GiD_AccessValue get gendata Solver_Type] eq "AmgclMPISolver"} {
-    #        puts $FileVar "            \"solver_type\":   \"AmgclMPISolver\","
-    #        puts $FileVar "            \"krylov_type\":   \"fgmres\","
-    #        puts $FileVar "            \"max_iteration\": 100,"
-    #        puts $FileVar "            \"verbosity\":     [GiD_AccessValue get gendata Verbosity],"
-    #        puts $FileVar "            \"tolerance\":     1.0e-6,"
-    #        puts $FileVar "            \"scaling\":       [GiD_AccessValue get gendata Scaling]"
-    #    } elseif {[GiD_AccessValue get gendata Solver_Type] eq "AztecSolver"} {
-    #        puts $FileVar "            \"solver_type\":         \"AztecSolver\","
-    #        puts $FileVar "            \"tolerance\":           1.0e-6,"
-    #        puts $FileVar "            \"max_iteration\":       200,"
-    #        puts $FileVar "            \"scaling\":             [GiD_AccessValue get gendata Scaling],"
-    #        puts $FileVar "            \"preconditioner_type\": \"None\""
-    #    } elseif {([GiD_AccessValue get gendata Solver_Type] eq "Klu") || ([GiD_AccessValue get gendata Solver_Type] eq "MultiLevelSolver")} {
-    #        puts $FileVar "            \"solver_type\": \"[GiD_AccessValue get gendata Solver_Type]\","
-    #        puts $FileVar "            \"scaling\":     [GiD_AccessValue get gendata Scaling]"
-    #    } else {
-    #        puts $FileVar "            \"solver_type\": \"Klu\","
-    #        puts $FileVar "            \"scaling\":     false"
-    #    }
-    #} else {
-        #if {[GiD_AccessValue get gendata Solver_Type] eq "AMGCL"} {
-        #    puts $FileVar "            \"solver_type\":     \"AMGCL\","
-        #    puts $FileVar "            \"smoother_type\":   \"ilu0\","
-        #    puts $FileVar "            \"krylov_type\":     \"gmres\","
-        #    puts $FileVar "            \"coarsening_type\": \"aggregation\","
-        #    puts $FileVar "            \"max_iteration\":   100,"
-        #    puts $FileVar "            \"verbosity\":       [GiD_AccessValue get gendata Verbosity],"
-        #    puts $FileVar "            \"tolerance\":       1.0e-6,"
-        #    puts $FileVar "            \"scaling\":         [GiD_AccessValue get gendata Scaling]"
-        #} elseif {[GiD_AccessValue get gendata Solver_Type] eq "BICGSTABSolver"} {
-        #    puts $FileVar "            \"solver_type\":         \"BICGSTABSolver\","
-        #    puts $FileVar "            \"tolerance\":           1.0e-6,"
-        #    puts $FileVar "            \"max_iteration\":       100,"
-        #    puts $FileVar "            \"scaling\":             [GiD_AccessValue get gendata Scaling],"
-        #    puts $FileVar "            \"preconditioner_type\": \"ILU0Preconditioner\""
-        #} elseif {([GiD_AccessValue get gendata Solver_Type] eq "SkylineLUFactorizationSolver") || ([GiD_AccessValue get gendata Solver_Type] eq "SuperLUSolver")} {
-        #    puts $FileVar "            \"solver_type\":   \"[GiD_AccessValue get gendata Solver_Type]\""
-        #} else {
+    puts $FileVar "        \"linear_solver_settings\":     \{"
             puts $FileVar "            \"solver_type\":   \"SuperLUSolver\""
 			puts $FileVar "            \"scaling\":       \"false\""
         }
     }
     puts $FileVar "        \},"
 	
+
+
+
+
+
 	#---------------------------------------- to be continued
     ## problem_domain_sub_model_part_list
     set PutStrings \[

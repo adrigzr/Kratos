@@ -339,7 +339,6 @@ protected:
           
         for (ElementsArrayType::ptr_iterator it = mr_model_part.Elements().ptr_begin(); it != mr_model_part.Elements().ptr_end(); ++it)
         {
-           // (*it)->GetValueOnIntegrationPoints(EFFECTIVE_STRESS_VECTOR,GaussPointsStresses,mr_model_part.GetProcessInfo());
            GaussPointsStresses = (*it)->GetValue(STRESS_VECTOR); // Cornejo
       
             young   = (*it)->GetProperties()[YOUNG_MODULUS];
@@ -426,7 +425,6 @@ protected:
             // }
      
             pElementError[Elem_it] = EError;
-      
             rGlobalError += EError*EError;
             rGlobalStrainEnergy += EStrainEnergy*EStrainEnergy;
       
@@ -514,7 +512,7 @@ protected:
         else
             eletyp = "Tetrahedra"; // TODO: this means Quadrilateral (bug)
   
-        //Writing background mesh file
+        //Writing background mesh file .BGM
         std::fstream bgmfile;
         bgmfile.open((mproblem_name+".bgm").c_str(),std::fstream::out);
   
@@ -553,7 +551,7 @@ protected:
         
         for(unsigned int i = 0; i < mNElements; i++)
         {
-            bgmfile << i+1 << " " << NewElementDimension[i] << std::endl;
+            bgmfile << i + 1 << " " << NewElementDimension[i] << std::endl;
             GlobalDimension += NewElementDimension[i];
         }
         GlobalDimension = GlobalDimension/mNElements;
@@ -561,24 +559,24 @@ protected:
   
         bgmfile.close();
   
-        //Writing batch file
+        // Writing batch file for GiD
         std::fstream batchfile;
       
         batchfile.open((mproblem_name+".bch").c_str(),std::fstream::out);
       
-        batchfile << "Mescape Files Read" << std::endl;
+		batchfile << "Mescape Files Read" << std::endl;
         batchfile << mproblem_path << std::endl;
         batchfile << "Mescape Meshing AssignSizes BackgMesh" << std::endl;
         batchfile << "Yes" << std::endl;
         batchfile << "escape" << std::endl;
-        batchfile << "Mescape Meshing AssignSizes BackgMesh" << std::endl;
-        batchfile << mproblem_path+"/"+mproblem_name+".bgm" << std::endl;
+		batchfile << "Mescape Meshing AssignSizes BackgMesh" << std::endl;
+		batchfile << mproblem_path + "\\" + mproblem_name + ".bgm" << std::endl;
         batchfile << "Mescape Meshing Generate" << std::endl;
         batchfile << "Yes" << std::endl;
         batchfile << GlobalDimension << " MeshingParametersFrom=Preferences" << std::endl;
         batchfile << "Mescape Meshing MeshView" << std::endl;
-        batchfile << "Mescape Files WriteCalcFile" << std::endl;
-        batchfile << mproblem_path+"/"+mproblem_name+".dat" << std::endl;
+		batchfile << "Mescape Files WriteCalcFile" << std::endl;
+		batchfile << mproblem_path + "\\" + mproblem_name + ".dat" << std::endl;
         batchfile << "escape escape escape escape escape Quit" << std::endl;
         batchfile << "No" << std::endl;
       
@@ -589,8 +587,7 @@ protected:
 
     void WriteLastMeshInfo(const NodeStresses* NodeStressesVector,const double* ElementRefinementParameter,const double& GlobalError,const double& GlobalStrainEnergy)
     {
-        //AMR PostProcess Files
-        
+        // AMR PostProcess Files 
         std::string eletyp;
 
         if((*(mr_model_part.Elements().ptr_begin()))->GetGeometry().PointsNumber()==3)//Only one type of element (triangle or quadrilateral)
@@ -598,9 +595,9 @@ protected:
         else
             eletyp = "Quadrilateral";
         
-        //Writing Post Mesh File
+        // Writing Post Mesh File
         std::fstream meshfile;
-        meshfile.open((mproblem_name+"_AMR_parameters.post.msh").c_str(),std::fstream::out);
+        meshfile.open((mproblem_name + "_AMR_parameters.post.msh").c_str(),std::fstream::out);
     
         meshfile << "MESH \"AMR_Mesh\" dimension " << 2 << " ElemType " << eletyp << " Nnode " << (*(mr_model_part.Elements().ptr_begin()))->GetGeometry().PointsNumber() << std::endl;
         meshfile << "Coordinates" << std::endl;

@@ -64,9 +64,9 @@ class FEM_Solution(MainSolidFEM.Solution):
 		# Defining the model_part
 		self.main_model_part = KratosMultiphysics.ModelPart(self.ProjectParameters["problem_data"]["model_part_name"].GetString())
 
-		self.time_step  = self.ProjectParameters["problem_data"]["time_step"].GetDouble()
+		self.time_step  = self.ProjectParameters["problem_data"]["time_step" ].GetDouble()
 		self.start_time = self.ProjectParameters["problem_data"]["start_time"].GetDouble()
-		self.end_time   = self.ProjectParameters["problem_data"]["end_time"].GetDouble()
+		self.end_time   = self.ProjectParameters["problem_data"]["end_time"  ].GetDouble()
 
 
 		#self.main_model_part.ProcessInfo.SetValue(KratosMultiphysics.DIMENSION, self.ProjectParameters["problem_data"]["dimension"].GetInt())
@@ -83,8 +83,7 @@ class FEM_Solution(MainSolidFEM.Solution):
 		self.solver   = solver_module.CreateSolver(self.main_model_part, self.ProjectParameters["solver_settings"])
 
 		#### Output settings start ####
-		#self.problem_path = os.getcwd()
-		self.problem_path = self.ProjectParameters["AMR_data"]["problem_path"]
+		self.problem_path = os.getcwd()
 		self.problem_name = self.ProjectParameters["problem_data"]["problem_name"].GetString()
 
 		

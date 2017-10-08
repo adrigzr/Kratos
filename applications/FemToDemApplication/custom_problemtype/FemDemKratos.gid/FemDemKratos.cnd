@@ -14,6 +14,8 @@ VALUE: 2400
 HELP: Units in IS: kg/m3
 QUESTION: Poisson_Ratio
 VALUE: 0.2
+QUESTION: Plane_state#CB#(Plane_Stress,Plane_Strain)
+VALUE: Plane_Stress
 QUESTION: Thickness
 VALUE: 1.0
 HELP: If t = 1.0 implies plane strain, otherwise plane stress

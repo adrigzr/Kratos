@@ -2,7 +2,7 @@
     "AMR_data"                 : {
 		"activate_AMR"                         : true,
         "plane_state"                          : "Plane_Stress",
-        "mesh_optimality_criteria_criteria"    : "Global_Error_Equidistribution",
+        "mesh_optimality_criteria"             : "Global_Error_Equidistribution",
         "permissible_error"                    : 0.09,
         "refinement_frequency"                 : 0.2e-7,
         "gid_path"                             : "C:/Program Files/GiD/GiD 13.0.1/gid.exe",
