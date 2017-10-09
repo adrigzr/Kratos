@@ -189,8 +189,8 @@ class AdaptiveMeshRefinementUtility:
                 Wait()
 
                 # move the posts of the amr to the AMR folder
-                src_mesh = os.path.join(self.problem_path, str(problem_name) + "_AMR_parameters.post.msh")
-                src_res  = os.path.join(self.problem_path, str(problem_name) + "_AMR_parameters.post.res")
+                src_mesh = os.path.join(self.problem_path, str(problem_name)   + "_AMR_parameters.post.msh")
+                src_res  = os.path.join(self.problem_path, str(problem_name)   + "_AMR_parameters.post.res")
                 dst_mesh = os.path.join(self.AMR_files_path, str(problem_name) + "_AMR_parameters_mesh_" + str(self.n_refinements) + ".post.msh")
                 dst_res  = os.path.join(self.AMR_files_path, str(problem_name) + "_AMR_parameters_mesh_" + str(self.n_refinements) + ".post.res")
 
@@ -208,11 +208,17 @@ class AdaptiveMeshRefinementUtility:
             print("despues execute after output step")
             Wait()
 
-# aqui estamos !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-
             # GID GENERATE THE NEW MESH BASED ON THE BACKGROUND MESH  ----> TODO
-            os.system("cd "+str(self.gid_path)+" && ./gid -b "+str(self.problem_path)+"/"+str(problem_name)+".bch -n")
-            os.system("cd && mv "+str(self.problem_path)+"/"+str(problem_name)+".dat "+str(self.problem_path)+"/"+str(problem_name)+".mdpa && rm "+str(self.problem_path)+"/"+str(problem_name)+"-1.dat")
+            #os.system("cd " + str(self.gid_path) + " && ./gid -b "+ str(self.problem_path)+"/"+str(problem_name)+".bch -n")
+            #os.system("cd && mv "+str(self.problem_path)+"/"+str(problem_name)+".dat "+str(self.problem_path)+"/"+str(problem_name)+".mdpa && rm "+str(self.problem_path)+"/"+str(problem_name)+"-1.dat")
+            
+            # Execute .bch file with GiD
+            os.system("cd " + str(self.gid_path) " && gid -b " + os.path.join(self.problem_path, str(problem_name) + ".bch -n"))
+            shutil.move(os.path.join(str(self.problem_path), str(problem_name) + ".dat" ) , os.path.join(str(self.problem_path), str(problem_name) + ".mdpa"))
+            shutil.rmtree(os.path.join(str(self.problem_path), str(problem_name)+"-1.dat"))
+            
+
+            # aqui estamos !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
             
             ## Finalize previous mesh ---------------------------------------------------------------------------------------
             

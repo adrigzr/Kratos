@@ -35,7 +35,6 @@ HELP: In seconds
 QUESTION: gid_path
 VALUE: D:\\Program Files (x86)\\GiD 13.1.8d\\gid.exe
 
-
 TITLE:Solver_Settings
 QUESTION: Solution_Type#CB#(Quasi-Static,Dynamic)
 VALUE: Dynamic
@@ -106,7 +105,6 @@ QUESTION: Write_Damage#CB#(true,false)
 VALUE: true
 QUESTION: Write_Is_Damaged#CB#(true,false)
 VALUE: true
-
 
 QUESTION: GiD_post_mode#CB#(GiD_PostAscii,GiD_PostAsciiZipped,GiD_PostBinary,GiD_PostHDF5)
 VALUE: GiD_PostAscii

@@ -38,9 +38,7 @@ VALUE: 0.00
 HELP: D = R_alpha*M + r_beta*K
 END CONDITION
 
-
 BOOK: Dirichlet_Constraints
-
 
 CONDITION: Solid_Displacement
 CONDTYPE: over groups
@@ -93,7 +91,6 @@ QUESTION: Displacement_Z_Table(Time,Displacement_Z)
 VALUE: #N# 2 0.0 0.0
 END CONDITION
 
-
 BOOK: Loads
 
 CONDITION: Force
@@ -134,8 +131,6 @@ DEPENDENCIES: (Constant,HIDE,Force_Z_Table,#CURRENT#)(Table_Interpolation,RESTOR
 QUESTION: Force_Z_Table(Time,Force_Z)
 VALUE: #N# 2 0.0 0.0
 END CONDITION
-
-
 
 CONDITION: Face_Load
 CONDTYPE: over groups
@@ -215,7 +210,6 @@ DEPENDENCIES: (Constant,HIDE,Tangential_Load_Table,#CURRENT#)(Table_Interpolatio
 QUESTION: Tangential_Load_Table(Time,Tangential_Load)
 VALUE: #N# 2 0.0 0.0
 END CONDITION
-
 
 CONDITION: Body_Acceleration
 CONDTYPE: over groups

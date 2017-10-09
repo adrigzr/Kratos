@@ -630,7 +630,7 @@ protected:
     
         meshfile.close();
     
-        //Writing Results File
+        // Writing Results File
         std::fstream resfile;
         resfile.open((mproblem_name+"_AMR_parameters.post.res").c_str(),std::fstream::out);
     
