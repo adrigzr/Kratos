@@ -821,7 +821,6 @@ private:
     double mInvDt;
     double mInvGamma;
     double mInvGammaMinusOne;
-<<<<<<< HEAD
     double mBeta;
     double mMass1Switch;
     double mAdjointStartTime;
@@ -829,12 +828,8 @@ private:
     double mNumericalDiffusionFactor;
     double mMaximumViscosityRatio;
     double mResidual;
-    ObjectiveFunction::Pointer mpObjectiveFunction;
-    std::vector<LocalSystemVectorType> mAdjointVelocity;
-=======
     ResponseFunction::Pointer mpResponseFunction;
     std::vector<LocalSystemVectorType> mAdjointValues;
->>>>>>> origin
     std::vector<LocalSystemVectorType> mAdjointAcceleration;
     std::vector<LocalSystemVectorType> mResponseGradient;
     std::vector<LocalSystemMatrixType> mAdjointMassMatrix;

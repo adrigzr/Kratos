@@ -376,35 +376,8 @@ public:
                                     const ProcessInfo& rCurrentProcessInfo) override
     {
         KRATOS_TRY
-<<<<<<< HEAD
-        if (rVariable == MASS_MATRIX_0)
-        {
-            this->CalculateVMSMassMatrix(rOutput,0,rCurrentProcessInfo);
-        }
-        else if (rVariable == MASS_MATRIX_1)
-        {
-            this->CalculateVMSMassMatrix(rOutput,1,rCurrentProcessInfo);
-        }
-        else if (rVariable == ADJOINT_MATRIX_1)
-        {
-            this->CalculatePrimalGradientOfVMSSteadyTerm(rOutput,rCurrentProcessInfo);
-            rOutput = trans(rOutput); // transpose
-        }
-        else if (rVariable == ADJOINT_MATRIX_2)
-        {
-            this->CalculatePrimalGradientOfVMSSteadyTerm(rOutput,rCurrentProcessInfo);
-            this->AddPrimalGradientOfVMSMassTerm(rOutput,ACCELERATION,-1.0,rCurrentProcessInfo);
-            rOutput = trans(rOutput); // transpose
-        }
-        else if (rVariable == ADJOINT_DIFFUSION_MATRIX)
-        {
-            this->CalculateDiffusion(rOutput,rCurrentProcessInfo);
-        }
-        else if (rVariable == SHAPE_DERIVATIVE_MATRIX_1)
-=======
 
         if (rSensitivityVariable == SHAPE_SENSITIVITY)
->>>>>>> origin
         {
             this->CalculateShapeGradientOfVMSSteadyTerm(rOutput,rCurrentProcessInfo);
             this->AddShapeGradientOfVMSMassTerm(rOutput,ACCELERATION,-1.0,rCurrentProcessInfo);
