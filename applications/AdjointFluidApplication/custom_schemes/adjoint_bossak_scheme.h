@@ -183,6 +183,7 @@ public:
         KRATOS_TRY
 
         BaseType::Initialize(rModelPart);
+        // mOutputFileStream.open("Adjoint_Energy_" + std::to_string(mNumericalDiffusionFactor) + "_" + std::to_string(mMaximumViscosityRatio) +  ".data");
         mOutputFileStream.open("Adjoint_Energy_" + std::to_string(mNumericalDiffusionFactor) +  ".data");
         mOutputFileStream<<"time,adjoint_energy"<<std::endl;
 
@@ -257,7 +258,7 @@ public:
 
         for (auto it = rModelPart.ElementsBegin(); it != rModelPart.ElementsEnd(); ++it) {
             // it->SetValue(INITIAL_PENALTY, mNumericalDiffusionFactor);
-            // it->SetValue(LAMBDA, mMaximumViscosityRatio);
+            it->SetValue(LAMBDA, mMaximumViscosityRatio);
             for (unsigned int iNode = 0; iNode < it->GetGeometry().PointsNumber(); ++iNode)
                 it->GetGeometry()[iNode].GetValue(NODAL_AREA) += 1.0;
         }

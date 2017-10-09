@@ -58,12 +58,14 @@ public:
         {
             "objective_type": "drag",
             "structure_model_part_name": "PLEASE_SPECIFY_MODEL_PART",
-            "drag_direction": [1.0, 0.0, 0.0]
+            "drag_direction": [1.0, 0.0, 0.0],
+            "output_file":""
         })");
 
         rParameters.ValidateAndAssignDefaults(DefaultParams);
 
         mStructureModelPartName = rParameters["structure_model_part_name"].GetString();
+        mOutputFilename = rParameters["output_file"].GetString();
 
         if (rParameters["drag_direction"].IsArray() == false ||
             rParameters["drag_direction"].size() != 3)
@@ -100,6 +102,8 @@ public:
     /// Destructor.
     virtual ~DragObjectiveFunction()
     {
+        if (mOutputFileOpenend)
+            mOutputFileStream.close();
     }
 
     ///@}
@@ -140,6 +144,12 @@ public:
              ++it)
             it->Set(STRUCTURE, true);
 
+        if (mOutputFilename.compare("") != 0) 
+        {
+            mOutputFileStream.open(mOutputFilename + ".data");
+            mOutputFileStream<<"#time       DRAG"<<std::endl;
+            mOutputFileOpenend = true;
+        }
         KRATOS_CATCH("")
     }
 
@@ -214,6 +224,42 @@ public:
         KRATOS_CATCH("")
     }
 
+    virtual double Calculate(ModelPart& rModelPart)
+    {
+        double result = 0.0;
+
+        ModelPart& rSurfaceModelPart = rModelPart.GetSubModelPart(mStructureModelPartName);
+
+        #pragma omp parallel reduction(+:result)
+        {
+            ModelPart::NodeIterator NodesBegin;
+            ModelPart::NodeIterator NodesEnd;
+            OpenMPUtils::PartitionedIterators(rSurfaceModelPart.Nodes(), NodesBegin, NodesEnd);
+
+            for (auto it = NodesBegin; it != NodesEnd; ++it)
+            {
+                const array_1d<double,3>& reaction = it->FastGetSolutionStepValue(REACTION, 0);
+                result -= inner_prod(reaction, mDragDirection);
+            }
+        }
+
+        return result;
+    }
+
+    virtual void FinalizeSolutionStep(ModelPart& rModelPart)
+    {
+        mObjectiveValue = Calculate(rModelPart);
+
+        if (mOutputFileOpenend) 
+        {
+            ProcessInfo& rProcessInfo = rModelPart.GetProcessInfo();
+            mOutputFileStream.precision(5);
+            mOutputFileStream<<std::scientific<<rProcessInfo[TIME]<<" ";
+            mOutputFileStream.precision(15);
+            mOutputFileStream<<std::scientific<<mObjectiveValue<<std::endl;        
+        }
+    }
+
     ///@}
 
 protected:
@@ -233,7 +279,10 @@ protected:
 private:
     ///@name Member Variables
     ///@{
-
+    std::string mOutputFilename;
+    std::ofstream mOutputFileStream;
+    bool mOutputFileOpenend = false;
+    double mObjectiveValue;
     std::string mStructureModelPartName;
     array_1d<double, TDim> mDragDirection;
     std::vector<Vector> mDragFlagVector;

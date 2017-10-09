@@ -373,6 +373,8 @@ public:
 
     virtual void FinalizeSolutionStep(ModelPart& rModelPart)
     {
+        mObjectiveValue = Calculate(rModelPart);
+
         if (mOutputFileOpenend) 
         {
             ProcessInfo& rProcessInfo = rModelPart.GetProcessInfo();

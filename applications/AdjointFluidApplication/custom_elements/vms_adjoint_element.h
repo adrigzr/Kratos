@@ -375,7 +375,6 @@ public:
             const ProcessInfo& rCurrentProcessInfo)
     {
         KRATOS_TRY
-
         if (rVariable == MASS_MATRIX_0)
         {
             this->CalculateVMSMassMatrix(rOutput,0,rCurrentProcessInfo);
@@ -479,10 +478,19 @@ protected:
 
         GeometryUtils::CalculateGeometryData(this->GetGeometry(),DN_DX,N,Volume);     
 
+        double Viscosity;
+        this->EvaluateInPoint(Viscosity,VISCOSITY,N);
+
         // return CalculateDiffusion_RatioMethod();
         // return CalculateDiffusion_EigenMethod();
         double numerical_diffusion = CalculateDiffusion_SVMethod();
         // double numerical_diffusion = CalculateDiffusion_EigenMethod();
+        double max_numerical_diffusion_ratio = this->GetValue(LAMBDA);
+
+
+        if (numerical_diffusion/Viscosity > max_numerical_diffusion_ratio)
+            numerical_diffusion = Viscosity*max_numerical_diffusion_ratio;
+
         this->AddNumericalDiffusionTerm(rAdjointMatrix, DN_DX, numerical_diffusion * Volume);
         
         KRATOS_CATCH("")
@@ -508,7 +516,23 @@ protected:
         for (IndexType i=0;i<TDim; i++)
             velocity_divergence += GradVel(i,i);
         
-        boost::numeric::ublas::matrix<double, boost::numeric::ublas::column_major> M( TDim + 1, TDim + 1);
+        // boost::numeric::ublas::matrix<double, boost::numeric::ublas::column_major> M( TDim + 1, TDim + 1);
+        // for (IndexType i=0; i < TDim; i++)
+        //     M(i,i) = 0.5 * velocity_divergence - GradVel(i,i);
+        // for (IndexType i=0; i < TDim; i++)
+        //     for (IndexType j=i+1; j < TDim; j++)
+        //     {
+        //         M(i,j) = -GradVel(i,j);
+        //         M(j,i) = -GradVel(j,i);
+        //     }
+        // for (IndexType i=0; i < TDim + 1; i++)
+        // {
+        //     M(TDim, i) = 0.0;
+        //     M(i, TDim) = 0.0;
+        // }
+        // M(TDim, TDim) = 0.5 * velocity_divergence;
+
+        boost::numeric::ublas::matrix<double, boost::numeric::ublas::column_major> M( TDim , TDim);
         for (IndexType i=0; i < TDim; i++)
             M(i,i) = 0.5 * velocity_divergence - GradVel(i,i);
         for (IndexType i=0; i < TDim; i++)
@@ -517,14 +541,8 @@ protected:
                 M(i,j) = -GradVel(i,j);
                 M(j,i) = -GradVel(j,i);
             }
-        for (IndexType i=0; i < TDim + 1; i++)
-        {
-            M(TDim, i) = 0.0;
-            M(i, TDim) = 0.0;
-        }
-        M(TDim, TDim) = 0.5 * velocity_divergence;
 
-        boost::numeric::ublas::vector<double> S(TDim + 1);
+        boost::numeric::ublas::vector<double> S(TDim);
         int ierr = boost::numeric::bindings::lapack::gesvd(M, S);
 
         double numerical_viscosity;
@@ -725,14 +743,13 @@ protected:
             const ProcessInfo& rCurrentProcessInfo)
     {
         KRATOS_TRY
-
         if (rMassMatrix.size1() != TFluidLocalSize || rMassMatrix.size2() != TFluidLocalSize)
             rMassMatrix.resize(TFluidLocalSize,TFluidLocalSize,false);
 
         for (IndexType i=0; i < TFluidLocalSize; i++)
             for (IndexType j=0; j < TFluidLocalSize; j++)
                 rMassMatrix(i,j) = 0.0;
-
+        
         // Get shape functions, shape function gradients and element volume (area in
         // 2D). Only one integration point is used so the volume is its weight.
         ShapeFunctionDerivativesType DN_DX;
@@ -752,7 +769,6 @@ protected:
         // u
         array_1d< double, TDim > Velocity;
         this->EvaluateInPoint(Velocity,VELOCITY,N,Step);
-
         // u * Grad(N)
         array_1d< double, TNumNodes > DensityVelGradN;
         for (IndexType i = 0; i < TNumNodes; i++)
@@ -761,7 +777,6 @@ protected:
             for (IndexType d = 0; d < TDim; d++)
                 DensityVelGradN[i] += Density * DN_DX(i,d) * Velocity[d];
         }
-
         // Stabilization parameters
         double VelNorm = 0.0;
         for (IndexType d = 0; d < TDim; d++)
