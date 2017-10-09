@@ -432,7 +432,6 @@ protected:
     ///@{
 
     /// Calculate VMS-stabilized (lumped) mass matrix.
-<<<<<<< HEAD
     /**
      * The VMS-stabilized mass matrix is computed at the given step.
      * We assume that the mesh does not move between steps.
@@ -717,8 +716,6 @@ protected:
         // }
     }
      
-=======
->>>>>>> origin
     void CalculateVMSMassMatrix(
             MatrixType& rMassMatrix,
             const ProcessInfo& rCurrentProcessInfo)
@@ -727,15 +724,8 @@ protected:
         if (rMassMatrix.size1() != TFluidLocalSize || rMassMatrix.size2() != TFluidLocalSize)
             rMassMatrix.resize(TFluidLocalSize,TFluidLocalSize,false);
 
-<<<<<<< HEAD
-        for (IndexType i=0; i < TFluidLocalSize; i++)
-            for (IndexType j=0; j < TFluidLocalSize; j++)
-                rMassMatrix(i,j) = 0.0;
-        
-=======
         rMassMatrix.clear();
 
->>>>>>> origin
         // Get shape functions, shape function gradients and element volume (area in
         // 2D). Only one integration point is used so the volume is its weight.
         ShapeFunctionDerivativesType DN_DX;
