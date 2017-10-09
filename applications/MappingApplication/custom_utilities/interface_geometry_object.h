@@ -48,8 +48,15 @@ namespace Kratos
 ///@name Kratos Classes
 ///@{
 
-/// Short class definition.
-/** Detail class definition.
+/// GeometricalObject-based objects (Element or Condition) on the Interface for Searching
+/** This class Is the "wrapper" for Elements/Conditions on the interface. It uses the fact that both 
+* Elements and Conditions are deriving from "GeometricalObject". The search is caarried out using the 
+* center of the geometry. 
+* It saves a pointer to the original geometry, not to the Condition/Element itself. This is e.g. why the Id is not accessible.
+* It selects the best result by the closest projection distance of the successful projections.
+* In case no projection is successful, it uses an approximation (closest node of the geometry with the
+* smallest center distance to the point for which a neighbor is to be found)
+* Look into the class description of the MapperCommunicator to see how this Object is used in the application
 */
 class InterfaceGeometryObject : public InterfaceObject
 {
@@ -65,7 +72,7 @@ public:
     ///@{
 
     /// Default constructor.
-    InterfaceGeometryObject(Geometry<Node<3>>& rGeometry, const double ApproximationTolerance, const int ConstructionIndex,
+    InterfaceGeometryObject(Geometry<Node<3>>& rGeometry, const double ApproximationTolerance, const int EchoLevel, const int ConstructionIndex,
                             GeometryData::IntegrationMethod IntegrationMethod = GeometryData::NumberOfIntegrationMethods) :
         mpGeometry(&rGeometry),
         mApproximationTolerance(ApproximationTolerance),
@@ -73,10 +80,18 @@ public:
         mIntegrationMethod(IntegrationMethod)
     {
         SetCoordinates();
+    
         mGeometryFamily = mpGeometry->GetGeometryFamily();
+        KRATOS_ERROR_IF(mGeometryFamily == GeometryData::Kratos_Point) 
+            << "Elements/Conditions with point-based geometries cannot be used with interpolative "
+            << "Mapping, use the Nearest Neighbor Mapper instead!" << std::endl;
+    
         mNumPoints = mpGeometry->PointsNumber();
         KRATOS_ERROR_IF(mNumPoints == 0) << "Number of Points cannot be zero" << std::endl;
-        mpPoint = &(mpGeometry->GetPoint(0));
+    
+        mpPoint = &(mpGeometry->GetPoint(0)); // used for debugging
+    
+        mEchoLevel = EchoLevel;
     }
 
     /// Destructor.
@@ -92,6 +107,11 @@ public:
     ///@name Operations
     ///@{
 
+    Geometry<Node<3>>* pGetBase()
+    {
+        return mpGeometry;
+    }
+
     bool EvaluateResult(const array_1d<double, 3>& rGlobalCoords,
                         double& rMinDistance, const double Distance,
                         std::vector<double>& rShapeFunctionValues) override   // I am an object in the bins
@@ -99,7 +119,7 @@ public:
         // Distance is the distance to the center and not the projection distance, therefore it is unused
         bool is_closer = false;
         bool is_inside = false;
-        double projection_distance;
+        double projection_distance = std::numeric_limits<double>::max();
         array_1d<double, 3> projection_local_coords;
 
         if (mGeometryFamily == GeometryData::Kratos_Linear
@@ -132,16 +152,24 @@ public:
                         projection_distance);
         }
         else
-        {
-            std::cout << "MAPPER WARNING, Unsupported geometry, "
-                      << "using an approximation" << std::endl;
+        {   
+            if (mEchoLevel >= 2) {
+                std::cout << "MAPPER WARNING, Unsupported geometry, "
+                          << "using an approximation (Nearest Node)"
+                          << " | InterfaceGeometryObject, Center: [ "
+                          << this->X() << " | "
+                          << this->Y() << " | "
+                          << this->Z() << " ], "
+                          << "(KratosGeometryFamily \"" << mGeometryFamily 
+                          << "\", num points: " << mNumPoints << std::endl;              
+            }
             return false;
         }
 
-        projection_distance = fabs(projection_distance);
-
         if (is_inside)
         {
+            projection_distance = fabs(projection_distance);
+
             if (projection_distance < rMinDistance)
             {
                 rMinDistance = projection_distance;
@@ -196,93 +224,6 @@ public:
         return is_closer;
     }
 
-
-    // Scalars
-    double GetObjectValue(const Variable<double>& rVariable,
-                          const Kratos::Flags& rOptions) override
-    {
-        KRATOS_ERROR_IF_NOT(rOptions.Is(MapperFlags::NON_HISTORICAL_DATA))
-                << "Only Non-Historical Variables are accessible for Conditions" << std::endl;
-
-        return mpPoint->GetValue(rVariable);
-    }
-
-    void SetObjectValue(const Variable<double>& rVariable,
-                        const double& rValue,
-                        const Kratos::Flags& rOptions,
-                        const double Factor) override
-    {
-        KRATOS_ERROR_IF_NOT(rOptions.Is(MapperFlags::NON_HISTORICAL_DATA))
-                << "Only Non-Historical Variables are accessible for Conditions" << std::endl;
-
-        if (rOptions.Is(MapperFlags::ADD_VALUES))
-        {
-            double old_value = mpPoint->GetValue(rVariable);
-            mpPoint->SetValue(rVariable, old_value + rValue * Factor);
-        }
-        else
-        {
-            mpPoint->SetValue(rVariable, rValue * Factor);
-        }
-    }
-
-    double GetObjectValueInterpolated(const Variable<double>& rVariable,
-                                      const std::vector<double>& rShapeFunctionValues) override
-    {
-        double interpolated_value = 0.0f;
-
-        for (int i = 0; i < mNumPoints; ++i)
-        {
-            interpolated_value += mpGeometry->GetPoint(i).FastGetSolutionStepValue(rVariable) * rShapeFunctionValues[i];
-        }
-        return interpolated_value;
-    }
-
-    // Vectors
-    array_1d<double, 3> GetObjectValue(const Variable< array_1d<double, 3> >& rVariable,
-                                       const Kratos::Flags& rOptions) override
-    {
-        KRATOS_ERROR_IF_NOT(rOptions.Is(MapperFlags::NON_HISTORICAL_DATA))
-                << "Only Non-Historical Variables are accessible for Conditions" << std::endl;
-
-        return mpPoint->GetValue(rVariable);
-    }
-
-    void SetObjectValue(const Variable< array_1d<double, 3> >& rVariable,
-                        const array_1d<double, 3>& rValue,
-                        const Kratos::Flags& rOptions,
-                        const double Factor) override
-    {
-        KRATOS_ERROR_IF_NOT(rOptions.Is(MapperFlags::NON_HISTORICAL_DATA))
-                << "Only Non-Historical Variables are accessible for Conditions" << std::endl;
-
-        if (rOptions.Is(MapperFlags::ADD_VALUES))
-        {
-            array_1d<double, 3> old_value = mpPoint->GetValue(rVariable);
-            mpPoint->SetValue(rVariable, old_value + rValue * Factor);
-        }
-        else
-        {
-            mpPoint->SetValue(rVariable, rValue * Factor);
-        }
-    }
-
-    array_1d<double, 3> GetObjectValueInterpolated(const Variable< array_1d<double, 3> >& rVariable,
-            const std::vector<double>& rShapeFunctionValues) override
-    {
-        array_1d<double, 3> interpolated_value;
-        interpolated_value[0] = 0.0f;
-        interpolated_value[1] = 0.0f;
-        interpolated_value[2] = 0.0f;
-        for (int i = 0; i < mNumPoints; ++i)
-        {
-            interpolated_value[0] += mpGeometry->GetPoint(i).FastGetSolutionStepValue(rVariable)[0] * rShapeFunctionValues[i];
-            interpolated_value[1] += mpGeometry->GetPoint(i).FastGetSolutionStepValue(rVariable)[1] * rShapeFunctionValues[i];
-            interpolated_value[2] += mpGeometry->GetPoint(i).FastGetSolutionStepValue(rVariable)[2] * rShapeFunctionValues[i];
-        }
-        return interpolated_value;
-    }
-
     // Functions used for Debugging
     void PrintNeighbors(const int CommRank) override
     {
@@ -322,7 +263,7 @@ public:
     ///@{
 
     /// Turn back information as a string.
-    virtual std::string Info() const
+    virtual std::string Info() const override
     {
         std::stringstream buffer;
         buffer << "InterfaceGeometryObject" ;
@@ -330,13 +271,13 @@ public:
     }
 
     /// Print information about this object.
-    virtual void PrintInfo(std::ostream& rOStream) const
+    virtual void PrintInfo(std::ostream& rOStream) const override
     {
         rOStream << "InterfaceGeometryObject";
     }
 
     /// Print object's data.
-    virtual void PrintData(std::ostream& rOStream) const {}
+    virtual void PrintData(std::ostream& rOStream) const override {}
 
 
     ///@}
@@ -395,7 +336,7 @@ private:
     Geometry<Node<3>>* mpGeometry;
     Node<3>* mpPoint;
     GeometryData::KratosGeometryFamily mGeometryFamily;
-    int mNumPoints;
+    int mNumPoints; 
     double mApproximationTolerance = 0.0f;
     int mConstructionIndex;
     GeometryData::IntegrationMethod mIntegrationMethod;

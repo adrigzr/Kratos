@@ -40,7 +40,7 @@ class ImpactsTimeStepDataBase  // It holds the historical information gathered i
 {
     public:
 
-    ImpactsTimeStepDataBase(const double time) : mNImpacts(0), mTime(time){}
+    ImpactsTimeStepDataBase(const double time) : mNImpacts(0)/*, mTime(time)*/{}
     ~ImpactsTimeStepDataBase(){}
 
     int GetNumberOfImpacts()
@@ -79,7 +79,7 @@ class ImpactsTimeStepDataBase  // It holds the historical information gathered i
     private:
 
         int mNImpacts;
-        double mTime;
+        /*double mTime;*/
         std::vector<int> mId1;
         std::vector<int> mId2;
         std::vector<double> mRelVelNormal;
@@ -95,8 +95,8 @@ class ParticleHistoryDatabase // It holds the historical information gathered fo
     {
         public:
 
-        ParticleHistoryDatabase(): mNImpacts(0), mId(0){}
-        ParticleHistoryDatabase(const int id) : mNImpacts(0), mId(id){}
+        ParticleHistoryDatabase(): mNImpacts(0)/*, mId(0)*/{}
+        ParticleHistoryDatabase(const int id) : mNImpacts(0)/*, mId(id)*/{}
         ~ParticleHistoryDatabase(){}
 
         void PushBackImpacts(const double time, const int id2, const double normal_vel, const double tang_vel)
@@ -125,10 +125,22 @@ class ParticleHistoryDatabase // It holds the historical information gathered fo
             }
         }
 
+        void GetMaxVelocities(double& db_normal_impact_velocity, double& db_tangential_impact_velocity){
+            if(mRelVelNormal.size()){
+                db_normal_impact_velocity = std::abs(*(std::max_element(mRelVelNormal.begin(), mRelVelNormal.end())));
+                db_tangential_impact_velocity = std::abs(*(std::max_element(mRelVelTangential.begin(), mRelVelTangential.end())));
+            }
+            else {
+                db_normal_impact_velocity = 0.0;
+                db_tangential_impact_velocity = 0.0;
+            }
+
+        }
+
     private:
 
         int mNImpacts;
-        int mId;
+        //int mId;
         std::vector<double> mTimes;
         std::vector<int> mId2;
         std::vector<double> mRelVelNormal;
@@ -155,6 +167,8 @@ void GetTimeStepsData(boost::python::list ids,
                       boost::python::list tangential_relative_vel);
 
 virtual void MakeMeasurements(ModelPart &analytic_model_part);
+
+virtual void SetNodalMaxImpactVelocities(ModelPart &analytic_model_part);
 
 virtual ParticleHistoryDatabase& GetParticleDataBase(int id);
 

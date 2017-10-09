@@ -16,9 +16,11 @@ namespace Kratos {
         KRATOS_TRY
 
         const int number_of_particles = (int) rCustomListOfSphericParticles.size();
+        std::vector<PropertiesProxy>& vector_of_properties_proxies = PropertiesProxiesManager().GetPropertiesProxies(*mpDem_model_part);
+        
         #pragma omp parallel for
         for (int i = 0; i < number_of_particles; i++) {
-          rCustomListOfSphericParticles[i]->SetFastProperties(mFastProperties);
+          rCustomListOfSphericParticles[i]->SetFastProperties(vector_of_properties_proxies);
         }
         return;
         KRATOS_CATCH("")
@@ -138,7 +140,7 @@ namespace Kratos {
         RebuildListOfSphericParticles<SphericParticle>(r_model_part.GetCommunicator().LocalMesh().Elements(), mListOfSphericParticles);
         RebuildListOfSphericParticles<SphericParticle>(r_model_part.GetCommunicator().GhostMesh().Elements(), mListOfGhostSphericParticles);
 
-        CreatePropertiesProxies(mFastProperties, *mpDem_model_part, *mpInlet_model_part, *mpCluster_model_part);
+        PropertiesProxiesManager().CreatePropertiesProxies(*mpDem_model_part, *mpInlet_model_part, *mpCluster_model_part);
 
         RepairPointersToNormalProperties(mListOfSphericParticles); // The particles sent to this partition have their own copy of the Kratos properties they were using in the previous partition!!
         RepairPointersToNormalProperties(mListOfGhostSphericParticles);
@@ -175,7 +177,7 @@ namespace Kratos {
 
         // Finding overlapping of initial configurations
         if (r_process_info[CLEAN_INDENT_OPTION]) {
-            for (int i = 0; i < 10; i++) CalculateInitialMaxIndentations();
+            for (int i = 0; i < 10; i++) CalculateInitialMaxIndentations(r_process_info);
         }
 
         if (r_process_info[CRITICAL_TIME_OPTION]) {
@@ -259,6 +261,7 @@ namespace Kratos {
         const int number_of_clusters = pElements.size();
         ProcessInfo& r_process_info = GetModelPart().GetProcessInfo();
         bool continuum_strategy = r_process_info[CONTINUUM_OPTION];
+        std::vector<PropertiesProxy>& vector_of_properties_proxies = PropertiesProxiesManager().GetPropertiesProxies(*mpDem_model_part);
 
         //mpParticleCreatorDestructor->FindAndSaveMaxNodeIdInModelPart(*mpDem_model_part); //This has been moved to python main script and checks both dem model part and walls model part (also important!)
 
@@ -272,10 +275,10 @@ namespace Kratos {
 
             PropertiesProxy* p_fast_properties = NULL;
             int general_properties_id = cluster_element.GetProperties().Id();
-            for (unsigned int i = 0; i < mFastProperties.size(); i++) {
-                int fast_properties_id = mFastProperties[i].GetId();
+            for (unsigned int i = 0; i < vector_of_properties_proxies.size(); i++) {
+                int fast_properties_id = vector_of_properties_proxies[i].GetId();
                 if (fast_properties_id == general_properties_id) {
-                    p_fast_properties = &(mFastProperties[i]);
+                    p_fast_properties = &(vector_of_properties_proxies[i]);
                     break;
                 }
             }
@@ -595,8 +598,9 @@ namespace Kratos {
     void ExplicitSolverStrategy::BoundingBoxUtility(bool is_time_to_mark_and_remove) {
         KRATOS_TRY
         ModelPart& r_model_part = GetModelPart();
+        ProcessInfo& r_process_info = r_model_part.GetProcessInfo();
 
-        if (ElementConfigureType::GetDomainPeriodicity()) {
+        if (r_process_info[DOMAIN_IS_PERIODIC]) {
             mpParticleCreatorDestructor->MoveParticlesOutsideBoundingBoxBackInside(r_model_part);
         } else if (is_time_to_mark_and_remove) {
             mpParticleCreatorDestructor->DestroyParticlesOutsideBoundingBox(*mpCluster_model_part);
@@ -1166,7 +1170,7 @@ namespace Kratos {
         KRATOS_CATCH("")
     }//DoubleHierarchyMethod
 
-    void ExplicitSolverStrategy::CalculateInitialMaxIndentations() {
+    void ExplicitSolverStrategy::CalculateInitialMaxIndentations(ProcessInfo& r_process_info) {
         KRATOS_TRY
         std::vector<double> indentations_list, indentations_list_ghost;
         indentations_list.resize(mListOfSphericParticles.size());
@@ -1179,7 +1183,7 @@ namespace Kratos {
             #pragma omp for
             for (int i = 0; i < number_of_particles; i++) {
                 double indentation;
-                mListOfSphericParticles[i]->CalculateMaxBallToBallIndentation(indentation);
+                mListOfSphericParticles[i]->CalculateMaxBallToBallIndentation(indentation, r_process_info);
                 double max_indentation = std::max(0.0, 0.5 * indentation); // reducing the radius by half the indentation is enough
 
                 mListOfSphericParticles[i]->CalculateMaxBallToFaceIndentation(indentation);
@@ -1206,7 +1210,7 @@ namespace Kratos {
             #pragma omp for
             for (int i = 0; i < number_of_particles; i++) {
                 double indentation;
-                mListOfSphericParticles[i]->CalculateMaxBallToBallIndentation(indentation);
+                mListOfSphericParticles[i]->CalculateMaxBallToBallIndentation(indentation, r_process_info);
             }
         } //#pragma omp parallel
 

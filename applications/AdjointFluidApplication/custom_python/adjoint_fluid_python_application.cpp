@@ -15,8 +15,12 @@
 #include "adjoint_fluid_application.h"
 #include "custom_python/add_custom_schemes_to_python.h"
 #include "custom_python/add_custom_processes_to_python.h"
+<<<<<<< HEAD
 #include "custom_python/add_custom_objective_functions_to_python.h"
 #include "custom_python/add_custom_utilities_to_python.h"
+=======
+#include "custom_python/add_custom_response_functions_to_python.h"
+>>>>>>> origin
 
 namespace Kratos
 {
@@ -34,6 +38,7 @@ BOOST_PYTHON_MODULE(KratosAdjointFluidApplication)
 
   AddCustomSchemesToPython();
   AddCustomProcessesToPython();
+<<<<<<< HEAD
   AddCustomObjectiveFunctionsToPython();
   AddCustomUtilitiesToPython();
 
@@ -44,6 +49,10 @@ BOOST_PYTHON_MODULE(KratosAdjointFluidApplication)
   //KRATOS_REGISTER_IN_PYTHON_VARIABLE( PRIMAL_PRESSURE );
   //KRATOS_REGISTER_IN_PYTHON_3D_VARIABLE_WITH_COMPONENTS( SHAPE_SENSITIVITY );
   //KRATOS_REGISTER_IN_PYTHON_VARIABLE( NORMAL_SENSITIVITY );
+=======
+  AddCustomResponseFunctionsToPython();
+
+>>>>>>> origin
 }
 
 } // namespace Python
