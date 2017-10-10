@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "MainKratos.py", line 17, in <module>
+    import KratosMultiphysics.FluidDynamicsApplication as KratosCFD
+ImportError: No module named 'KratosMultiphysics.FluidDynamicsApplication'
