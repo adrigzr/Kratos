@@ -62,17 +62,14 @@ proc WriteConstraintVectorProcess {FileVar GroupNum Groups EntityType VarName Ta
         set Entities [GiD_EntitiesGroups get [lindex [lindex $Groups $i] 1] $EntityType]
         if {[llength $Entities] > 0} {
             incr MyGroupNum
-            puts $MyFileVar "        \"python_module\": \"apply_constraint_vector_table_process\","
-            puts $MyFileVar "        \"kratos_module\": \"KratosMultiphysics.PoromechanicsApplication\","
-            puts $MyFileVar "        \"process_name\":  \"ApplyConstraintVectorTableProcess\","
+            puts $MyFileVar "        \"python_module\": \"assign_vector_components_to_nodes_process\","
+            puts $MyFileVar "        \"kratos_module\": \"KratosMultiphysics.SolidMechanicsApplication\","
+            puts $MyFileVar "        \"process_name\":  \"AssignVectorComponentsToNodesProcess\","
             puts $MyFileVar "        \"Parameters\":    \{"
             puts $MyFileVar "            \"mesh_id\":         0,"
             puts $MyFileVar "            \"model_part_name\": \"[lindex [lindex $Groups $i] 1]\","
             puts $MyFileVar "            \"variable_name\":   \"$VarName\","
-            puts $MyFileVar "            \"active\":          \[[lindex [lindex $Groups $i] 3],[lindex [lindex $Groups $i] 8],[lindex [lindex $Groups $i] 13]\],"
-            puts $MyFileVar "            \"is_fixed\":        \[[lindex [lindex $Groups $i] 5],[lindex [lindex $Groups $i] 10],[lindex [lindex $Groups $i] 15]\],"
             puts $MyFileVar "            \"value\":           \[[lindex [lindex $Groups $i] 4],[lindex [lindex $Groups $i] 9],[lindex [lindex $Groups $i] 14]\],"
-            puts $MyFileVar "            \"table\":           \[[dict get $TableDict [lindex [lindex $Groups $i] 1] Table0],[dict get $TableDict [lindex [lindex $Groups $i] 1] Table1],[dict get $TableDict [lindex [lindex $Groups $i] 1] Table2]\]"
             puts $MyFileVar "        \}"
             if {$MyGroupNum < $NumGroups} {
                 puts $MyFileVar "    \},\{"
@@ -137,20 +134,16 @@ proc WriteLoadVectorProcess {FileVar GroupNum Groups VarName TableDict NumGroups
 
     for {set i 0} {$i < [llength $Groups]} {incr i} {
         incr MyGroupNum
-        puts $MyFileVar "        \"python_module\": \"apply_load_vector_table_process\","
-        puts $MyFileVar "        \"kratos_module\": \"KratosMultiphysics.PoromechanicsApplication\","
-        puts $MyFileVar "        \"process_name\":  \"ApplyLoadVectorTableProcess\","
+        puts $MyFileVar "        \"python_module\": \"assign_modulus_and_direction_to_conditions_process\","
+        puts $MyFileVar "        \"kratos_module\": \"KratosMultiphysics.SolidMechanicsApplication\","
+        puts $MyFileVar "        \"process_name\":  \"AssignModulusAndDirectionToConditionsProcess\","
         puts $MyFileVar "        \"Parameters\":    \{"
         puts $MyFileVar "            \"mesh_id\":         0,"
         puts $MyFileVar "            \"model_part_name\": \"[lindex [lindex $Groups $i] 1]\","
         puts $MyFileVar "            \"variable_name\":   \"$VarName\","
-        puts $MyFileVar "            \"active\":          \[[lindex [lindex $Groups $i] 3],[lindex [lindex $Groups $i] 7],[lindex [lindex $Groups $i] 11]\],"
-        puts $MyFileVar "            \"value\":           \[[lindex [lindex $Groups $i] 4],[lindex [lindex $Groups $i] 8],[lindex [lindex $Groups $i] 12]\],"
-        if {[GiD_AccessValue get gendata Strategy_Type] eq "Arc-Length"} {
-            puts $MyFileVar "            \"table\":           \[0,0,0\]"
-        } else {
-            puts $MyFileVar "            \"table\":           \[[dict get $TableDict [lindex [lindex $Groups $i] 1] Table0],[dict get $TableDict [lindex [lindex $Groups $i] 1] Table1],[dict get $TableDict [lindex [lindex $Groups $i] 1] Table2]\]"
-        }
+        puts $MyFileVar "            \"modulus\":             [lindex [lindex $Groups $i] 3],"
+        puts $MyFileVar "            \"direction\":           \[[lindex [lindex $Groups $i] 5],[lindex [lindex $Groups $i] 9],[lindex [lindex $Groups $i] 13]\],"
+        puts $MyFileVar "            \"interval\":            \[[lindex [lindex $Groups $i] 16],[lindex [lindex $Groups $i] 17]\]"
         puts $MyFileVar "        \}"
         if {$MyGroupNum < $NumGroups} {
             puts $MyFileVar "    \},\{"
@@ -159,7 +152,33 @@ proc WriteLoadVectorProcess {FileVar GroupNum Groups VarName TableDict NumGroups
         }
     }
 }
+#-------------------------------------------------------------------------------
 
+proc WriteGLoadVectorProcess {FileVar GroupNum Groups VarName TableDict NumGroups} {
+    upvar $FileVar MyFileVar
+    upvar $GroupNum MyGroupNum
+
+    for {set i 0} {$i < [llength $Groups]} {incr i} {
+        incr MyGroupNum
+        puts $MyFileVar "        \"python_module\": \"assign_modulus_and_direction_to_nodes_process\","
+        puts $MyFileVar "        \"kratos_module\": \"KratosMultiphysics.SolidMechanicsApplication\","
+        puts $MyFileVar "        \"process_name\":  \"AssignModulusAndDirectionToNodesProcess\","
+        puts $MyFileVar "        \"Parameters\":    \{"
+        puts $MyFileVar "            \"mesh_id\":         0,"
+        puts $MyFileVar "            \"model_part_name\": \"[lindex [lindex $Groups $i] 1]\","
+        puts $MyFileVar "            \"variable_name\":   \"$VarName\","
+        puts $MyFileVar "            \"modulus\":             [lindex [lindex $Groups $i] 3],"
+        puts $MyFileVar "            \"direction\":           \[[lindex [lindex $Groups $i] 5],[lindex [lindex $Groups $i] 9],[lindex [lindex $Groups $i] 13]\],"
+        puts $MyFileVar "            \"interval\":            \[[lindex [lindex $Groups $i] 16],[lindex [lindex $Groups $i] 17]\]"
+        puts $MyFileVar "        \}"
+
+        if {$MyGroupNum < $NumGroups} {
+            puts $MyFileVar "    \},\{"
+        } else {
+            puts $MyFileVar "    \}\]"
+        }
+    }
+}
 #-------------------------------------------------------------------------------
 
 proc WriteNormalLoadProcess {FileVar GroupNum Groups VarName TableDict NumGroups} {
@@ -168,37 +187,15 @@ proc WriteNormalLoadProcess {FileVar GroupNum Groups VarName TableDict NumGroups
 
     for {set i 0} {$i < [llength $Groups]} {incr i} {
         incr MyGroupNum
-        puts $MyFileVar "        \"python_module\": \"apply_normal_load_table_process\","
-        puts $MyFileVar "        \"kratos_module\": \"KratosMultiphysics.PoromechanicsApplication\","
-        puts $MyFileVar "        \"process_name\":  \"ApplyNormalLoadTableProcess\","
+        puts $MyFileVar "        \"python_module\": \"assign_scalar_to_conditions_process\","
+        puts $MyFileVar "        \"kratos_module\": \"KratosMultiphysics.SolidMechanicsApplication\","
+        puts $MyFileVar "        \"process_name\":  \"AssignScalarToConditionsProcess\","
         puts $MyFileVar "        \"Parameters\":    \{"
         puts $MyFileVar "            \"mesh_id\":              0,"
         puts $MyFileVar "            \"model_part_name\":      \"[lindex [lindex $Groups $i] 1]\","
         puts $MyFileVar "            \"variable_name\":        \"$VarName\","
-        puts $MyFileVar "            \"active\":               \[[lindex [lindex $Groups $i] 3],[lindex [lindex $Groups $i] 11]\],"
-        puts $MyFileVar "            \"value\":                \[[lindex [lindex $Groups $i] 5],[lindex [lindex $Groups $i] 12]\],"
-        if {[GiD_AccessValue get gendata Strategy_Type] eq "Arc-Length"} {
-            puts $MyFileVar "            \"table\":                \[0,0\],"
-        } else {
-            puts $MyFileVar "            \"table\":                \[[dict get $TableDict [lindex [lindex $Groups $i] 1] Table0],[dict get $TableDict [lindex [lindex $Groups $i] 1] Table1]\],"
-        }
-        if {[lindex [lindex $Groups $i] 4] eq "Hydrostatic"} {
-            set PutStrings true
-        } else {
-            set PutStrings false
-        }
-        puts $MyFileVar "            \"hydrostatic\":          $PutStrings,"
-        if {[lindex [lindex $Groups $i] 6] eq "Y"} {
-            set PutStrings 2
-        } elseif {[lindex [lindex $Groups $i] 6] eq "Z"} {
-            set PutStrings 3
-        } else {
-            set PutStrings 1
-        }
-        puts $MyFileVar "            \"gravity_direction\":    $PutStrings,"
-        puts $MyFileVar "            \"reference_coordinate\": [lindex [lindex $Groups $i] 7],"
-        puts $MyFileVar "            \"specific_weight\":      [lindex [lindex $Groups $i] 8]"
-        puts $MyFileVar "        \}"
+        puts $MyFileVar "            \"value\":                 [lindex [lindex $Groups $i] 5],"
+        puts $MyFileVar "            \"interval\":             \[[lindex [lindex $Groups $i] 15],[lindex [lindex $Groups $i] 16]\]"
         if {$MyGroupNum < $NumGroups} {
             puts $MyFileVar "    \},\{"
         } else {
@@ -206,7 +203,6 @@ proc WriteNormalLoadProcess {FileVar GroupNum Groups VarName TableDict NumGroups
         }
     }
 }
-
 #-------------------------------------------------------------------------------
 
 proc WriteLoadScalarProcess {FileVar GroupNum Groups VarName TableDict NumGroups} {

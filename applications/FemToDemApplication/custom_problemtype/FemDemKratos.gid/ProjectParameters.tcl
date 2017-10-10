@@ -91,12 +91,150 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     AppendGroupNames PutStrings Normal_Load
     # Body_Acceleration
     AppendGroupNames PutStrings Body_Acceleration
+
     set PutStrings [string trimright $PutStrings ,]
     append PutStrings \]
     puts $FileVar "        \"processes_sub_model_part_list\":      $PutStrings,"
     ## body_domain_sub_model_part_list
     set PutStrings \[
     AppendGroupNames PutStrings Body_Part
+    set PutStrings [string trimright $PutStrings ,]
+    append PutStrings \]   
+
+    puts $FileVar "        \"body_domain_sub_model_part_list\":    $PutStrings,"
+    ## loads_sub_model_part_list
+    set PutStrings \[
+    set iGroup 0
+    # Force
+    AppendGroupNamesWithNum PutStrings iGroup Force
+    # Face_Load
+    AppendGroupNamesWithNum PutStrings iGroup Face_Load
+    # Normal_Load
+    AppendGroupNamesWithNum PutStrings iGroup Normal_Load
+    # Body_Acceleration
+    AppendGroupNamesWithNum PutStrings iGroup Body_Acceleration
+    if {$iGroup > 0} {
+        set PutStrings [string trimright $PutStrings ,]
+    }
+    append PutStrings \]
+    puts $FileVar "        \"loads_sub_model_part_list\":          $PutStrings,"
+    ## loads_variable_list
+    set PutStrings \[
+    # Force
+    AppendGroupVariables PutStrings Force POINT_LOAD
+    # Face_Load
+    AppendGroupVariables PutStrings Face_Load LINE_LOAD
+    # Normal_Load
+    AppendGroupVariables PutStrings Normal_Load POSITIVE_FACE_PRESSURE
+    # Body_Acceleration
+    AppendGroupVariables PutStrings Body_Acceleration VOLUME_ACCELERATION
+    if {$iGroup > 0} {
+        set PutStrings [string trimright $PutStrings ,]
+    }
+    append PutStrings \]
+    puts $FileVar "        \"loads_variable_list\":                $PutStrings"
+    puts $FileVar "    \},"
+
+
+    ## output_configuration
+    puts $FileVar "    \"output_configuration\": \{"
+    puts $FileVar "        \"result_file_configuration\": \{"
+    puts $FileVar "            \"gidpost_flags\":       \{"
+    puts $FileVar "                \"WriteDeformedMeshFlag\": \"[GiD_AccessValue get gendata Write_deformed_mesh]\","
+    puts $FileVar "                \"WriteConditionsFlag\":   \"[GiD_AccessValue get gendata Write_conditions]\","
+    puts $FileVar "                \"GiDPostMode\":           \"GiD_PostAscii\","
+    puts $FileVar "                \"MultiFileFlag\":         \"MultipleFiles\""
+    puts $FileVar "            \},"
+    puts $FileVar "            \"file_label\":          \"[GiD_AccessValue get gendata File_label]\","
+    puts $FileVar "            \"output_control_type\": \"[GiD_AccessValue get gendata Output_control_type]\","
+    puts $FileVar "            \"output_frequency\":     [GiD_AccessValue get gendata Output_frequency],"
+    puts $FileVar "            \"body_output\":          [GiD_AccessValue get gendata Body_output],"
+    puts $FileVar "            \"node_output\":          [GiD_AccessValue get gendata Node_output],"
+    puts $FileVar "            \"skin_output\":          [GiD_AccessValue get gendata Skin_output],"
+    puts $FileVar "            \"plane_output\":         \[\],"
+    
+    # nodal_results
+    set PutStrings \[
+    set iGroup 0
+    AppendOutputVariables PutStrings iGroup Write_Solid_Displacement DISPLACEMENT
+    AppendOutputVariables PutStrings iGroup Write_Solid_Displacement VELOCITY
+    AppendOutputVariables PutStrings iGroup Write_Solid_Displacement ACCELERATION
+    if {[GiD_AccessValue get gendata Write_Reactions] eq true} {
+        incr iGroup
+        append PutStrings \" REACTION \"  ,
+    }
+
+    #AppendOutputVariables PutStrings iGroup Write_Force POINT_LOAD
+    #AppendOutputVariables PutStrings iGroup Write_Face_Load LINE_LOAD
+    #AppendOutputVariables PutStrings iGroup Write_Normal_Load POSITIVE_FACE_PRESSURE
+    #AppendOutputVariables PutStrings iGroup Write_Body_Acceleration VOLUME_ACCELERATION
+    if {$iGroup > 0} {
+        set PutStrings [string trimright $PutStrings ,]
+    }
+    append PutStrings \]
+    puts $FileVar "            \"nodal_results\":       $PutStrings,"
+
+    # gauss_point_results
+    set PutStrings \[
+    set iGroup 0
+    AppendOutputVariables PutStrings iGroup Write_Strain GREEN_LAGRANGE_STRAIN_TENSOR
+    AppendOutputVariables PutStrings iGroup Write_Predictive_Stress CAUCHY_STRESS_TENSOR
+    AppendOutputVariables PutStrings iGroup Write_Predictive_Stress STRESS_VECTOR
+    AppendOutputVariables PutStrings iGroup Write_Integrated_Stress STRESS_VECTOR_INTEGRATED
+    AppendOutputVariables PutStrings iGroup Write_Damage DAMAGE_ELEMENT
+    AppendOutputVariables PutStrings iGroup Write_Is_Damaged IS_DAMAGED
+
+    if {$iGroup > 0} {
+        set PutStrings [string trimright $PutStrings ,]
+    }
+    append PutStrings \]
+    puts $FileVar "            \"gauss_point_results\": $PutStrings"
+    puts $FileVar "        \},"
+    puts $FileVar "        \"point_data_configuration\":  \[\]"
+    puts $FileVar "    \},"
+
+    ## constraints_process_list
+    set Groups [GiD_Info conditions Solid_Displacement groups]
+    set NumGroups [llength $Groups]
+    set iGroup 0
+    puts $FileVar "    \"constraints_process_list\": \[\{"
+    # Solid_Displacement
+    set Groups [GiD_Info conditions Solid_Displacement groups]
+    WriteConstraintVectorProcess FileVar iGroup $Groups lines DISPLACEMENT $TableDict $NumGroups
+    WriteConstraintVectorProcess FileVar iGroup $Groups points DISPLACEMENT $TableDict $NumGroups
+
+    ## loads_process_list
+    set Groups [GiD_Info conditions Force groups]
+    set NumGroups [llength $Groups]
+    set Groups [GiD_Info conditions Face_Load groups]
+    incr NumGroups [llength $Groups]
+    set Groups [GiD_Info conditions Normal_Load groups]
+    incr NumGroups [llength $Groups]
+    set Groups [GiD_Info conditions Body_Acceleration groups]
+    incr NumGroups [llength $Groups]
+
+    if {$NumGroups > 0} {
+        set iGroup 0
+        puts $FileVar "    \"loads_process_list\": \[\{"
+        # Force
+        set Groups [GiD_Info conditions Force groups]
+        WriteLoadVectorProcess FileVar iGroup $Groups POINT_LOAD $TableDict $NumGroups
+        # Face_Load
+        set Groups [GiD_Info conditions Face_Load groups]
+        WriteLoadVectorProcess FileVar iGroup $Groups LINE_LOAD $TableDict $NumGroups
+
+        # Normal_Load
+        set Groups [GiD_Info conditions Normal_Load groups]
+        WriteNormalLoadProcess FileVar iGroup $Groups POSITIVE_FACE_PRESSURE $TableDict $NumGroups
+
+        # Body_Acceleration
+        set Groups [GiD_Info conditions Body_Acceleration groups]
+        WriteGLoadVectorProcess FileVar iGroup $Groups VOLUME_ACCELERATION $TableDict $NumGroups
+    } else {
+        puts $FileVar "    \"loads_process_list\":       \[\]"
+    }
+
+
 
 
     puts $FileVar "     \},"
