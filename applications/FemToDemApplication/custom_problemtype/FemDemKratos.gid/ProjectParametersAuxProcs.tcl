@@ -1,3 +1,12 @@
+proc AppendGroupName {String CondName} {
+    upvar $String MyString
+    
+    set Groups [GiD_Info conditions $CondName groups]
+    for {set i 0} {$i < [llength $Groups]} {incr i} {
+        append MyString \" [lindex [lindex $Groups $i] 1] \" 
+    }
+}
+
 proc AppendGroupNames {String CondName} {
     upvar $String MyString
     

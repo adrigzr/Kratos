@@ -79,16 +79,15 @@ proc WriteMdpa { basename dir problemtypedir } {
     set Dim [GiD_AccessValue get gendata Domain_Size]
     # Force
     set Groups [GiD_Info conditions Force groups]
-    WriteNodalConditions FileVar ConditionId ConditionDict $Groups UPwForceCondition2D1N $BodyElemsProp
+    WriteNodalConditions FileVar ConditionId ConditionDict $Groups PointLoadCondition2D1N $BodyElemsProp
     # Face_Load
     set Groups [GiD_Info conditions Face_Load groups]
-    WriteFaceConditions FileVar ConditionId ConditionDict $Groups UPwFaceLoadCondition2D2N $PropertyDict
+    WriteFaceConditions FileVar ConditionId ConditionDict $Groups LineLoadCondition2D2N $PropertyDict
     # Normal_Load
     set Groups [GiD_Info conditions Normal_Load groups]
-    WriteFaceConditions FileVar ConditionId ConditionDict $Groups UPwNormalFaceLoadCondition2D2N $PropertyDict
+    WriteFaceConditions FileVar ConditionId ConditionDict $Groups LineLoadCondition2D2N $PropertyDict
     puts $FileVar "End Conditions"
     puts $FileVar ""
-    
     puts $FileVar ""
     
     ## SubModelParts
@@ -106,22 +105,10 @@ proc WriteMdpa { basename dir problemtypedir } {
     WriteConstraintSubmodelPart FileVar Body_Acceleration $TableDict
     
     
+    close $FileVar
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    return $TableDict
+
+ 
     
 }
