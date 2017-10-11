@@ -69,7 +69,7 @@ proc WriteConstraintVectorProcess {FileVar GroupNum Groups EntityType VarName Ta
             puts $MyFileVar "            \"mesh_id\":         0,"
             puts $MyFileVar "            \"model_part_name\": \"[lindex [lindex $Groups $i] 1]\","
             puts $MyFileVar "            \"variable_name\":   \"$VarName\","
-            puts $MyFileVar "            \"value\":           \[[lindex [lindex $Groups $i] 4],[lindex [lindex $Groups $i] 9],[lindex [lindex $Groups $i] 14]\],"
+            puts $MyFileVar "            \"value\":           \[[lindex [lindex $Groups $i] 4],[lindex [lindex $Groups $i] 9],[lindex [lindex $Groups $i] 14]\]"
             puts $MyFileVar "        \}"
             if {$MyGroupNum < $NumGroups} {
                 puts $MyFileVar "    \},\{"

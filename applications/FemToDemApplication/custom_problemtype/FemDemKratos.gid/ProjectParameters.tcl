@@ -16,7 +16,7 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     puts $FileVar "        \"mesh_optimality_criteria\":       \"[GiD_AccessValue get gendata Mesh_Optimality_Criteria]\","
     puts $FileVar "        \"permissible_error\":               [GiD_AccessValue get gendata Permissible_Error],"
     puts $FileVar "        \"refinement_frequency\":            [GiD_AccessValue get gendata Refinement_Frequency],"
-    puts $FileVar "        \"gid_path\":                       \"[GiD_AccessValue get gendata gid_path]\","
+    puts $FileVar "        \"gid_path\":                       \"[GiD_AccessValue get gendata gid_path]\""
     puts $FileVar "    \},"
     ## problem_data
     puts $FileVar "   \"problem_data\": \{"
@@ -26,7 +26,7 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     puts $FileVar "        \"start_time\":           [GiD_AccessValue get gendata Start_Time],"
     puts $FileVar "        \"end_time\":             [GiD_AccessValue get gendata End_Time],"
     puts $FileVar "        \"time_step\":            [GiD_AccessValue get gendata Delta_Time],"
-	puts $FileVar "        \"echo_level\":           [GiD_AccessValue get gendata Echo_Level],"
+	puts $FileVar "        \"echo_level\":           [GiD_AccessValue get gendata Echo_Level]"
     puts $FileVar "    \},"
     ## solver_settings
     puts $FileVar "   \"solver_settings\": \{"
@@ -55,8 +55,8 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     puts $FileVar "            \"max_iteration\":                        [GiD_AccessValue get gendata Max_Iterations],"
 
     puts $FileVar "            \"linear_solver_settings\":     \{"
-    puts $FileVar "                 \"solver_type\":      \"SuperLUSolver\""
-    puts $FileVar "                 \"scaling\":          \"false\""
+    puts $FileVar "                 \"solver_type\":      \"SuperLUSolver\","
+    puts $FileVar "                 \"scaling\":           false"
     puts $FileVar "            \},"
 
 	set PutStrings \[
@@ -71,6 +71,7 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     
     append PutStrings \]
     puts $FileVar "        \"problem_domain_sub_model_part_list\": $PutStrings,"
+   
     ## processes_sub_model_part_list
     set PutStrings \[
     # Solid_Displacement
@@ -86,46 +87,47 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
 
     set PutStrings [string trimright $PutStrings ,]
     append PutStrings \]
-    puts $FileVar "        \"processes_sub_model_part_list\":      $PutStrings,"
+    puts $FileVar "        \"processes_sub_model_part_list\":      $PutStrings"
+    puts $FileVar "   \}," 
     ## body_domain_sub_model_part_list
     set PutStrings \[
     AppendGroupNames PutStrings Body_Part
     set PutStrings [string trimright $PutStrings ,]
     append PutStrings \]   
 
-    puts $FileVar "        \"body_domain_sub_model_part_list\":    $PutStrings,"
+    #puts $FileVar "        \"body_domain_sub_model_part_list\":    $PutStrings,"
     ## loads_sub_model_part_list
-    set PutStrings \[
-    set iGroup 0
+    #set PutStrings \[
+    #set iGroup 0
     # Force
-    AppendGroupNamesWithNum PutStrings iGroup Force
+    #AppendGroupNamesWithNum PutStrings iGroup Force
     # Face_Load
-    AppendGroupNamesWithNum PutStrings iGroup Face_Load
+    #AppendGroupNamesWithNum PutStrings iGroup Face_Load
     # Normal_Load
-    AppendGroupNamesWithNum PutStrings iGroup Normal_Load
+   # AppendGroupNamesWithNum PutStrings iGroup Normal_Load
     # Body_Acceleration
-    AppendGroupNamesWithNum PutStrings iGroup Body_Acceleration
-    if {$iGroup > 0} {
-        set PutStrings [string trimright $PutStrings ,]
-    }
-    append PutStrings \]
-    puts $FileVar "        \"loads_sub_model_part_list\":          $PutStrings,"
+    #AppendGroupNamesWithNum PutStrings iGroup Body_Acceleration
+    #if {$iGroup > 0} {
+    #    set PutStrings [string trimright $PutStrings ,]
+    #}
+    #append PutStrings \]
+    #puts $FileVar "        \"loads_sub_model_part_list\":          $PutStrings,"
     ## loads_variable_list
-    set PutStrings \[
+    #set PutStrings \[
     # Force
-    AppendGroupVariables PutStrings Force POINT_LOAD
+    #AppendGroupVariables PutStrings Force POINT_LOAD
     # Face_Load
-    AppendGroupVariables PutStrings Face_Load LINE_LOAD
+    #AppendGroupVariables PutStrings Face_Load LINE_LOAD
     # Normal_Load
-    AppendGroupVariables PutStrings Normal_Load POSITIVE_FACE_PRESSURE
+    #AppendGroupVariables PutStrings Normal_Load POSITIVE_FACE_PRESSURE
     # Body_Acceleration
-    AppendGroupVariables PutStrings Body_Acceleration VOLUME_ACCELERATION
-    if {$iGroup > 0} {
-        set PutStrings [string trimright $PutStrings ,]
-    }
-    append PutStrings \]
-    puts $FileVar "        \"loads_variable_list\":                $PutStrings"
-    puts $FileVar "    \},"
+    #AppendGroupVariables PutStrings Body_Acceleration VOLUME_ACCELERATION
+    #if {$iGroup > 0} {
+    #    set PutStrings [string trimright $PutStrings ,]
+    #}
+    #append PutStrings \]
+    #puts $FileVar "        \"loads_variable_list\":                $PutStrings"
+    #puts $FileVar "    \},"
 
     ## output_configuration
     puts $FileVar "    \"output_configuration\": \{"
@@ -187,15 +189,15 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     # restart options
     puts $FileVar "    \"restart_options\":     \{"
     puts $FileVar "            \"SaveRestart\":        false,"
-    puts $FileVar "            \"RestartFrequency\":   0"
-    puts $FileVar "            \"LoadRestart\":        false"
+    puts $FileVar "            \"RestartFrequency\":   0,"
+    puts $FileVar "            \"LoadRestart\":        false,"
     puts $FileVar "            \"Restart_Step\":       0"
     puts $FileVar "    \},"
 
     # constraint data
     puts $FileVar "    \"constraints_data\":     \{"
     puts $FileVar "            \"incremental_load\":                false,"
-    puts $FileVar "            \"incremental_displacement\":        false,"
+    puts $FileVar "            \"incremental_displacement\":        false"
     puts $FileVar "    \},"
 
     ## constraints_process_list

@@ -9,6 +9,10 @@ proc WriteMdpa { basename dir problemtypedir } {
     set FileVar [open $filename w]
 
     puts $FileVar ""
+    puts $FileVar "Begin Properties 0"
+    puts $FileVar "End Properties"
+    puts $FileVar ""
+    
     ## Properties
     set PropertyId 0
     set PropertyDict [dict create]
@@ -88,7 +92,7 @@ proc WriteMdpa { basename dir problemtypedir } {
     # Normal_Load
     set Groups [GiD_Info conditions Normal_Load groups]
     WriteFaceConditions FileVar ConditionId ConditionDict $Groups LineLoadCondition2D2N $PropertyDict
-    puts $FileVar "End Conditions"
+    #puts $FileVar "End Conditions"
     puts $FileVar ""
     puts $FileVar ""
     

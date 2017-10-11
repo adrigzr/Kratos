@@ -1,5 +1,5 @@
 BeginZE D:/FemDem/applications/FemToDemApplication/examples/test.gid/test.vv
-   x -5.717254638671875 3.62246799468994141
+   x -5.70987749099731445 3.61509060859680176
    y 4.17849874496459961 -3.59845137596130371
    z -13.3680238723754883 13.3680238723754883
    e 4.45600795745849609
@@ -12,7 +12,7 @@ BeginZE D:/FemDem/applications/FemToDemApplication/examples/test.gid/test.vv
    pfo 0
    pf 4
    pv 0
-   NowUse 0
+   NowUse 1
    DrawingType 0
    LightVector 90 90 150 0
    OGLShadow(UseShadows) 0
