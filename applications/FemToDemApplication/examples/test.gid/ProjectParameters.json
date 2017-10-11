@@ -1,7 +1,7 @@
 {
    "AMR_data": {
-        "activate_AMR":                    true,
-        "plane_state":                    "Plane_Stress",
+        "activate_AMR":                    false,
+        "plane_state":                    "Plane_Strain",
         "mesh_optimality_criteria":       "Global_Error_Equidistribution",
         "permissible_error":               0.09,
         "refinement_frequency":            1.0,
@@ -17,31 +17,32 @@
         "echo_level":           1,
     },
    "solver_settings": {
-        "solver_type":                        "solid_mechanics_implicit_dynamic_solver",
+            "solver_type":                       "solid_mechanics_implicit_dynamic_solver",
+            "solution_type":                     "Dynamic",
+            "time_integration_method":           "Implicit",
+            "scheme_type":                       "Newmark",
             "echo_level":                         1,
-            "solution_type":                      "Dynamic",
-            "time_integration_method":            "Newmark",
             "model_import_settings":              {
                  "input_type":         "mdpa",
                  "input_filename":     "test",
                  "input_file_label":    0
             },
-             "line_search":                          false,
-             "convergence_criterion":               "Residual_criterion",
-             "displacement_relative_tolerance":      1.0E-4,
-             "displacement_absolute_tolerance":      1.0E-9,
-             "residual_relative_tolerance":          1.0E-4,
-             "residual_absolute_tolerance":          1.0E-9,
-             "max_iteration":                        15,
-        "linear_solver_settings":     {
-          "solver_type":   "SuperLUSolver"
-          "scaling":       "false"
-        },
+            "line_search":                          false,
+            "convergence_criterion":               "Residual_criterion",
+            "displacement_relative_tolerance":      1.0E-4,
+            "displacement_absolute_tolerance":      1.0E-9,
+            "residual_relative_tolerance":          1.0E-4,
+            "residual_absolute_tolerance":          1.0E-9,
+            "max_iteration":                        15,
+            "linear_solver_settings":     {
+                 "solver_type":      "SuperLUSolver"
+                 "scaling":          "false"
+            },
         "problem_domain_sub_model_part_list": ["Body_Part-auto-1","Body_Part-auto-2",],
-        "processes_sub_model_part_list":      ["Solid_Displacement-auto-1","Force-auto-1","Face_Load-auto-1","Normal_Load-auto-1","Body_Acceleration-auto-1"],
+        "processes_sub_model_part_list":      ["Solid_Displacement-auto-1","Force-auto-1","Force-auto-2","Face_Load-auto-1","Normal_Load-auto-1","Body_Acceleration-auto-1"],
         "body_domain_sub_model_part_list":    ["Body_Part-auto-1","Body_Part-auto-2"],
-        "loads_sub_model_part_list":          ["Force-auto-1","Face_Load-auto-1","Normal_Load-auto-1","Body_Acceleration-auto-1"],
-        "loads_variable_list":                ["POINT_LOAD","LINE_LOAD","POSITIVE_FACE_PRESSURE","VOLUME_ACCELERATION"]
+        "loads_sub_model_part_list":          ["Force-auto-1","Force-auto-2","Face_Load-auto-1","Normal_Load-auto-1","Body_Acceleration-auto-1"],
+        "loads_variable_list":                ["POINT_LOAD","POINT_LOAD","LINE_LOAD","POSITIVE_FACE_PRESSURE","VOLUME_ACCELERATION"]
     },
     "output_configuration": {
         "result_file_configuration": {
@@ -51,8 +52,8 @@
                 "GiDPostMode":           "GiD_PostAscii",
                 "MultiFileFlag":         "MultipleFiles"
             },
-            "file_label":          "step",
-            "output_control_type": "step",
+            "file_label":          "time",
+            "output_control_type": "time",
             "output_frequency":     1,
             "body_output":          true,
             "node_output":          false,
@@ -63,6 +64,16 @@
         },
         "point_data_configuration":  []
     },
+    "restart_options":     {
+            "SaveRestart":        false,
+            "RestartFrequency":   0
+            "LoadRestart":        false
+            "Restart_Step":       0
+    },
+    "constraints_data":     {
+            "incremental_load":                false,
+            "incremental_displacement":        false,
+    },
     "constraints_process_list": [{
         "python_module": "assign_vector_components_to_nodes_process",
         "kratos_module": "KratosMultiphysics.SolidMechanicsApplication",
@@ -71,7 +82,7 @@
             "mesh_id":         0,
             "model_part_name": "Solid_Displacement-auto-1",
             "variable_name":   "DISPLACEMENT",
-            "value":           [0.0,0.0,0.0],
+            "value":           ["1+t",0.0,0.0],
         }
     }],
     "loads_process_list": [{
@@ -82,9 +93,21 @@
             "mesh_id":         0,
             "model_part_name": "Force-auto-1",
             "variable_name":   "POINT_LOAD",
-            "modulus":             25,
-            "direction":           [1,0.0,0.0],
-            "interval":            [0.0,1.0]
+            "modulus":             0.0,
+            "direction":           [0.0,0.0,0.0],
+            "interval":            [0.0,"End"]
+        }
+    },{
+        "python_module": "assign_modulus_and_direction_to_conditions_process",
+        "kratos_module": "KratosMultiphysics.SolidMechanicsApplication",
+        "process_name":  "AssignModulusAndDirectionToConditionsProcess",
+        "Parameters":    {
+            "mesh_id":         0,
+            "model_part_name": "Force-auto-2",
+            "variable_name":   "POINT_LOAD",
+            "modulus":             "sin(t)",
+            "direction":           [1.0,2.0,0.0],
+            "interval":            [0.0,25.0]
         }
     },{
         "python_module": "assign_modulus_and_direction_to_conditions_process",
@@ -121,6 +144,5 @@
             "interval":            [0.0,1.0]
         }
     }]
-     },
 
 }

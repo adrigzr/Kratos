@@ -49,7 +49,7 @@ VALUE: true
 DEPENDENCIES: (false,HIDE,X_Value,0.0,HIDE,Fix_X,false)(true,RESTORE,X_Value,#CURRENT#,RESTORE,Fix_X,#CURRENT#)
 QUESTION: X_Value
 VALUE: 0.0
-HELP: Units in IS: m
+HELP: Units in IS: m -> If it is a function put expression between ""
 QUESTION: Fix_X#CB#(true,false)
 VALUE: true
 HELP: Fixed: it is not a DOF, it is an imposed value. Unfixed: it is an initial value for the DOF
@@ -64,7 +64,7 @@ VALUE: true
 DEPENDENCIES: (false,HIDE,Y_Value,0.0,HIDE,Fix_Y,false)(true,RESTORE,Y_Value,#CURRENT#,RESTORE,Fix_Y,#CURRENT#)
 QUESTION: Y_Value
 VALUE: 0.0
-HELP: Units in IS: m
+HELP: Units in IS: m -> If it is a function put expression between ""
 QUESTION: Fix_Y#CB#(true,false)
 VALUE: true
 HELP: Fixed: it is not a DOF, it is an imposed value. Unfixed: it is an initial value for the DOF
@@ -79,7 +79,7 @@ VALUE: true
 DEPENDENCIES: (false,HIDE,Z_Value,0.0,HIDE,Fix_Z,false)(true,RESTORE,Z_Value,#CURRENT#,RESTORE,Fix_Z,#CURRENT#)
 QUESTION: Z_Value
 VALUE: 0.0
-HELP: Units in IS: m
+HELP: Units in IS: m -> If it is a function put expression between ""
 QUESTION: Fix_Z#CB#(true,false)
 VALUE: true
 HELP: Fixed: it is not a DOF, it is an imposed value. Unfixed: it is an initial value for the DOF
@@ -99,9 +99,10 @@ CONDMESHTYPE: over nodes
 GROUPALLOW: points
 QUESTION: Modulus
 VALUE: 0.0
+HELP: UIf it is a function write the expression between ""
 QUESTION: FORCE_X#CB#(true,false)
 VALUE: true
-DEPENDENCIES: (false,HIDE,X_Value,0.0,HIDE,Imposed_Force_X,Constant)(true,RESTORE,X_Value,#CURRENT#,RESTORE,Imposed_Force_X,#CURRENT#)
+DEPENDENCIES: (false,HIDE,X_Direction,0.0,HIDE,Imposed_Force_X,Constant)(true,RESTORE,X_Direction,#CURRENT#,RESTORE,Imposed_Force_X,#CURRENT#)
 QUESTION: X_Direction
 VALUE: 0.0
 HELP: Units in IS for both 2D and 3D cases: N.
@@ -112,7 +113,7 @@ QUESTION: Force_X_Table(Time,Force_X)
 VALUE: #N# 2 0.0 0.0
 QUESTION: FORCE_Y#CB#(true,false)
 VALUE: true
-DEPENDENCIES: (false,HIDE,Y_Value,0.0,HIDE,Imposed_Force_Y,Constant)(true,RESTORE,Y_Value,#CURRENT#,RESTORE,Imposed_Force_Y,#CURRENT#)
+DEPENDENCIES: (false,HIDE,Y_Direction,0.0,HIDE,Imposed_Force_Y,Constant)(true,RESTORE,Y_Direction,#CURRENT#,RESTORE,Imposed_Force_Y,#CURRENT#)
 QUESTION: Y_Direction
 VALUE: 0.0
 HELP: Units in IS for both 2D and 3D cases: N.
@@ -123,7 +124,7 @@ QUESTION: Force_Y_Table(Time,Force_Y)
 VALUE: #N# 2 0.0 0.0
 QUESTION: FORCE_Z#CB#(true,false)
 VALUE: true
-DEPENDENCIES: (false,HIDE,Z_Value,0.0,HIDE,Imposed_Force_Z,Constant)(true,RESTORE,Z_Value,#CURRENT#,RESTORE,Imposed_Force_Z,#CURRENT#)
+DEPENDENCIES: (false,HIDE,Z_Direction,0.0,HIDE,Imposed_Force_Z,Constant)(true,RESTORE,Z_Direction,#CURRENT#,RESTORE,Imposed_Force_Z,#CURRENT#)
 QUESTION: Z_Direction
 VALUE: 0.0
 HELP: Units in IS for both 2D and 3D cases: N.
@@ -135,7 +136,7 @@ VALUE: #N# 2 0.0 0.0
 QUESTION: Initial_Time
 VALUE: 0.0
 QUESTION: End_Time
-VALUE: 1.0
+VALUE: "End"
 END CONDITION
 
 CONDITION: Face_Load
@@ -180,7 +181,7 @@ VALUE: #N# 2 0.0 0.0
 QUESTION: Initial_Time
 VALUE: 0.0
 QUESTION: End_Time
-VALUE: 1.0
+VALUE: "End"
 END CONDITION
 
 CONDITION: Normal_Load
@@ -224,7 +225,7 @@ VALUE: #N# 2 0.0 0.0
 QUESTION: Initial_Time
 VALUE: 0.0
 QUESTION: End_Time
-VALUE: 1.0
+VALUE: "End"
 END CONDITION
 
 CONDITION: Body_Acceleration
@@ -269,5 +270,5 @@ VALUE: #N# 2 0.0 0.0
 QUESTION: Initial_Time
 VALUE: 0.0
 QUESTION: End_Time
-VALUE: 1.0
+VALUE: "End"
 END CONDITION

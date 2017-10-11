@@ -1,18 +1,18 @@
-BeginZE C:/Users/Alejandro/Desktop/test.gid/test.vv
-   x -5.22649621963500977 3.04333066940307617
-   y 3.61285829544067383 -3.00086665153503418
+BeginZE D:/FemDem/applications/FemToDemApplication/examples/test.gid/test.vv
+   x -5.717254638671875 3.62246799468994141
+   y 4.17849874496459961 -3.59845137596130371
    z -13.3680238723754883 13.3680238723754883
    e 4.45600795745849609
    v 0 0 0
    r 1
    m 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
-   c -1.1569591760635376 0.327843934297561646 0
+   c -0.08496866375207901 0.853666007518768311 0
    pd 0
    pno 0
    pfo 0
    pf 4
    pv 0
-   NowUse 1
+   NowUse 0
    DrawingType 0
    LightVector 90 90 150 0
    OGLShadow(UseShadows) 0
@@ -29,7 +29,7 @@ BeginZE C:/Users/Alejandro/Desktop/test.gid/test.vv
    OGLStereo(EyeDistance) 0.075
    OGLStereo(LeftEyeDistance) 1 0 0 1
    OGLStereo(RightEyeDistance) 0 1 1 1
-EndZE C:/Users/Alejandro/Desktop/test.gid/test.vv
+EndZE D:/FemDem/applications/FemToDemApplication/examples/test.gid/test.vv
 
 BeginMirror
    Mirror 0 Angle 0.0 AngleFake -15.0 SizeFactor 2.0 HeightOffset 0.25 Color #d9e5f24d Backlight Off EdgeStyle No Type Scene DrawMode Mirror

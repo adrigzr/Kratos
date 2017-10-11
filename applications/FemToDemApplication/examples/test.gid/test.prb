@@ -3,7 +3,7 @@ TITLE: Problem_Data
 QUESTION: Domain_Size#CB#(2,3)
 VALUE: 2
 QUESTION: Plane_state#CB#(Plane_Stress,Plane_Strain)
-VALUE: Plane_Stress
+VALUE: Plane_Strain
 QUESTION: Start_Time
 VALUE: 0.0
 HELP: Units in IS: s
@@ -22,7 +22,7 @@ DEPENDENCIES: (OpenMP,RESTORE,Number_of_threads,#CURRENT#)(MPI,HIDE,Number_of_th
 QUESTION: Number_of_threads
 VALUE: 4
 QUESTION: Activate_AMR#CB#(true,false)
-VALUE: true
+VALUE: false
 HELP: Enables the adaptative meshing technique
 QUESTION: Mesh_Optimality_Criteria#CB#(Global_Error_Equidistribution,Local_Error_Equidistribution)
 VALUE: Global_Error_Equidistribution
@@ -34,7 +34,7 @@ HELP: In seconds
 QUESTION: gid_path
 VALUE: D:\\Program Files (x86)\\GiD 13.1.8d\\gid.exe
 TITLE: Solver_Settings
-QUESTION: Solution_Type#CB#(Quasi-Static,Dynamic)
+QUESTION: Solution_Type#CB#(Static,Dynamic)
 VALUE: Dynamic
 QUESTION: Scheme_Type#CB#(Newmark)
 VALUE: Newmark
@@ -113,9 +113,9 @@ HELP: Write Gauss points results also on the conditions.
 QUESTION: Multi_file_flag#CB#(SingleFile,MultipleFiles)
 VALUE: MultipleFiles
 QUESTION: File_label#CB#(step,time)
-VALUE: step
+VALUE: time
 QUESTION: Output_control_type#CB#(step,time)
-VALUE: step
+VALUE: time
 QUESTION: Output_frequency
 VALUE: 1
 QUESTION: Body_output#CB#(true,false)

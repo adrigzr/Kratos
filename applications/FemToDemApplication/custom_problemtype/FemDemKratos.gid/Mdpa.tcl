@@ -1,3 +1,4 @@
+
 proc WriteMdpa { basename dir problemtypedir } {
     
     ## Source auxiliar procedures
@@ -30,23 +31,26 @@ proc WriteMdpa { basename dir problemtypedir } {
         incr PropertyId
         dict set PropertyDict [lindex [lindex $Groups $i] 1] $PropertyId
         puts $FileVar "Begin Properties $PropertyId"
-        puts $FileVar "  YIELD_SURFACE            [lindex [lindex $Groups $i] 3]"
-        puts $FileVar "  YOUNG_MODULUS            [lindex [lindex $Groups $i] 4]"
-        puts $FileVar "  DENSITY                  [lindex [lindex $Groups $i] 5]"
-        puts $FileVar "  POISSON_RATIO            [lindex [lindex $Groups $i] 6]"
-        puts $FileVar "  THICKNESS                [lindex [lindex $Groups $i] 8]"
-        puts $FileVar "  YIELD_STRESS_C           [lindex [lindex $Groups $i] 9]"
-        puts $FileVar "  YIELD_STRESS_T           [lindex [lindex $Groups $i] 10]"
-        puts $FileVar "  FRAC_ENERGY_T            [lindex [lindex $Groups $i] 11]"
-        puts $FileVar "  INTERNAL_FRICTION_ANGLE  [lindex [lindex $Groups $i] 12]"
-        puts $FileVar "  RAYLEIGH_BETA            [lindex [lindex $Groups $i] 13]"
-        puts $FileVar "  RAYLEIGH_ALPHA           [lindex [lindex $Groups $i] 14]"
+        puts $FileVar "// ELASTIC PROPERTIES"
+        puts $FileVar "      YOUNG_MODULUS            [lindex [lindex $Groups $i] 4]"
+        puts $FileVar "      DENSITY                  [lindex [lindex $Groups $i] 5]"
+        puts $FileVar "      POISSON_RATIO            [lindex [lindex $Groups $i] 6]"
+        puts $FileVar "      THICKNESS                [lindex [lindex $Groups $i] 8]"
+        puts $FileVar ""
+        puts $FileVar "// DAMAGE PARAMETERS"
+        puts $FileVar "      YIELD_SURFACE            [lindex [lindex $Groups $i] 3]"
+        puts $FileVar "      YIELD_STRESS_C           [lindex [lindex $Groups $i] 9]"
+        puts $FileVar "      YIELD_STRESS_T           [lindex [lindex $Groups $i] 10]"
+        puts $FileVar "      FRAC_ENERGY_T            [lindex [lindex $Groups $i] 11]"
+        puts $FileVar "      INTERNAL_FRICTION_ANGLE  [lindex [lindex $Groups $i] 12]"
+        puts $FileVar ""
+        puts $FileVar "// DYNAMIC PARAMETERS  D = alpha*M + beta*K"
+        puts $FileVar "      RAYLEIGH_BETA            [lindex [lindex $Groups $i] 13]"
+        puts $FileVar "      RAYLEIGH_ALPHA           [lindex [lindex $Groups $i] 14]"
         puts $FileVar "End Properties"
         puts $FileVar ""
     }
     puts $FileVar ""
-
-
     #Warnwin "Grupos $Groups"
     #W "Grupos $Groups"
 
@@ -54,7 +58,7 @@ proc WriteMdpa { basename dir problemtypedir } {
     set Nodes [GiD_Info Mesh Nodes]
     puts $FileVar "Begin Nodes"
     for {set i 0} {$i < [llength $Nodes]} {incr i 4} {
-        puts $FileVar "  [lindex $Nodes $i] [lindex $Nodes [expr { $i+1 }]] [lindex $Nodes [expr { $i+2 }]] [lindex $Nodes [expr { $i+3 }]]"
+        puts $FileVar "  [lindex $Nodes $i]    [format  "%.10f" [lindex $Nodes [expr { $i+1 }]]]    [format  "%.10f" [lindex $Nodes [expr { $i+2 }]]]    [format  "%.10f" [lindex $Nodes [expr { $i+3 }]]]"
     }
     puts $FileVar "End Nodes"
     puts $FileVar ""
@@ -62,8 +66,6 @@ proc WriteMdpa { basename dir problemtypedir } {
     
     ## Elements
     set Groups [GiD_Info conditions Body_Part groups]
-
-    
 
     for {set i 0} {$i < [llength $Groups]} {incr i} {
          # Elements Property
@@ -103,7 +105,6 @@ proc WriteMdpa { basename dir problemtypedir } {
     WriteLoadSubmodelPart FileVar Normal_Load $TableDict $ConditionDict
     # Body_Acceleration
     WriteConstraintSubmodelPart FileVar Body_Acceleration $TableDict
-    
     
     close $FileVar
     

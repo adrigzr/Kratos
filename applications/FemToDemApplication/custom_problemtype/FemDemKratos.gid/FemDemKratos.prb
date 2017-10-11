@@ -36,7 +36,7 @@ QUESTION: gid_path
 VALUE: D:\\Program Files (x86)\\GiD 13.1.8d\\gid.exe
 
 TITLE:Solver_Settings
-QUESTION: Solution_Type#CB#(Quasi-Static,Dynamic)
+QUESTION: Solution_Type#CB#(Static,Dynamic)
 VALUE: Dynamic
 QUESTION: Scheme_Type#CB#(Newmark)
 VALUE: Newmark
