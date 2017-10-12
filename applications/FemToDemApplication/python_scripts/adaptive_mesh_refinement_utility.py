@@ -207,18 +207,17 @@ class AdaptiveMeshRefinementUtility:
             
             print("despues execute after output step")
             Wait()
+            #------------------------------------------------------------------->> Aqui estamos
 
             # GID GENERATE THE NEW MESH BASED ON THE BACKGROUND MESH  ----> TODO
             #os.system("cd " + str(self.gid_path) + " && ./gid -b "+ str(self.problem_path)+"/"+str(problem_name)+".bch -n")
             #os.system("cd && mv "+str(self.problem_path)+"/"+str(problem_name)+".dat "+str(self.problem_path)+"/"+str(problem_name)+".mdpa && rm "+str(self.problem_path)+"/"+str(problem_name)+"-1.dat")
             
-            # Execute .bch file with GiD --->> Aqui estamos
+            # Execute .bch file with GiD 
             #os.system("cd " + str(self.gid_path) " && gid -b " + os.path.join(self.problem_path, str(problem_name) + ".bch -n"))
             #shutil.move(os.path.join(str(self.problem_path), str(problem_name) + ".dat" ) , os.path.join(str(self.problem_path), str(problem_name) + ".mdpa"))
             #shutil.rmtree(os.path.join(str(self.problem_path), str(problem_name)+"-1.dat"))
             
-
-            # aqui estamos !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
             
             ## Finalize previous mesh ---------------------------------------------------------------------------------------
             

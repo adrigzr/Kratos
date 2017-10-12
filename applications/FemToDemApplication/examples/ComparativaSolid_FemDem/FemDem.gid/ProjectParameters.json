@@ -61,7 +61,7 @@
             "mesh_id":         0,
             "model_part_name": "Face_Load-auto-1",
             "variable_name":   "LINE_LOAD",
-            "modulus":             200.000,
+            "modulus":             2.0,
             "direction":           [1.0,0.0,0.0],
             "interval":            [0.0,"End"]
         }
@@ -73,7 +73,7 @@
             "mesh_id":         0,
             "model_part_name": "Body_Acceleration-auto-1",
             "variable_name":   "VOLUME_ACCELERATION",
-            "modulus":             0.001,
+            "modulus":             "sin(t)",
             "direction":           [0.0,-1.0,0.0],
             "interval":            [0.0,"End"]
         }
