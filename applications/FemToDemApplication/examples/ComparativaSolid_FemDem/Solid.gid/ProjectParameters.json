@@ -29,7 +29,7 @@
         "residual_absolute_tolerance"        : 1e-9,
         "max_iteration"                      : 10,
         "problem_domain_sub_model_part_list" : ["Parts_Parts_Auto1"],
-        "processes_sub_model_part_list"      : ["DISPLACEMENT_Displacement_Auto1","DISPLACEMENT_Displacement_Auto2"]
+        "processes_sub_model_part_list"      : ["DISPLACEMENT_Displacement_Auto1","DISPLACEMENT_Displacement_Auto2","PointLoad2D_Load_on_points_Auto2","LinePressure2D_Pressure_on_lines_Auto1"]
     },
     "constraints_process_list" : [{
         "python_module" : "assign_vector_components_to_nodes_process",
@@ -52,11 +52,37 @@
             "mesh_id"         : 0,
             "model_part_name" : "DISPLACEMENT_Displacement_Auto2",
             "variable_name"   : "DISPLACEMENT",
-            "value"           : [null,-0.01,0.0],
+            "value"           : [null,"0.01*t",0.0],
+            "interval"        : [0.0,0.0]
+        }
+    }],
+    "loads_process_list"       : [{
+        "python_module" : "assign_modulus_and_direction_to_conditions_process",
+        "kratos_module" : "KratosMultiphysics.SolidMechanicsApplication",
+        "help"          : "This process sets a vector variable value over a condition",
+        "check"         : "DirectorVectorNonZero direction",
+        "process_name"  : "AssignModulusAndDirectionToConditionsProcess",
+        "Parameters"    : {
+            "mesh_id"         : 0,
+            "model_part_name" : "PointLoad2D_Load_on_points_Auto2",
+            "variable_name"   : "POINT_LOAD",
+            "modulus"         : "0.1*t",
+            "direction"       : [1.0,0.0,0.0],
+            "interval"        : [0.0,"End"]
+        }
+    },{
+        "python_module" : "assign_scalar_to_conditions_process",
+        "kratos_module" : "KratosMultiphysics.SolidMechanicsApplication",
+        "help"          : "This process sets a scalar variable value over a condition",
+        "process_name"  : "AssignScalarToConditionsProcess",
+        "Parameters"    : {
+            "mesh_id"         : 0,
+            "model_part_name" : "LinePressure2D_Pressure_on_lines_Auto1",
+            "variable_name"   : "POSITIVE_FACE_PRESSURE ",
+            "value"           : "0.1*t",
             "interval"        : [0.0,"End"]
         }
     }],
-    "loads_process_list"       : [],
     "output_configuration"     : {
         "result_file_configuration" : {
             "gidpost_flags"       : {

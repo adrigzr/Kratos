@@ -19,7 +19,7 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     puts $FileVar "        \"permissible_error\":               [GiD_AccessValue get gendata Permissible_Error],"
     puts $FileVar "        \"refinement_frequency\":            [GiD_AccessValue get gendata Refinement_Frequency],"
     puts $FileVar "        \"gid_path\":                       \"[GiD_AccessValue get gendata gid_path]\""
-        puts $FileVar "    \},"
+    puts $FileVar "    \},"
     ## problem_data
     puts $FileVar "   \"problem_data\": \{"
     puts $FileVar "        \"problem_name\":         \"$basename\","

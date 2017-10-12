@@ -149,7 +149,7 @@ proc WriteLoadVectorProcess {FileVar GroupNum Groups VarName TableDict NumGroups
         if {$MyGroupNum < $NumGroups} {
             puts $MyFileVar "    \},\{"
         } else {
-            puts $MyFileVar "    \}\]"
+            puts $MyFileVar "    \}\],"
         }
     }
 }
@@ -176,7 +176,7 @@ proc WriteGLoadVectorProcess {FileVar GroupNum Groups VarName TableDict NumGroup
         if {$MyGroupNum < $NumGroups} {
             puts $MyFileVar "    \},\{"
         } else {
-            puts $MyFileVar "    \}\]"
+            puts $MyFileVar "    \}\],"
         }
     }
 }
@@ -197,10 +197,12 @@ proc WriteNormalLoadProcess {FileVar GroupNum Groups VarName TableDict NumGroups
         puts $MyFileVar "            \"variable_name\":        \"$VarName\","
         puts $MyFileVar "            \"value\":                 [lindex [lindex $Groups $i] 5],"
         puts $MyFileVar "            \"interval\":             \[[lindex [lindex $Groups $i] 15],[lindex [lindex $Groups $i] 16]\]"
+        puts $MyFileVar "        \}"
+
         if {$MyGroupNum < $NumGroups} {
             puts $MyFileVar "    \},\{"
         } else {
-            puts $MyFileVar "    \}\]"
+            puts $MyFileVar "    \}\],"
         }
     }
 }

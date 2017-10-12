@@ -1,3 +1,4 @@
+
 ## GiD events --------------------------------------------------------------------------------------------------------------------------------------------------
 
 proc InitGIDProject { dir } {
@@ -63,15 +64,10 @@ proc BeforeRunCalculation { batfilename basename dir problemtypedir gidexe args 
     WriteMaterials $basename $dir $problemtypedir $TableDict
 #---------------------------------------------------------------
 
+    # Copy python scripts in the problemdir
+    file copy -force [file join $problemtypedir DEM_explicit_solver_var.py] [file join $dir DEM_explicit_solver_var.py]
+    file copy -force [file join $problemtypedir KratosFemDemApplication.py] [file join $dir KratosFemDemApplication.py]
 
-
-
-     # # Copy python script in the problemdir
-     # if {[GiD_AccessValue get gendata Fracture_Propagation] eq true} {
-     #     file copy -force [file join $problemtypedir poromechanics_fracture_main.py] [file join $dir MainKratos.py]
-     # } else {
-     #     file copy -force [file join $problemtypedir poromechanics_main.py] [file join $dir MainKratos.py]
-     # }
     
     # Run the problem
       #set run 1

@@ -12,7 +12,7 @@
         "model_part_name":      "Structure",
         "domain_size":          2,
         "start_time":           0.0,
-        "end_time":             1.0,
+        "end_time":             10.0,
         "time_step":            0.25,
         "echo_level":           1
     },
@@ -39,7 +39,7 @@
                  "scaling":           false
             },
         "problem_domain_sub_model_part_list": ["Body_Part-auto-1"],
-        "processes_sub_model_part_list":      ["Solid_Displacement-auto-1","Solid_Displacement-auto-2"]
+        "processes_sub_model_part_list":      ["Solid_Displacement-auto-1","Face_Load-auto-1","Body_Acceleration-auto-1"]
    },
     "constraints_process_list": [{
         "python_module": "assign_vector_components_to_nodes_process",
@@ -52,19 +52,32 @@
             "value":           [0.0,0.0,0.0],
             "interval":        [0.0,"End"]
         }
-    },{
-        "python_module": "assign_vector_components_to_nodes_process",
+    }],
+    "loads_process_list": [{
+        "python_module": "assign_modulus_and_direction_to_conditions_process",
         "kratos_module": "KratosMultiphysics.SolidMechanicsApplication",
-        "process_name":  "AssignVectorComponentsToNodesProcess",
+        "process_name":  "AssignModulusAndDirectionToConditionsProcess",
         "Parameters":    {
             "mesh_id":         0,
-            "model_part_name": "Solid_Displacement-auto-2",
-            "variable_name":   "DISPLACEMENT",
-            "value":           [null,-0.01,0.0],
-            "interval":        [0.0,"End"]
+            "model_part_name": "Face_Load-auto-1",
+            "variable_name":   "LINE_LOAD",
+            "modulus":             200.000,
+            "direction":           [1.0,0.0,0.0],
+            "interval":            [0.0,"End"]
+        }
+    },{
+        "python_module": "assign_modulus_and_direction_to_nodes_process",
+        "kratos_module": "KratosMultiphysics.SolidMechanicsApplication",
+        "process_name":  "AssignModulusAndDirectionToNodesProcess",
+        "Parameters":    {
+            "mesh_id":         0,
+            "model_part_name": "Body_Acceleration-auto-1",
+            "variable_name":   "VOLUME_ACCELERATION",
+            "modulus":             0.001,
+            "direction":           [0.0,-1.0,0.0],
+            "interval":            [0.0,"End"]
         }
     }],
-    "loads_process_list":       [],
     "output_configuration": {
         "result_file_configuration": {
             "gidpost_flags":       {
