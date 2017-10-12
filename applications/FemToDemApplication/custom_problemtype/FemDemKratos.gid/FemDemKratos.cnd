@@ -49,7 +49,7 @@ VALUE: true
 DEPENDENCIES: (false,HIDE,X_Value,0.0,HIDE,Fix_X,false)(true,RESTORE,X_Value,#CURRENT#,RESTORE,Fix_X,#CURRENT#)
 QUESTION: X_Value
 VALUE: 0.0
-HELP: Units in IS: m -> If it is a function put expression between ""
+HELP: Units in IS: m // If it is a function put expression between "" // If it is free put null
 QUESTION: Fix_X#CB#(true,false)
 VALUE: true
 HELP: Fixed: it is not a DOF, it is an imposed value. Unfixed: it is an initial value for the DOF
@@ -64,7 +64,7 @@ VALUE: true
 DEPENDENCIES: (false,HIDE,Y_Value,0.0,HIDE,Fix_Y,false)(true,RESTORE,Y_Value,#CURRENT#,RESTORE,Fix_Y,#CURRENT#)
 QUESTION: Y_Value
 VALUE: 0.0
-HELP: Units in IS: m -> If it is a function put expression between ""
+HELP: Units in IS: m // If it is a function put expression between "" // If it is free put null
 QUESTION: Fix_Y#CB#(true,false)
 VALUE: true
 HELP: Fixed: it is not a DOF, it is an imposed value. Unfixed: it is an initial value for the DOF
@@ -79,7 +79,7 @@ VALUE: true
 DEPENDENCIES: (false,HIDE,Z_Value,0.0,HIDE,Fix_Z,false)(true,RESTORE,Z_Value,#CURRENT#,RESTORE,Fix_Z,#CURRENT#)
 QUESTION: Z_Value
 VALUE: 0.0
-HELP: Units in IS: m -> If it is a function put expression between ""
+HELP: Units in IS: m // If it is a function put expression between "" // If it is free put null
 QUESTION: Fix_Z#CB#(true,false)
 VALUE: true
 HELP: Fixed: it is not a DOF, it is an imposed value. Unfixed: it is an initial value for the DOF
@@ -89,6 +89,10 @@ VALUE: Constant
 DEPENDENCIES: (Constant,HIDE,Displacement_Z_Table,#CURRENT#)(Table_Interpolation,RESTORE,Displacement_Z_Table,#CURRENT#)
 QUESTION: Displacement_Z_Table(Time,Displacement_Z)
 VALUE: #N# 2 0.0 0.0
+QUESTION: Initial_Time
+VALUE: 0.0
+QUESTION: End_Time
+VALUE: "End"
 END CONDITION
 
 BOOK: Loads

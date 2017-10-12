@@ -3,7 +3,7 @@ TITLE: Problem_Data
 QUESTION: Domain_Size#CB#(2,3)
 VALUE: 2
 QUESTION: Plane_state#CB#(Plane_Stress,Plane_Strain)
-VALUE: Plane_Strain
+VALUE: Plane_Stress
 QUESTION: Start_Time
 VALUE: 0.0
 HELP: Units in IS: s

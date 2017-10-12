@@ -1,4 +1,7 @@
 
+Begin Properties 0
+End Properties
+
 Begin Properties 1
 // ELASTIC PROPERTIES
       YOUNG_MODULUS            3.0e7
@@ -569,7 +572,6 @@ Begin Conditions LineLoadCondition2D2N
   34  1  104 110
 End Conditions
 
-End Conditions
 
 
 Begin SubModelPart Body_Part-auto-1

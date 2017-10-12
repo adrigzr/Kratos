@@ -55,7 +55,7 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     puts $FileVar "            \"max_iteration\":                        [GiD_AccessValue get gendata Max_Iterations],"
 
     puts $FileVar "            \"linear_solver_settings\":     \{"
-    puts $FileVar "                 \"solver_type\":      \"SuperLUSolver\","
+    puts $FileVar "                 \"solver_type\":      \"[GiD_AccessValue get gendata Solver_Type]\","
     puts $FileVar "                 \"scaling\":           false"
     puts $FileVar "            \},"
 
@@ -129,6 +129,49 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     #puts $FileVar "        \"loads_variable_list\":                $PutStrings"
     #puts $FileVar "    \},"
 
+    
+
+    ## constraints_process_list
+    set Groups [GiD_Info conditions Solid_Displacement groups]
+    set NumGroups [llength $Groups]
+    set iGroup 0
+    puts $FileVar "    \"constraints_process_list\": \[\{"
+    # Solid_Displacement
+    set Groups [GiD_Info conditions Solid_Displacement groups]
+    WriteConstraintVectorProcess FileVar iGroup $Groups lines DISPLACEMENT $TableDict $NumGroups
+    WriteConstraintVectorProcess FileVar iGroup $Groups points DISPLACEMENT $TableDict $NumGroups
+
+    ## loads_process_list
+    set Groups [GiD_Info conditions Force groups]
+    set NumGroups [llength $Groups]
+    set Groups [GiD_Info conditions Face_Load groups]
+    incr NumGroups [llength $Groups]
+    set Groups [GiD_Info conditions Normal_Load groups]
+    incr NumGroups [llength $Groups]
+    set Groups [GiD_Info conditions Body_Acceleration groups]
+    incr NumGroups [llength $Groups]
+
+    if {$NumGroups > 0} {
+        set iGroup 0
+        puts $FileVar "    \"loads_process_list\": \[\{"
+        # Force
+        set Groups [GiD_Info conditions Force groups]
+        WriteLoadVectorProcess FileVar iGroup $Groups POINT_LOAD $TableDict $NumGroups
+        # Face_Load
+        set Groups [GiD_Info conditions Face_Load groups]
+        WriteLoadVectorProcess FileVar iGroup $Groups LINE_LOAD $TableDict $NumGroups
+
+        # Normal_Load
+        set Groups [GiD_Info conditions Normal_Load groups]
+        WriteNormalLoadProcess FileVar iGroup $Groups POSITIVE_FACE_PRESSURE $TableDict $NumGroups
+
+        # Body_Acceleration
+        set Groups [GiD_Info conditions Body_Acceleration groups]
+        WriteGLoadVectorProcess FileVar iGroup $Groups VOLUME_ACCELERATION $TableDict $NumGroups
+    } else {
+        puts $FileVar "    \"loads_process_list\":       \[\],"
+    }
+    
     ## output_configuration
     puts $FileVar "    \"output_configuration\": \{"
     puts $FileVar "        \"result_file_configuration\": \{"
@@ -188,60 +231,17 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
 
     # restart options
     puts $FileVar "    \"restart_options\":     \{"
-    puts $FileVar "            \"SaveRestart\":        false,"
-    puts $FileVar "            \"RestartFrequency\":   0,"
-    puts $FileVar "            \"LoadRestart\":        false,"
-    puts $FileVar "            \"Restart_Step\":       0"
+    puts $FileVar "        \"SaveRestart\":        false,"
+    puts $FileVar "        \"RestartFrequency\":   0,"
+    puts $FileVar "        \"LoadRestart\":        false,"
+    puts $FileVar "        \"Restart_Step\":       0"
     puts $FileVar "    \},"
 
     # constraint data
     puts $FileVar "    \"constraints_data\":     \{"
-    puts $FileVar "            \"incremental_load\":                false,"
-    puts $FileVar "            \"incremental_displacement\":        false"
-    puts $FileVar "    \},"
-
-    ## constraints_process_list
-    set Groups [GiD_Info conditions Solid_Displacement groups]
-    set NumGroups [llength $Groups]
-    set iGroup 0
-    puts $FileVar "    \"constraints_process_list\": \[\{"
-    # Solid_Displacement
-    set Groups [GiD_Info conditions Solid_Displacement groups]
-    WriteConstraintVectorProcess FileVar iGroup $Groups lines DISPLACEMENT $TableDict $NumGroups
-    WriteConstraintVectorProcess FileVar iGroup $Groups points DISPLACEMENT $TableDict $NumGroups
-
-    ## loads_process_list
-    set Groups [GiD_Info conditions Force groups]
-    set NumGroups [llength $Groups]
-    set Groups [GiD_Info conditions Face_Load groups]
-    incr NumGroups [llength $Groups]
-    set Groups [GiD_Info conditions Normal_Load groups]
-    incr NumGroups [llength $Groups]
-    set Groups [GiD_Info conditions Body_Acceleration groups]
-    incr NumGroups [llength $Groups]
-
-    if {$NumGroups > 0} {
-        set iGroup 0
-        puts $FileVar "    \"loads_process_list\": \[\{"
-        # Force
-        set Groups [GiD_Info conditions Force groups]
-        WriteLoadVectorProcess FileVar iGroup $Groups POINT_LOAD $TableDict $NumGroups
-        # Face_Load
-        set Groups [GiD_Info conditions Face_Load groups]
-        WriteLoadVectorProcess FileVar iGroup $Groups LINE_LOAD $TableDict $NumGroups
-
-        # Normal_Load
-        set Groups [GiD_Info conditions Normal_Load groups]
-        WriteNormalLoadProcess FileVar iGroup $Groups POSITIVE_FACE_PRESSURE $TableDict $NumGroups
-
-        # Body_Acceleration
-        set Groups [GiD_Info conditions Body_Acceleration groups]
-        WriteGLoadVectorProcess FileVar iGroup $Groups VOLUME_ACCELERATION $TableDict $NumGroups
-    } else {
-        puts $FileVar "    \"loads_process_list\":       \[\]"
-    }
-
-    puts $FileVar ""
+    puts $FileVar "        \"incremental_load\":                false,"
+    puts $FileVar "        \"incremental_displacement\":        false"
+    puts $FileVar "    \}"
     puts $FileVar "\}"
 
     close $FileVar

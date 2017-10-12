@@ -1,11 +1,11 @@
 {
    "AMR_data": {
         "activate_AMR":                    false,
-        "plane_state":                    "Plane_Strain",
+        "plane_state":                    "Plane_Stress",
         "mesh_optimality_criteria":       "Global_Error_Equidistribution",
         "permissible_error":               0.09,
         "refinement_frequency":            1.0,
-        "gid_path":                       "D:\\Program Files (x86)\\GiD 13.1.8d\\gid.exe",
+        "gid_path":                       "D:\\Program Files (x86)\\GiD 13.1.8d\\gid.exe"
     },
    "problem_data": {
         "problem_name":         "test",
@@ -14,7 +14,7 @@
         "start_time":           0.0,
         "end_time":             1.0,
         "time_step":            0.25,
-        "echo_level":           1,
+        "echo_level":           1
     },
    "solver_settings": {
             "solver_type":                       "solid_mechanics_implicit_dynamic_solver",
@@ -35,15 +35,12 @@
             "residual_absolute_tolerance":          1.0E-9,
             "max_iteration":                        15,
             "linear_solver_settings":     {
-                 "solver_type":      "SuperLUSolver"
-                 "scaling":          "false"
+                 "solver_type":      "SuperLUSolver",
+                 "scaling":           false
             },
         "problem_domain_sub_model_part_list": ["Body_Part-auto-1","Body_Part-auto-2",],
-        "processes_sub_model_part_list":      ["Solid_Displacement-auto-1","Force-auto-1","Force-auto-2","Face_Load-auto-1","Normal_Load-auto-1","Body_Acceleration-auto-1"],
-        "body_domain_sub_model_part_list":    ["Body_Part-auto-1","Body_Part-auto-2"],
-        "loads_sub_model_part_list":          ["Force-auto-1","Force-auto-2","Face_Load-auto-1","Normal_Load-auto-1","Body_Acceleration-auto-1"],
-        "loads_variable_list":                ["POINT_LOAD","POINT_LOAD","LINE_LOAD","POSITIVE_FACE_PRESSURE","VOLUME_ACCELERATION"]
-    },
+        "processes_sub_model_part_list":      ["Solid_Displacement-auto-1","Force-auto-1","Force-auto-2","Face_Load-auto-1","Normal_Load-auto-1","Body_Acceleration-auto-1"]
+   },
     "output_configuration": {
         "result_file_configuration": {
             "gidpost_flags":       {
@@ -66,13 +63,13 @@
     },
     "restart_options":     {
             "SaveRestart":        false,
-            "RestartFrequency":   0
-            "LoadRestart":        false
+            "RestartFrequency":   0,
+            "LoadRestart":        false,
             "Restart_Step":       0
     },
     "constraints_data":     {
             "incremental_load":                false,
-            "incremental_displacement":        false,
+            "incremental_displacement":        false
     },
     "constraints_process_list": [{
         "python_module": "assign_vector_components_to_nodes_process",
@@ -82,7 +79,7 @@
             "mesh_id":         0,
             "model_part_name": "Solid_Displacement-auto-1",
             "variable_name":   "DISPLACEMENT",
-            "value":           ["1+t",0.0,0.0],
+            "value":           ["1+t",0.0,0.0]
         }
     }],
     "loads_process_list": [{

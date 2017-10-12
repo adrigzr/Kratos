@@ -449,8 +449,8 @@ if __name__ == "__main__":
 
 class DEM_Solution(MainDEM.Solution):
 
-	def Info(self):
-		print("DEM part of the FEM-DEM application")
+    def Info(self):
+        print("DEM part of the FEM-DEM application")
 
 
 
