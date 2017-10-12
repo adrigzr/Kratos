@@ -9,6 +9,8 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     set FileVar [open $filename w]
     
     puts $FileVar "\{"
+
+   
     ## AMR data
     puts $FileVar "   \"AMR_data\": \{"
     puts $FileVar "        \"activate_AMR\":                    [GiD_AccessValue get gendata Activate_AMR],"
@@ -17,7 +19,7 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     puts $FileVar "        \"permissible_error\":               [GiD_AccessValue get gendata Permissible_Error],"
     puts $FileVar "        \"refinement_frequency\":            [GiD_AccessValue get gendata Refinement_Frequency],"
     puts $FileVar "        \"gid_path\":                       \"[GiD_AccessValue get gendata gid_path]\""
-    puts $FileVar "    \},"
+        puts $FileVar "    \},"
     ## problem_data
     puts $FileVar "   \"problem_data\": \{"
     puts $FileVar "        \"problem_name\":         \"$basename\","
@@ -46,7 +48,7 @@ proc WriteProjectParameters { basename dir problemtypedir TableDict} {
     puts $FileVar "                 \"input_filename\":     \"$basename\","
     puts $FileVar "                 \"input_file_label\":    0"
     puts $FileVar "            \},"
-    puts $FileVar "            \"line_search\":                          false,"
+    puts $FileVar "            \"line_search\":                          [GiD_AccessValue get gendata Line_search],"
     puts $FileVar "            \"convergence_criterion\":               \"[GiD_AccessValue get gendata Convergence_Criterion]\","
     puts $FileVar "            \"displacement_relative_tolerance\":      [GiD_AccessValue get gendata Displacement_Relative_Tolerance],"
     puts $FileVar "            \"displacement_absolute_tolerance\":      [GiD_AccessValue get gendata Displacement_Absolute_Tolerance],"
