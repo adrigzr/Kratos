@@ -716,7 +716,7 @@ SphericParticle* ParticleCreatorDestructor::SphereCreatorForBreakableClusters(Mo
         
         SphericParticle* spheric_p_particle = dynamic_cast<SphericParticle*> (p_particle.get());
 
-        std::vector<PropertiesProxy>& vector_of_proxies = r_modelpart[VECTOR_OF_PROPERTIES_PROXIES];
+        boost::numeric::ublas::vector<PropertiesProxy>& vector_of_proxies = r_modelpart[VECTOR_OF_PROPERTIES_PROXIES];
         spheric_p_particle->SetFastProperties(vector_of_proxies);
 
         const double density = spheric_p_particle->GetDensity();

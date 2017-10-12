@@ -50,7 +50,7 @@ void ComputeHydrodynamicForces(ModelPart& r_model_part)
 
 private:
 
-std::vector<PropertiesProxy> mFastProperties;
+boost::numeric::ublas::vector<PropertiesProxy> mFastProperties;
 };
 
 }

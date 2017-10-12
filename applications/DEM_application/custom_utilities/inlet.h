@@ -96,7 +96,7 @@ namespace Kratos {
         // with the newly created ones to come. Otherwise, an initial huge indentation could easily happen.
         double mNormalizedMaxIndentationForRelease;
         double mNormalizedMaxIndentationForNewParticleCreation;
-        std::vector<PropertiesProxy> mFastProperties;
+        boost::numeric::ublas::vector<PropertiesProxy> mFastProperties;
         boost::numeric::ublas::vector<bool> mLayerRemoved;
         //std::vector<int> mTotalNumberOfDetachedParticles;
         ModelPart& mInletModelPart; //The model part used to insert elements

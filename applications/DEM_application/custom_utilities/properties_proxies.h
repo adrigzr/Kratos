@@ -137,7 +137,7 @@ namespace Kratos {
     }; // class PropertiesProxy
 
     
-    inline std::ostream & operator<<( std::ostream& rOut, const std::vector<PropertiesProxy>& vector_of_proxies){
+    inline std::ostream & operator<<( std::ostream& rOut, const boost::numeric::ublas::vector<PropertiesProxy>& vector_of_proxies){
             rOut << "";
             return rOut;
     }
@@ -150,7 +150,7 @@ namespace Kratos {
     public:
         KRATOS_CLASS_POINTER_DEFINITION(PropertiesProxiesManager);
         
-        void AddPropertiesProxiesFromModelPartProperties(std::vector<PropertiesProxy>& vector_of_proxies,
+        void AddPropertiesProxiesFromModelPartProperties(boost::numeric::ublas::vector<PropertiesProxy>& vector_of_proxies,
                                                          ModelPart& rModelPart,
                                                          int& properties_counter);  
     
@@ -160,7 +160,7 @@ namespace Kratos {
     
         void CreatePropertiesProxies(ModelPart& r_model_part);
         
-        std::vector<PropertiesProxy>& GetPropertiesProxies(ModelPart& r_model_part);
+        boost::numeric::ublas::vector<PropertiesProxy>& GetPropertiesProxies(ModelPart& r_model_part);
     }; // class PropertiesProxiesManager
     
     

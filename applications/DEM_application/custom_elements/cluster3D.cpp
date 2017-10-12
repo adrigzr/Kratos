@@ -160,7 +160,7 @@ namespace Kratos {
     }
     
     
-    void Cluster3D::SetOrientation(const Quaternion<double> Orientation) {
+    void Cluster3D::SetOrientation(const Quaternion<double>& Orientation) {
         this->GetGeometry()[0].FastGetSolutionStepValue(ORIENTATION) = Orientation;
     }
 

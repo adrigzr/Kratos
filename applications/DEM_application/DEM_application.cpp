@@ -124,7 +124,7 @@ namespace Kratos
   // *************** Continuum only END ***************
 
   // MATERIAL PARAMETERS
-  KRATOS_CREATE_VARIABLE(std::vector<PropertiesProxy>, VECTOR_OF_PROPERTIES_PROXIES)
+  KRATOS_CREATE_VARIABLE(boost::numeric::ublas::vector<PropertiesProxy>, VECTOR_OF_PROPERTIES_PROXIES)
   KRATOS_CREATE_VARIABLE(double, NODAL_MASS_COEFF)
   KRATOS_CREATE_VARIABLE(double, DEM_MAGIC_FACTOR)
   KRATOS_CREATE_VARIABLE(double, DEM_MAGIC_FACTOR_POISSON)

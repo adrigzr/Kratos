@@ -1742,7 +1742,7 @@ void   SphericParticle::SetParticleGammaFromProperties(double* particle_gamma)  
 
 PropertiesProxy* SphericParticle::GetFastProperties()                                    { return mFastProperties;                                                          }
 void   SphericParticle::SetFastProperties(PropertiesProxy* pProps)                       { mFastProperties = pProps;                                                        }
-void   SphericParticle::SetFastProperties(std::vector<PropertiesProxy>& list_of_proxies) {
+void   SphericParticle::SetFastProperties(boost::numeric::ublas::vector<PropertiesProxy>& list_of_proxies) {
     for (unsigned int j = 0; j < list_of_proxies.size(); j++){
         if (list_of_proxies[j].GetId() == GetProperties().Id()) {
             SetFastProperties(&list_of_proxies[j]);

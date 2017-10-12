@@ -138,7 +138,7 @@ namespace Kratos {
         rSerializer.load("mParticleMaterial",mParticleMaterial);*/        
     }
       
-    void PropertiesProxiesManager::AddPropertiesProxiesFromModelPartProperties(std::vector<PropertiesProxy>& vector_of_proxies,
+    void PropertiesProxiesManager::AddPropertiesProxiesFromModelPartProperties(boost::numeric::ublas::vector<PropertiesProxy>& vector_of_proxies,
                                                                       ModelPart& rModelPart,
                                                                       int& properties_counter) {
         
@@ -219,9 +219,9 @@ namespace Kratos {
                                                   ModelPart& clusters_mp) {
         KRATOS_TRY
         
-        balls_mp[VECTOR_OF_PROPERTIES_PROXIES] = std::vector<PropertiesProxy>();
+        balls_mp[VECTOR_OF_PROPERTIES_PROXIES] = boost::numeric::ublas::vector<PropertiesProxy>();
         
-        std::vector<PropertiesProxy>& vector_of_proxies = balls_mp[VECTOR_OF_PROPERTIES_PROXIES];          
+        boost::numeric::ublas::vector<PropertiesProxy>& vector_of_proxies = balls_mp[VECTOR_OF_PROPERTIES_PROXIES];          
         vector_of_proxies.clear();    
         vector_of_proxies.resize( balls_mp.NumberOfProperties() + inlet_mp.NumberOfProperties() + clusters_mp.NumberOfProperties() );
         int properties_counter = 0;
@@ -238,9 +238,9 @@ namespace Kratos {
 
         KRATOS_TRY
         
-        r_model_part[VECTOR_OF_PROPERTIES_PROXIES] = std::vector<PropertiesProxy>();
+        r_model_part[VECTOR_OF_PROPERTIES_PROXIES] = boost::numeric::ublas::vector<PropertiesProxy>();
         
-        std::vector<PropertiesProxy>& vector_of_proxies = r_model_part[VECTOR_OF_PROPERTIES_PROXIES];
+        boost::numeric::ublas::vector<PropertiesProxy>& vector_of_proxies = r_model_part[VECTOR_OF_PROPERTIES_PROXIES];
         vector_of_proxies.clear();    
         vector_of_proxies.resize( r_model_part.NumberOfProperties() );
         int properties_counter = 0;
@@ -251,7 +251,7 @@ namespace Kratos {
         KRATOS_CATCH("")
     }
     
-    std::vector<PropertiesProxy>& PropertiesProxiesManager::GetPropertiesProxies(ModelPart& r_model_part) {
+    boost::numeric::ublas::vector<PropertiesProxy>& PropertiesProxiesManager::GetPropertiesProxies(ModelPart& r_model_part) {
         return r_model_part[VECTOR_OF_PROPERTIES_PROXIES];
     }
     

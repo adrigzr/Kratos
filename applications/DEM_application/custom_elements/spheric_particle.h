@@ -224,7 +224,7 @@ virtual double& GetInelasticViscodampingEnergy();
 
 PropertiesProxy* GetFastProperties();
 void   SetFastProperties(PropertiesProxy* pProps);
-void   SetFastProperties(std::vector<PropertiesProxy>& list_of_proxies);
+void   SetFastProperties(boost::numeric::ublas::vector<PropertiesProxy>& list_of_proxies);
 
 double SlowGetYoung();
 double SlowGetRollingFriction();
