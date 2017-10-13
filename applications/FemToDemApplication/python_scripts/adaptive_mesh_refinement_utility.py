@@ -53,10 +53,10 @@ class AdaptiveMeshRefinementUtility:
         self.gid_path = self.ProjectParameters["AMR_data"]["gid_path"].GetString()
         AMR_info_path = os.path.join(self.problem_path,"AMR_info.txt")
 
-        print("gid", self.gid_path)
+        #print("gid", self.gid_path)
         #print(len(str(self.gid_path)))
         #print("lera",str(self.gid_path)[0])
-        self.gid_path = str(self.gid_path)[:-10]
+        #self.gid_path = str(self.gid_path)[:-10]
         #print("gid", self.gid_path)
         Wait()
         activate_AMR = True
@@ -128,7 +128,6 @@ class AdaptiveMeshRefinementUtility:
                 for i in range(self.last_refinement_id,current_id+1):
                     #os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.msh")
                     #os.system("move "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.res")
-                    
                     src_mesh = os.path.join(self.problem_path, str(problem_name) + "_" + str(i) + ".post.msh")
                     src_res  = os.path.join(self.problem_path, str(problem_name) + "_" + str(i) + ".post.res")
                     dst_mesh = os.path.join(self.AMR_files_path, str(problem_name) + "_results_mesh_"+  str(self.n_refinements) + "_step_" + str(i) + ".post.msh")
@@ -188,7 +187,7 @@ class AdaptiveMeshRefinementUtility:
                                                          self.n_refinements).Execute()
                 Wait()
 
-                # move the posts of the amr to the AMR folder
+                # Move the posts of the amr to the AMR_folder
                 src_mesh = os.path.join(self.problem_path, str(problem_name)   + "_AMR_parameters.post.msh")
                 src_res  = os.path.join(self.problem_path, str(problem_name)   + "_AMR_parameters.post.res")
                 dst_mesh = os.path.join(self.AMR_files_path, str(problem_name) + "_AMR_parameters_mesh_" + str(self.n_refinements) + ".post.msh")
@@ -207,17 +206,22 @@ class AdaptiveMeshRefinementUtility:
             
             print("despues execute after output step")
             Wait()
-            #------------------------------------------------------------------->> Aqui estamos
+            
 
             # GID GENERATE THE NEW MESH BASED ON THE BACKGROUND MESH  ----> TODO
             #os.system("cd " + str(self.gid_path) + " && ./gid -b "+ str(self.problem_path)+"/"+str(problem_name)+".bch -n")
             #os.system("cd && mv "+str(self.problem_path)+"/"+str(problem_name)+".dat "+str(self.problem_path)+"/"+str(problem_name)+".mdpa && rm "+str(self.problem_path)+"/"+str(problem_name)+"-1.dat")
             
             # Execute .bch file with GiD 
-            #os.system("cd " + str(self.gid_path) " && gid -b " + os.path.join(self.problem_path, str(problem_name) + ".bch -n"))
+            os.system("cd " + str(self.gid_path[:-8]) + " && gid -b " + os.path.join(self.problem_path, str(problem_name) + ".bch -n"))
+            print("despues de gid commands gid path: ", self.gid_path[:-8])
+            Wait()            
             #shutil.move(os.path.join(str(self.problem_path), str(problem_name) + ".dat" ) , os.path.join(str(self.problem_path), str(problem_name) + ".mdpa"))
             #shutil.rmtree(os.path.join(str(self.problem_path), str(problem_name)+"-1.dat"))
             
+            print("despues de removees")
+            Wait()
+            #------------------------------------------------------------------->> Aqui estamos
             
             ## Finalize previous mesh ---------------------------------------------------------------------------------------
             

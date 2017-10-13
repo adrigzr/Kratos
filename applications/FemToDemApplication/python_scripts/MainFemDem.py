@@ -332,7 +332,7 @@ class FEM_Solution(MainSolidFEM.Solution):
 					                                                                                    self.time,
 					                                                                                    self.current_id)
 			elif(self.last_mesh):
-				self.AMR_util.Finalize(self.model_part,self.current_id)
+				self.AMR_util.Finalize(self.main_model_part,self.current_id)
 
 		#print("despues de solve sol step  / execute")
 		#Wait()

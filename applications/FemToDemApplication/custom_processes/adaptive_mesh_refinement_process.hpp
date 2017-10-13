@@ -575,8 +575,9 @@ protected:
         batchfile << "Yes" << std::endl;
         batchfile << GlobalDimension << " MeshingParametersFrom=Preferences" << std::endl;
         batchfile << "Mescape Meshing MeshView" << std::endl;
+        batchfile << "Mescape Utilities Calculate" << std::endl; //added
 		batchfile << "Mescape Files WriteCalcFile" << std::endl;
-		batchfile << mproblem_path + "\\" + mproblem_name + ".dat" << std::endl;
+		//batchfile << mproblem_path + "\\" + mproblem_name + ".dat" << std::endl;
         batchfile << "escape escape escape escape escape Quit" << std::endl;
         batchfile << "No" << std::endl;
       
