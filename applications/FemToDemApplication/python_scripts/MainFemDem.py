@@ -262,7 +262,7 @@ class FEM_Solution(MainSolidFEM.Solution):
 #============================================================================================================================
 	def InitializeSolutionStep(self):
 
-		neighbour_elemental_finder =  KratosMultiphysics.FindElementalNeighboursProcess(self.main_model_part,2, 5)
+		neighbour_elemental_finder =  KratosMultiphysics.FindElementalNeighboursProcess(self.main_model_part, 2, 5)
 		neighbour_elemental_finder.Execute()
 
 		self.delta_time = self.main_model_part.ProcessInfo[KratosMultiphysics.DELTA_TIME]
@@ -322,17 +322,7 @@ class FEM_Solution(MainSolidFEM.Solution):
 		# Adaptive Mesh Refinement
 		#print("solve sol step",self.activate_AMR )
 		#Wait()
-		if(self.activate_AMR):
-			self.refine, self.last_mesh = self.AMR_util.CheckAMR(self.time)
-			if(self.refine):
-				# aqui estamos
-				self.main_model_part,self.main_step_solver,self.gid_output_util = self.AMR_util.Execute(self.main_model_part,
-					                                                                                    self.solver,
-					                                                                                    self.gid_output_util,
-					                                                                                    self.time,
-					                                                                                    self.current_id)
-			elif(self.last_mesh):
-				self.AMR_util.Finalize(self.main_model_part,self.current_id)
+
 
 		#print("despues de solve sol step  / execute")
 		#Wait()
@@ -357,7 +347,21 @@ class FEM_Solution(MainSolidFEM.Solution):
 		# processes to be executed after witting the output
 		self.model_processes.ExecuteAfterOutputStep()
 
+		# Eliminates elements with damage > 0.98
 		self.main_model_part.RemoveElementsFromAllLevels(KratosMultiphysics.TO_ERASE)
+
+		if(self.activate_AMR):
+			self.refine, self.last_mesh = self.AMR_util.CheckAMR(self.time)
+			if(self.refine):
+				self.main_model_part, self.main_step_solver, self.gid_output_util = self.AMR_util.Execute(self.main_model_part,
+					                                                                                    self.solver,
+					                                                                                    self.gid_output_util,
+					                                                                                    self.time,
+					                                                                                    self.current_id)
+			elif(self.last_mesh):
+				self.AMR_util.Finalize(self.main_model_part,self.current_id)
+
+
 
 #============================================================================================================================
 	def Finalize(self):
@@ -440,6 +444,30 @@ class FEM_Solution(MainSolidFEM.Solution):
 
 if __name__ == "__main__": 
 	Solution().Run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
