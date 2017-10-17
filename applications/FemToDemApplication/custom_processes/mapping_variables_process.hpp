@@ -250,7 +250,7 @@ protected:
         double Tolerance = 1e-4;
         bool IsInside;
         
-        //Locate new nodes inside old elements and interpolate displacements.
+        //Locate new nodes inside old elements and interpolate displacements.  ->> TODO Velocities and accelerations
         //Triangles2D3N
         if((*mmodel_part_old.Elements().ptr_begin())->GetGeometry().PointsNumber() == 3)
         {
@@ -537,30 +537,30 @@ protected:
         double IntegrationCoefficient, StateVariable, Numerator, WeightingFunctionDenominator;
         for(unsigned int i=0; i < GaussPointNewVector.size(); i++)
         {
-            Me = GaussPointNewVector[i]->pConstitutiveLaw;
+            Me   = GaussPointNewVector[i]->pConstitutiveLaw;
             X_me = GaussPointNewVector[i]->X_coord;
             Y_me = GaussPointNewVector[i]->Y_coord;
-            Row = GaussPointNewVector[i]->Row;
+            Row  = GaussPointNewVector[i]->Row;
             Column = GaussPointNewVector[i]->Column;
             Numerator = 0.0;
             WeightingFunctionDenominator = 0.0;
             
             //Search in my cell
-            for(unsigned int j=0; j<pGaussPointOldMatrix[Row][Column].GaussPointOldVector.size(); j++)
+            for(unsigned int j = 0; j < pGaussPointOldMatrix[Row][Column].GaussPointOldVector.size(); j++)
             {
-                Other = pGaussPointOldMatrix[Row][Column].GaussPointOldVector[j].pConstitutiveLaw;
+                Other   = pGaussPointOldMatrix[Row][Column].GaussPointOldVector[j].pConstitutiveLaw;
                 X_other = pGaussPointOldMatrix[Row][Column].GaussPointOldVector[j].X_coord;
                 Y_other = pGaussPointOldMatrix[Row][Column].GaussPointOldVector[j].Y_coord;
         
-                Distance = sqrt((X_other-X_me)*(X_other-X_me) + (Y_other-Y_me)*(Y_other-Y_me));
+                Distance = sqrt((X_other - X_me) * (X_other - X_me) + (Y_other - Y_me) * (Y_other - Y_me));
 
                 if(Distance <= rCharacteristicLength) //TODO: es podria calcular amb tots els de la teva cel·la...
                 {
                     IntegrationCoefficient = Other->GetValue(INTEGRATION_COEFFICIENT,IntegrationCoefficient);
                     StateVariable = Other->GetValue(STATE_VARIABLE,StateVariable);
 
-                    Numerator += IntegrationCoefficient*exp(-4*Distance*Distance/(rCharacteristicLength*rCharacteristicLength))*StateVariable;
-                    WeightingFunctionDenominator += IntegrationCoefficient*exp(-4*Distance*Distance/(rCharacteristicLength*rCharacteristicLength));
+                    Numerator += IntegrationCoefficient * exp(-4 * Distance * Distance / (rCharacteristicLength * rCharacteristicLength)) * StateVariable;
+                    WeightingFunctionDenominator += IntegrationCoefficient * exp(-4 * Distance * Distance / (rCharacteristicLength * rCharacteristicLength));
                 }
             }
             
