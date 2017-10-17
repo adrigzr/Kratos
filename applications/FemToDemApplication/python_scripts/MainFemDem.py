@@ -347,7 +347,7 @@ class FEM_Solution(MainSolidFEM.Solution):
 		# processes to be executed after witting the output
 		self.model_processes.ExecuteAfterOutputStep()
 
-		# Eliminates elements with damage > 0.98
+		# Eliminates elements from the mesh with damage > 0.98
 		self.main_model_part.RemoveElementsFromAllLevels(KratosMultiphysics.TO_ERASE)
 
 		if(self.activate_AMR):

@@ -207,15 +207,15 @@ protected:
                 else if( Y_me < Y_bot ){Y_bot = Y_me;}
             }
             
-            Column_left = int((X_left-X_min)/ColumnSize);
-            Column_right = int((X_right-X_min)/ColumnSize);
-            Row_top = int((Y_max-Y_top)/RowSize);
-            Row_bot = int((Y_max-Y_bot)/RowSize);
+            Column_left = int((X_left - X_min) / ColumnSize);
+            Column_right = int((X_right - X_min) / ColumnSize);
+            Row_top = int((Y_max - Y_top) / RowSize);
+            Row_bot = int((Y_max - Y_bot) / RowSize);
 
-            if(Column_left == NColumns)  Column_left = NColumns-1;
-            if(Column_right == NColumns)  Column_right = NColumns-1;
-            if(Row_top == NRows)  Row_top = NRows-1;
-            if(Row_bot == NRows)  Row_bot = NRows-1;
+            if(Column_left == NColumns)  Column_left = NColumns - 1;
+            if(Column_right == NColumns)  Column_right = NColumns - 1;
+            if(Row_top == NRows)  Row_top = NRows - 1;
+            if(Row_bot == NRows)  Row_bot = NRows - 1;
 
             for(int i = Row_top; i <= Row_bot; i++)
             {
@@ -235,13 +235,13 @@ protected:
             X_me = i->X0();
             Y_me = i->Y0();
 
-            Row = int((Y_max-Y_me)/RowSize);
-            Column = int((X_me-X_min)/ColumnSize);
+            Row = int((Y_max - Y_me) / RowSize);
+            Column = int((X_me - X_min) / ColumnSize);
 
-            if(Column == NColumns) Column = NColumns-1;
-            if(Row == NRows) Row = NRows-1;
+            if(Column == NColumns) Column = NColumns - 1;
+            if(Row == NRows) Row = NRows - 1;
             
-            NodeNewVector.push_back(new NodeNew((*i),Row,Column));
+            NodeNewVector.push_back(new NodeNew((*i), Row, Column));
         }
 
         Element::Pointer pElementOld;
@@ -250,16 +250,16 @@ protected:
         double Tolerance = 1e-4;
         bool IsInside;
         
-        //Locate new nodes inside old elements and interpolate displacments.
+        //Locate new nodes inside old elements and interpolate displacements.
         //Triangles2D3N
-        if((*mmodel_part_old.Elements().ptr_begin())->GetGeometry().PointsNumber()==3)
+        if((*mmodel_part_old.Elements().ptr_begin())->GetGeometry().PointsNumber() == 3)
         {
             ElementDisplacements = ZeroVector(3);
             for(unsigned int i = 0; i < NodeNewVector.size(); i++)
             {
                 Element::GeometryType::PointType& NodeNew_i = NodeNewVector[i]->rNode;
-                Row = NodeNewVector[i]->Row;
-                Column = NodeNewVector[i]->Column;
+                Row = NodeNewVector[i] -> Row;
+                Column = NodeNewVector[i] -> Column;
                 const Element::GeometryType::CoordinatesArrayType NodeGlobalCoordinates = NodeNew_i.Coordinates(); //Coordinates of new nodes are still in the original position
                 IsInside = false;
                 
@@ -270,7 +270,7 @@ protected:
                     if(IsInside)  break;                                                                        
                 }
         
-                if(IsInside==false) //TODO: cal??
+                if(IsInside == false) //TODO: cal??
                 {
                     for(unsigned int j = 0; j < ElementOldMatrix[Row][Column].ElementOldVector.size(); j++)
                     {
@@ -282,7 +282,7 @@ protected:
         
                 ElementShapeFunctions = this->TriangleShapeFunctions(NodeLocalCoordinates[0],NodeLocalCoordinates[1]);
         
-                if( (NodeNew_i.pGetDof(DISPLACEMENT_X))->IsFixed()==false )
+                if( (NodeNew_i.pGetDof(DISPLACEMENT_X))->IsFixed() == false )
                 {
                     ElementDisplacements[0] = pElementOld->GetGeometry().GetPoint(0).FastGetSolutionStepValue(DISPLACEMENT)[0];
                     ElementDisplacements[1] = pElementOld->GetGeometry().GetPoint(1).FastGetSolutionStepValue(DISPLACEMENT)[0];
@@ -290,9 +290,9 @@ protected:
                     NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[0] = inner_prod(ElementShapeFunctions,ElementDisplacements);
                 }
                 else if( mImposedDisplacement == "Linearly_Incremented" )
-                    NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[0] = mmodel_part_old.GetProcessInfo()[TIME_STEPS]*NodeNew_i.FastGetSolutionStepValue(IMPOSED_DISPLACEMENT)[0];
+                    NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[0] = mmodel_part_old.GetProcessInfo()[TIME_STEPS] * NodeNew_i.FastGetSolutionStepValue(IMPOSED_DISPLACEMENT)[0];
                 
-                if( (NodeNew_i.pGetDof(DISPLACEMENT_Y))->IsFixed()==false )
+                if( (NodeNew_i.pGetDof(DISPLACEMENT_Y))->IsFixed() == false )
                 {
                     ElementDisplacements[0] = pElementOld->GetGeometry().GetPoint(0).FastGetSolutionStepValue(DISPLACEMENT)[1];
                     ElementDisplacements[1] = pElementOld->GetGeometry().GetPoint(1).FastGetSolutionStepValue(DISPLACEMENT)[1];
@@ -300,7 +300,7 @@ protected:
                     NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[1] = inner_prod(ElementShapeFunctions,ElementDisplacements);
                 }
                 else if( mImposedDisplacement == "Linearly_Incremented" )
-                    NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[1] = mmodel_part_old.GetProcessInfo()[TIME_STEPS]*NodeNew_i.FastGetSolutionStepValue(IMPOSED_DISPLACEMENT)[1];
+                    NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[1] = mmodel_part_old.GetProcessInfo()[TIME_STEPS] * NodeNew_i.FastGetSolutionStepValue(IMPOSED_DISPLACEMENT)[1];
             }
         }
         else //Quadrilateral2D4N
@@ -333,7 +333,7 @@ protected:
         
                 ElementShapeFunctions = this->QuadrilateralShapeFunctions(NodeLocalCoordinates[0],NodeLocalCoordinates[1]);
         
-                if( (NodeNew_i.pGetDof(DISPLACEMENT_X))->IsFixed()==false )
+                if( (NodeNew_i.pGetDof(DISPLACEMENT_X))->IsFixed() == false )
                 {
                     ElementDisplacements[0] = pElementOld->GetGeometry().GetPoint(0).FastGetSolutionStepValue(DISPLACEMENT)[0];
                     ElementDisplacements[1] = pElementOld->GetGeometry().GetPoint(1).FastGetSolutionStepValue(DISPLACEMENT)[0];
@@ -406,11 +406,11 @@ protected:
         Element::GeometryType::CoordinatesArrayType GPGlobalCoord;
         std::vector<GaussPointNew*> GaussPointNewVector;
 
-        int NRows = int((Y_max-Y_min)/(rCharacteristicLength*2));
-        int NColumns = int((X_max-X_min)/(rCharacteristicLength*2));
+        int NRows = int((Y_max - Y_min) / (rCharacteristicLength * 2));
+        int NColumns = int((X_max - X_min) / (rCharacteristicLength * 2));
     
-        double RowSize = (Y_max-Y_min)/NRows;
-        double ColumnSize = (X_max-X_min)/NColumns;
+        double RowSize = (Y_max - Y_min) / NRows;
+        double ColumnSize = (X_max - X_min) / NColumns;
 
         GaussPointOldCell** pGaussPointOldMatrix;
         pGaussPointOldMatrix = new GaussPointOldCell*[NRows];
@@ -418,11 +418,11 @@ protected:
         
         //Locate old Gauss points in cells
         //Triangles2D3N
-        if((*mmodel_part_old.Elements().ptr_begin())->GetGeometry().PointsNumber()==3)
+        if((*mmodel_part_old.Elements().ptr_begin())->GetGeometry().PointsNumber() == 3)
         {
             // GP local coordinates
-            Trian_GPLocalCoord[0] = 1/3;
-            Trian_GPLocalCoord[1] = 1/3;
+            Trian_GPLocalCoord[0] = 1 / 3;
+            Trian_GPLocalCoord[1] = 1 / 3;
             const Element::GeometryType::CoordinatesArrayType GPLocalCoord = Trian_GPLocalCoord;
             
             for(ElementsArrayType::ptr_iterator it = mmodel_part_old.Elements().ptr_begin(); it != mmodel_part_old.Elements().ptr_end(); ++it)
@@ -434,13 +434,13 @@ protected:
                 X_me = GPGlobalCoord[0];
                 Y_me = GPGlobalCoord[1];
 
-                Row = int((Y_max-Y_me)/RowSize);
-                Column = int((X_me-X_min)/ColumnSize);
+                Row    = int((Y_max - Y_me) / RowSize);
+                Column = int((X_me - X_min) / ColumnSize);
 
-                if(Row==NRows) Row = NRows-1;
-                if(Column==NColumns) Column = NColumns-1;
+                if(Row == NRows) Row = NRows - 1;
+                if(Column == NColumns) Column = NColumns-1;
 
-                pGaussPointOldMatrix[Row][Column].GaussPointOldVector.push_back(GaussPointOld(ConstitutiveLawVector[0],X_me,Y_me));
+                pGaussPointOldMatrix[Row][Column].GaussPointOldVector.push_back(GaussPointOld(ConstitutiveLawVector[0], X_me, Y_me));
             }
         }
         else //Quadrilateral2D4N
@@ -498,11 +498,11 @@ protected:
                 X_me = GPGlobalCoord[0];
                 Y_me = GPGlobalCoord[1];
 
-                Row = int((Y_max-Y_me)/RowSize);
-                Column = int((X_me-X_min)/ColumnSize);
+                Row = int((Y_max - Y_me) / RowSize);
+                Column = int((X_me - X_min) / ColumnSize);
 
-                if(Row==NRows) Row = NRows-1;
-                if(Column==NColumns) Column = NColumns-1;
+                if(Row == NRows) Row = NRows - 1;
+                if(Column == NColumns) Column = NColumns - 1;
 
                 GaussPointNewVector.push_back(new GaussPointNew(ConstitutiveLawVector[0],X_me, Y_me,Row,Column));
             }
