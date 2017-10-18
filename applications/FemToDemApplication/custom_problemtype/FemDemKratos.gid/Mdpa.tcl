@@ -47,6 +47,7 @@ proc WriteMdpa { basename dir problemtypedir } {
         puts $FileVar "    YIELD_STRESS_T           [lindex [lindex $Groups $i] 10]"
         puts $FileVar "    FRAC_ENERGY_T            [lindex [lindex $Groups $i] 11]"
         puts $FileVar "    INTERNAL_FRICTION_ANGLE  [lindex [lindex $Groups $i] 12]"
+		puts $FileVar "    CHARACTERISTIC_LENGTH    [lindex [lindex $Groups $i] 15]"
         puts $FileVar ""
         puts $FileVar "// DYNAMIC PARAMETERS  D = alpha*M + beta*K"
         puts $FileVar "    RAYLEIGH_BETA            [lindex [lindex $Groups $i] 13]"

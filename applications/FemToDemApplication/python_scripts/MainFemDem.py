@@ -64,6 +64,11 @@ class FEM_Solution(MainSolidFEM.Solution):
 		# Defining the model_part
 		self.main_model_part = KratosMultiphysics.ModelPart(self.ProjectParameters["problem_data"]["model_part_name"].GetString())
 
+		if (self.ProjectParameters["solver_settings"]["solution_type"].GetString() == "Dynamic"):
+			self.main_model_part.ProcessInfo.SetValue(KratosFemDem.IS_DYNAMIC, 1)
+		else:
+			self.main_model_part.ProcessInfo.SetValue(KratosFemDem.IS_DYNAMIC, 0)
+
 		self.time_step  = self.ProjectParameters["problem_data"]["time_step" ].GetDouble()
 		self.start_time = self.ProjectParameters["problem_data"]["start_time"].GetDouble()
 		self.end_time   = self.ProjectParameters["problem_data"]["end_time"  ].GetDouble()

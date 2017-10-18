@@ -7,7 +7,7 @@
 //  License:		 BSD License
 //					 Kratos default license: kratos/license.txt
 //
-//  Main authors:    Alejandro Cornejo Velázquez
+//  Main authors:    Alejandro Cornejo Velï¿½zquez
 //
 
 #if !defined(KRATOS_FEM_TO_DEM_APPLICATION_VARIABLES_H_INCLUDED )
@@ -42,7 +42,9 @@ namespace Kratos
 	KRATOS_DEFINE_VARIABLE(bool, TANGENT_CONSTITUTIVE_TENSOR);
 	KRATOS_DEFINE_VARIABLE(bool, SMOOTHING);
 	KRATOS_DEFINE_VARIABLE(double, IS_DAMAGED);
-	
+	KRATOS_DEFINE_VARIABLE(double, CHARACTERISTIC_LENGTH);
+	KRATOS_DEFINE_VARIABLE(int, MESH_REFINED);
+	KRATOS_DEFINE_VARIABLE(int, IS_DYNAMIC);
 }
 
 #endif	/* KRATOS_FEM_TO_DEM_APPLICATION_VARIABLES_H_INCLUDED */

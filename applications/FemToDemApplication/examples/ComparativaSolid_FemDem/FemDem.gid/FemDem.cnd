@@ -34,6 +34,9 @@ HELP: D = R_alpha*M + r_beta*K
 QUESTION: Rayleigh_Alpha
 VALUE: 0.00
 HELP: D = R_alpha*M + r_beta*K
+QUESTION: Characteristic_length
+VALUE: 0.02
+HELP: Units in IS: m // Radius of the averaged mapping circle
 END CONDITION
 BOOK:Dirichlet_Constraints
 NUMBER: 2 CONDITION: Solid_Displacement
@@ -225,7 +228,7 @@ NUMBER: 6 CONDITION: Body_Acceleration
 CONDTYPE: over group
 GROUPALLOW: surfaces
 QUESTION: Modulus
-VALUE: 0.0
+VALUE: 9.81
 HELP: If it is a function write the expression between ""
 QUESTION: BODY_ACCELERATION_X#CB#(true,false)
 VALUE: false
@@ -242,7 +245,7 @@ QUESTION: BODY_ACCELERATION_Y#CB#(true,false)
 VALUE: true
 DEPENDENCIES: (false,HIDE,Y_Value,0.0,HIDE,Imposed_Body_Acceleration_Y,Constant)(true,RESTORE,Y_Value,#CURRENT#,RESTORE,Imposed_Body_Acceleration_Y,#CURRENT#)
 QUESTION: Y_Value
-VALUE: 0.0
+VALUE: -1.0
 HELP: Units in IS: m/s2
 QUESTION: Imposed_Body_Acceleration_Y#CB#(Constant,Table_Interpolation)
 VALUE: Constant

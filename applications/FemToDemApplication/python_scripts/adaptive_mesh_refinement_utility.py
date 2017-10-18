@@ -247,7 +247,7 @@ class AdaptiveMeshRefinementUtility:
 
 
             ###TODO replace this "model" for real one once available in kratos core
-		    self.Model = {self.ProjectParameters["problem_data"]["model_part_name"].GetString() : model_part}
+            self.Model = {self.ProjectParameters["problem_data"]["model_part_name"].GetString() : model_part}
 
             #construct the solver (main setting methods are located in the solver_module)
             solver_module = __import__(self.ProjectParameters["solver_settings"]["solver_type"].GetString())
@@ -261,10 +261,10 @@ class AdaptiveMeshRefinementUtility:
 
             # Add dofs (always after importing the model part)
             if((model_part.ProcessInfo).Has(KratosMultiphysics.IS_RESTARTED)):
-	            if(model_part.ProcessInfo[KratosMultiphysics.IS_RESTARTED] == False):
-		            main_step_solver.AddDofs()
+                if(model_part.ProcessInfo[KratosMultiphysics.IS_RESTARTED] == False):
+                    main_step_solver.AddDofs()
             else:
-	            main_step_solver.AddDofs()
+                main_step_solver.AddDofs()
 
             # Add materials (assign material to model_parts if Materials.json exists)
             self.AddMaterials(model_part)
@@ -273,28 +273,28 @@ class AdaptiveMeshRefinementUtility:
             self.model_processes = self.AddProcesses(model_part)
             self.model_processes.ExecuteInitialize()
 
-		    #### START SOLUTION ####
+            #### START SOLUTION ####
 
-		    self.computing_model_part = main_step_solver.GetComputingModelPart()
-		
-		    ## Sets strategies, builders, linear solvers, schemes and solving info, and fills the buffer
-		    main_step_solver.Initialize()
+            self.computing_model_part = main_step_solver.GetComputingModelPart()
 
-		    neighbour_elemental_finder =  KratosMultiphysics.FindElementalNeighboursProcess(model_part, 2, 5)
-		    neighbour_elemental_finder.Execute()
+            ## Sets strategies, builders, linear solvers, schemes and solving info, and fills the buffer
+            main_step_solver.Initialize()
+
+            neighbour_elemental_finder =  KratosMultiphysics.FindElementalNeighboursProcess(model_part, 2, 5)
+            neighbour_elemental_finder.Execute()
 
             model_part.ProcessInfo[KratosMultiphysics.STEP] += 1
-		    self.main_model_part.CloneTimeStep(current_time) 
+            self.main_model_part.CloneTimeStep(current_time) 
 # cornejo ----------------------------------------------------------------------
 
 
 
             # Definition of output utility
             gid_output_util = self.gid_output_utility.GidOutputUtility(self.ProjectParameters,
-            	                                                                 problem_name,
-            	                                                                 current_time,
-            	                                                                 self.ending_time,
-            	                                                                 self.delta_time)
+                                                                                 problem_name,
+                                                                                 current_time,
+                                                                                 self.ending_time,
+                                                                                 self.delta_time)
             
             
             model_part.ProcessInfo[MESH_REFINED] = 1
@@ -382,52 +382,52 @@ class AdaptiveMeshRefinementUtility:
 
 # copy of the main ============================================================================================================================        
 
-	def AddMaterials(self, main_model_part):
+    def AddMaterials(self, main_model_part):
 
-		# Assign material to model_parts (if Materials.json exists)
-		import process_factory
+        # Assign material to model_parts (if Materials.json exists)
+        import process_factory
 
-		if os.path.isfile("Materials.json"):
-			materials_file = open("Materials.json",'r')
-			MaterialParameters = KratosMultiphysics.Parameters(materials_file.read())
+        if os.path.isfile("Materials.json"):
+            materials_file = open("Materials.json",'r')
+            MaterialParameters = KratosMultiphysics.Parameters(materials_file.read())
 
-			if(MaterialParameters.Has("material_models_list")):
+            if(MaterialParameters.Has("material_models_list")):
 
-				## Get the list of the model_part's in the object Model
-				for i in range(self.ProjectParameters["solver_settings"]["problem_domain_sub_model_part_list"].size()):
-					part_name = self.ProjectParameters["solver_settings"]["problem_domain_sub_model_part_list"][i].GetString()
-					if(main_model_part.HasSubModelPart(part_name) ):
-						self.Model.update({part_name: main_model_part.GetSubModelPart(part_name)})
+                ## Get the list of the model_part's in the object Model
+                for i in range(self.ProjectParameters["solver_settings"]["problem_domain_sub_model_part_list"].size()):
+                    part_name = self.ProjectParameters["solver_settings"]["problem_domain_sub_model_part_list"][i].GetString()
+                    if(main_model_part.HasSubModelPart(part_name) ):
+                        self.Model.update({part_name: main_model_part.GetSubModelPart(part_name)})
 
 
-				assign_materials_processes = process_factory.KratosProcessFactory(self.Model).ConstructListOfProcesses( MaterialParameters["material_models_list"] )
+                assign_materials_processes = process_factory.KratosProcessFactory(self.Model).ConstructListOfProcesses( MaterialParameters["material_models_list"] )
 
-			for process in assign_materials_processes:
-				process.Execute()
-		else:
-			print(" No Materials.json found ")
+            for process in assign_materials_processes:
+                process.Execute()
+        else:
+            print(" No Materials.json found ")
 
 #============================================================================================================================
 
-	def AddProcesses(self, main_model_part):
+    def AddProcesses(self, main_model_part):
 
-		# Build sub_model_parts or submeshes (rearrange parts for the application of custom processes)
-		## Get the list of the submodel part in the object Model
-		for i in range(self.ProjectParameters["solver_settings"]["processes_sub_model_part_list"].size()):
-			part_name = self.ProjectParameters["solver_settings"]["processes_sub_model_part_list"][i].GetString()
-			if(main_model_part.HasSubModelPart(part_name) ):
-				self.Model.update({part_name: main_model_part.GetSubModelPart(part_name)})
-		
-		# Obtain the list of the processes to be applied
-		import process_handler
+        # Build sub_model_parts or submeshes (rearrange parts for the application of custom processes)
+        ## Get the list of the submodel part in the object Model
+        for i in range(self.ProjectParameters["solver_settings"]["processes_sub_model_part_list"].size()):
+            part_name = self.ProjectParameters["solver_settings"]["processes_sub_model_part_list"][i].GetString()
+            if(main_model_part.HasSubModelPart(part_name) ):
+                self.Model.update({part_name: main_model_part.GetSubModelPart(part_name)})
+        
+        # Obtain the list of the processes to be applied
+        import process_handler
 
-		process_parameters = KratosMultiphysics.Parameters("{}") 
-		process_parameters.AddValue("echo_level", self.ProjectParameters["problem_data"]["echo_level"])
-		process_parameters.AddValue("constraints_process_list", self.ProjectParameters["constraints_process_list"])
-		process_parameters.AddValue("loads_process_list", self.ProjectParameters["loads_process_list"])
-		if( self.ProjectParameters.Has("problem_process_list") ):
-			process_parameters.AddValue("problem_process_list", self.ProjectParameters["problem_process_list"])
-		if( self.ProjectParameters.Has("output_process_list") ):
-			process_parameters.AddValue("output_process_list", self.ProjectParameters["output_process_list"])
+        process_parameters = KratosMultiphysics.Parameters("{}") 
+        process_parameters.AddValue("echo_level", self.ProjectParameters["problem_data"]["echo_level"])
+        process_parameters.AddValue("constraints_process_list", self.ProjectParameters["constraints_process_list"])
+        process_parameters.AddValue("loads_process_list", self.ProjectParameters["loads_process_list"])
+        if( self.ProjectParameters.Has("problem_process_list") ):
+            process_parameters.AddValue("problem_process_list", self.ProjectParameters["problem_process_list"])
+        if( self.ProjectParameters.Has("output_process_list") ):
+            process_parameters.AddValue("output_process_list", self.ProjectParameters["output_process_list"])
 
-		return (process_handler.ProcessHandler(self.Model, process_parameters))
+        return (process_handler.ProcessHandler(self.Model, process_parameters))

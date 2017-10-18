@@ -185,10 +185,14 @@ namespace Kratos
 		void SetIntegratedStressVector(Vector toIntegratedStressVector) { toIntegratedStressVector.resize(3);IntegratedStressVector = toIntegratedStressVector; }
 		Vector GetIntegratedStressVector() { return IntegratedStressVector; }
 
-		void SetBMatrix(Matrix toBMatrix) { toBMatrix.resize(3, 6);B = toBMatrix; }
+		void SetBMatrix(Matrix toBMatrix) { toBMatrix.resize(3, 6); B = toBMatrix; }
 		Matrix GetBMatrix(){ return B; }
 
 		void CalculateDeformationMatrix(Matrix& rB, const Matrix& rDN_DX);
+
+		void SetIntegrationCoefficient(double tomIntegrationCoefficient){ mIntegrationCoefficient = tomIntegrationCoefficient; }
+		double GetIntegrationCoefficient(){ return mIntegrationCoefficient; }
+		
 	private:
 		int iteration = 0;
 
@@ -216,6 +220,7 @@ namespace Kratos
 		Matrix B = ZeroMatrix(3, 6);
 
 		double Jac = 0.0;
+		double mIntegrationCoefficient
 	};// Class AleCornVelElement
 	
 }// Namespace Kratos

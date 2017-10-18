@@ -90,13 +90,14 @@ namespace Kratos
 	{
 		double CurrentfSigma = 0.0, damage_element = 0.0;
 		
-			for (int cont = 0;cont < 3;cont++)
+			//Loop over edges
+			for (int cont = 0; cont < 3; cont++)
 			{
 				this->Set_Convergeddamages(this->Get_NonConvergeddamages(cont), cont);
 				this->SetConverged_f_sigmas(this->Get_NonConvergedf_sigma(cont), cont);
 				CurrentfSigma = this->GetConverged_f_sigmas(cont);
 				if (CurrentfSigma > this->Get_threshold(cont)) { this->Set_threshold(CurrentfSigma, cont); }
-			} // Loop over edges
+			} // End Loop over edges
 
 			damage_element = this->Get_NonConvergeddamage();
 			this->Set_Convergeddamage(damage_element);
@@ -104,11 +105,6 @@ namespace Kratos
 			if (damage_element > 0.0) 
 			{
 				this->SetValue(IS_DAMAGED, 1);
-				//KRATOS_WATCH(this->Id())
-				//KRATOS_WATCH(this->GetValue(IS_DAMAGED))
-				//KRATOS_WATCH(this->GetValue(IS_DAMAGED))
-				//KRATOS_WATCH(this->Id())
-				//std::cout << "  " << std::endl;
 			}
 			
 			if (damage_element >= 0.98)
@@ -212,7 +208,7 @@ namespace Kratos
 
 			//CALL THE CONSTITUTIVE LAW (for this integration point)
 			//(after calling the constitutive law StressVector and ConstitutiveMatrix are set and can be used)
-			mConstitutiveLawVector[PointNumber]->CalculateMaterialResponseCauchy(Values);  // TODO -> must be independent from CL
+			mConstitutiveLawVector[PointNumber]->CalculateMaterialResponseCauchy(Values);  
 			//this->SetStressVector(Values.GetStressVector());
 			this->SetValue(STRESS_VECTOR, Values.GetStressVector());
 
@@ -265,6 +261,7 @@ namespace Kratos
 
 			double IntegrationWeight = integration_points[PointNumber].Weight() * detJ;
 			if (dimension == 2) IntegrationWeight *= GetProperties()[THICKNESS];
+			this->SetIntegrationCoefficient(IntegrationWeight)
 
 			Matrix B = ZeroMatrix(voigt_size, dimension*number_of_nodes);
 			B = this->GetBMatrix();
