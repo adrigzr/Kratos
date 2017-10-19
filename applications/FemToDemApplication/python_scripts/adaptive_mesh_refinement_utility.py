@@ -219,9 +219,6 @@ class AdaptiveMeshRefinementUtility:
             #shutil.move(os.path.join(str(self.problem_path), str(problem_name) + ".dat" ) , os.path.join(str(self.problem_path), str(problem_name) + ".mdpa"))
             #shutil.rmtree(os.path.join(str(self.problem_path), str(problem_name)+"-1.dat"))
             
-            print("despues de removees")
-            Wait()
-           
             
             ## Finalize previous mesh ---------------------------------------------------------------------------------------
             
@@ -240,19 +237,33 @@ class AdaptiveMeshRefinementUtility:
             delta_time = self.ProjectParameters["problem_data"]["time_step" ].GetDouble()
             current_time += delta_time
 
-            model_part = KratosMultiphysics.ModelPart(self.ProjectParameters["problem_data"]["model_part_name"].GetString())
-            model_part.ProcessInfo.SetValue(KratosMultiphysics.DOMAIN_SIZE, self.ProjectParameters["problem_data"]["domain_size"].GetInt())
-            model_part.ProcessInfo.SetValue(KratosMultiphysics.DELTA_TIME,  delta_time)
-            model_part.ProcessInfo.SetValue(KratosMultiphysics.TIME, current_time)  # curent or current+delta_t ??
+            model_part = ModelPart(self.ProjectParameters["problem_data"]["model_part_name"].GetString())
+            model_part.ProcessInfo.SetValue(DOMAIN_SIZE, self.ProjectParameters["problem_data"]["domain_size"].GetInt())
+            model_part.ProcessInfo.SetValue(DELTA_TIME,  delta_time)
+            model_part.ProcessInfo.SetValue(TIME, current_time)  # curent or current+delta_t ??
 
 
             ###TODO replace this "model" for real one once available in kratos core
             self.Model = {self.ProjectParameters["problem_data"]["model_part_name"].GetString() : model_part}
+            print(self.ProjectParameters["solver_settings"])
+            print("antes de create")
+            Wait()
+
+            print("ANTES ",self.ProjectParameters["solver_settings"])
+            del self.ProjectParameters["solver_settings"]["damp_factor_m"]
+            del self.ProjectParameters["solver_settings"]["dynamic_factor"]
+            print(self.ProjectParameters["solver_settings"])
+
+
+            
 
             #construct the solver (main setting methods are located in the solver_module)
             solver_module = __import__(self.ProjectParameters["solver_settings"]["solver_type"].GetString())
             main_step_solver   = solver_module.CreateSolver(model_part, self.ProjectParameters["solver_settings"])
 
+
+            print("despues de create")
+            Wait()
             # Add variables (always before importing the model part)
             main_step_solver.AddVariables()
 
@@ -260,8 +271,8 @@ class AdaptiveMeshRefinementUtility:
             main_step_solver.ImportModelPart()
 
             # Add dofs (always after importing the model part)
-            if((model_part.ProcessInfo).Has(KratosMultiphysics.IS_RESTARTED)):
-                if(model_part.ProcessInfo[KratosMultiphysics.IS_RESTARTED] == False):
+            if((model_part.ProcessInfo).Has(IS_RESTARTED)):
+                if(model_part.ProcessInfo[IS_RESTARTED] == False):
                     main_step_solver.AddDofs()
             else:
                 main_step_solver.AddDofs()
@@ -280,10 +291,10 @@ class AdaptiveMeshRefinementUtility:
             ## Sets strategies, builders, linear solvers, schemes and solving info, and fills the buffer
             main_step_solver.Initialize()
 
-            neighbour_elemental_finder =  KratosMultiphysics.FindElementalNeighboursProcess(model_part, 2, 5)
+            neighbour_elemental_finder =  FindElementalNeighboursProcess(model_part, 2, 5)
             neighbour_elemental_finder.Execute()
 
-            model_part.ProcessInfo[KratosMultiphysics.STEP] += 1
+            model_part.ProcessInfo[STEP] += 1
             self.main_model_part.CloneTimeStep(current_time) 
 # cornejo ----------------------------------------------------------------------
 
@@ -297,11 +308,13 @@ class AdaptiveMeshRefinementUtility:
                                                                                  self.delta_time)
             
             
-            model_part.ProcessInfo[MESH_REFINED] = 1
+            #model_part.ProcessInfo[MESH_REFINED] = 1
 #------------------------------------------------------------------->> Aqui estamos
             ## Mapping of variables -----------------------------------------------------------------------------------------
             
-            MappingVariablesProcess(model_part_old,model_part,self.ProjectParameters.ConditionsOptions.Imposed_Displacement).Execute()
+            MappingVariablesProcess(model_part_old, 
+                                    model_part, 
+                                    "Constant").Execute()
 
             ## Erase old Model Part -----------------------------------------------------------------------------------------
             
@@ -309,24 +322,32 @@ class AdaptiveMeshRefinementUtility:
             
             ## Test new Mesh ------------------------------------------------------------------------------------------------
             
-            mesh_convergence = main_step_solver.TestNewMesh()  # cornejo: we will use solvesolutionstep
+            #mesh_convergence = main_step_solver.TestNewMesh()  # cornejo: we will use solvesolutionstep
+            main_step_solver.InitializeSolutionStep()
+            main_step_solver.Predict()
+            mesh_convergence = main_step_solver.SolveSolutionStep()
+            main_step_solver.FinalizeSolutionStep()
+
+
+
             
-        if(mesh_convergence==True):
-            print("NEW MESH CONVERGED AFTER ",iteration_number," ITERATIONS")
+        if(mesh_convergence == True):
+            print("NEW MESH CONVERGED AFTER ", iteration_number," ITERATIONS")
         else:
             print("### WARNING: NO MESH CONVERGED AFTER ", iteration_number, " ITERATIONS ###")
         
         print(model_part)
         
         ## Saving files of new mesh -----------------------------------------------------------------------------------------
-        
-        os.system("cp "+str(self.problem_path)+"/"+str(problem_name)+".bgm "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_"+str(self.n_refinements+1)+".bgm")
-        
+        #os.system("cp "+str(self.problem_path)+"/"+str(problem_name)+".bgm "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_"+str(self.n_refinements+1)+".bgm")
+        src = os.path.join(str(self.problem_path),str(problem_name)+".bgm ")
+        dst = os.path.join(str(self.AMR_files_path), str(problem_name)+"_AMR_" + str(self.n_refinements+1) + ".bgm")
+        shutil.copy(src, dst)
         ## Initialize post files of new mesh --------------------------------------------------------------------------------
 
-        gid_output_util.initialize_results(model_part, current_id+1) #For single post file
+        gid_output_util.initialize_results(model_part, current_id + 1) #For single post file
         
-        self.last_refinement_id = current_id+1
+        self.last_refinement_id = current_id + 1
         self.n_refinements = self.n_refinements + 1
         
         return model_part, main_step_solver, gid_output_util
@@ -338,46 +359,80 @@ class AdaptiveMeshRefinementUtility:
         
         ## Previous definitions ---------------------------------------------------------------------------------------------
         
-        problem_name = self.ProjectParameters.problem_name
-        GidOutputConfiguration = self.ProjectParameters.GidOutputConfiguration
-        output_mode = GidOutputConfiguration.GiDPostMode
-        output_multiple_files = GidOutputConfiguration.GiDPostFiles
-        plane_state = self.ProjectParameters.plane_state
-        mesh_optimality_criteria = self.ProjectParameters.mesh_optimality_criteria
-        permissible_error = self.ProjectParameters.permissible_error
+        problem_name = self.ProjectParameters["problem_data"]["problem_name"].GetString()
+        #GidOutputConfiguration = self.ProjectParameters.GidOutputConfiguration
+        output_mode = self.post_mode = ProjectParameters["output_configuration"]["result_file_configuration"]["gidpost_flags"]["GiDPostMode"].GetString()
+        output_multiple_files = self.multi_file_flag = ProjectParameters["output_configuration"]["result_file_configuration"]["gidpost_flags"]["MultiFileFlag"].GetString()
+        plane_state = self.ProjectParameters["AMR_data"]["plane_state"].GetString()
+        mesh_optimality_criteria = self.ProjectParameters["AMR_data"]["mesh_optimality_criteria"].GetString()
+        permissible_error = self.ProjectParameters["AMR_data"]["permissible_error"].GetDouble()
 
         ## Finalize previous post results -----------------------------------------------------------------------------------
         
-        if(output_mode=="Binary"):
-            if(output_multiple_files=="Multiples"):
-                for i in range(self.last_refinement_id,current_id+1):
-                    os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.bin "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.bin")
+        if(output_mode == "GiD_PostBinary"):
+            if(output_multiple_files=="MultipleFiles"):
+                for i in range(self.last_refinement_id, current_id + 1):
+                    #os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.bin "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.bin")
+                    src = os.path.join(str(self.problem_path), str(problem_name) + "_" + str(i) + ".post.bin")
+                    dst = os.path.join(str(self.AMR_files_path), str(problem_name) + "_results_mesh_" + str(self.n_refinements) + "_step_" + str(i) + ".post.bin")
+                    shutil.move(src, dst)
             else:
-                os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+".post.bin "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.bin")
+                #os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+".post.bin "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.bin")
+                src = os.path.join(str(self.problem_path), str(problem_name) +  ".post.bin")
+                dst = os.path.join(str(self.AMR_files_path), str(problem_name) + "_results_mesh_" + str(self.n_refinements) + ".post.bin")
+                shutil.move(src, dst)
         else:
-            if(output_multiple_files=="Multiples"):
-                for i in range(self.last_refinement_id,current_id+1):
-                    os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.msh")
-                    os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.res")
+            if(output_multiple_files == "MultipleFiles"):
+                for i in range(self.last_refinement_id, current_id + 1):
+                    #os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.msh")
+                    #os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(i)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.res")
+                    mshsrc = os.path.join(str(self.problem_path), str(problem_name)+"_"+str(i)+".post.msh")
+                    ressrc = os.path.join(str(self.problem_path), str(problem_name)+"_"+str(i)+".post.res")
+                    mshdst = os.path.join(str(self.AMR_files_path), str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.msh")
+                    resdst = os.path.join(str(self.AMR_files_path), str(problem_name)+"_results_mesh_"+str(self.n_refinements)+"_step_"+str(i)+".post.res")
+                    shutil.move(mshsrc, mshdst)
+                    shutil.move(ressrc, resdst)
+
             else:
-                os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.msh")
-                os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.res")
+                #os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.msh")
+                #os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_"+str(self.last_refinement_id)+".post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_results_mesh_"+str(self.n_refinements)+".post.res")
+                mshsrc = os.path.join(str(self.problem_path), str(problem_name) + "_" + str(self.last_refinement_id)+".post.msh")
+                ressrc = os.path.join(str(self.problem_path), str(problem_name) + "_" + str(self.last_refinement_id)+".post.res")
+                mshdst = os.path.join(str(self.AMR_files_path), str(problem_name) + "_results_mesh_" + str(self.n_refinements)+".post.msh")
+                resdst = os.path.join(str(self.AMR_files_path), str(problem_name) + "_results_mesh_" + str(self.n_refinements)+".post.res")
+                shutil.move(mshsrc, mshdst)
+                shutil.move(ressrc, resdst)
+
         
-        os.system("cp "+str(self.problem_path)+"/"+str(problem_name)+".mdpa "+str(self.AMR_files_path)+"/"+str(problem_name)+"_mesh_"+str(self.n_refinements)+".mdpa")
+        #os.system("cp "+str(self.problem_path)+"/"+str(problem_name)+".mdpa "+str(self.AMR_files_path)+"/"+str(problem_name)+"_mesh_"+str(self.n_refinements)+".mdpa")
+        src = os.path.join(str(self.problem_path), str(problem_name) + ".mdpa")
+        dst = os.path.join(str(self.AMR_files_path), str(problem_name) + "_mesh_" + str(self.n_refinements) + ".mdpa")
+        shutil.copy(src, dst)
         
         ## Compute and save info of last mesh -------------------------------------------------------------------------------
         
-        AdaptiveMeshRefinementProcess(model_part,plane_state,problem_name,self.problem_path,mesh_optimality_criteria,permissible_error,self.n_refinements).ExecuteFinalize()
+        AdaptiveMeshRefinementProcess(model_part, 
+                                      plane_state,
+                                      problem_name,
+                                      self.problem_path,
+                                      mesh_optimality_criteria,
+                                      permissible_error,
+                                      self.n_refinements).ExecuteFinalize()
         
-        os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.msh")
-        os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.res")
+        #os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.msh "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.msh")
+        #os.system("mv "+str(self.problem_path)+"/"+str(problem_name)+"_AMR_parameters.post.res "+str(self.AMR_files_path)+"/"+str(problem_name)+"_AMR_parameters_mesh_"+str(self.n_refinements)+".post.res")
 
-        os.system("mv "+str(self.problem_path)+"/AMR_info.txt "+str(self.AMR_files_path))
+        srcmsh = os.path.join(str(self.problem_path), str(problem_name) + "_AMR_parameters.post.msh")
+        srcres = os.path.join(str(self.problem_path), str(problem_name) + "_AMR_parameters.post.res")
+        dstmsh = os.path.join(str(self.AMR_files_path), str(problem_name) + "_AMR_parameters_mesh_" + str(self.n_refinements) + ".post.msh")
+        dstres = os.path.join(str(self.AMR_files_path), str(problem_name) + "_AMR_parameters_mesh_" + str(self.n_refinements) + ".post.res")
+        shutil.move(srcmsh, dstmsh)
+        shutil.move(srcres, dstres)
 
-
-
-
-
+        #os.system("mv "+str(self.problem_path)+"/AMR_info.txt "+str(self.AMR_files_path))
+        src = os.path.join(str(self.problem_path), AMR_info.txt)
+        dst = os.path.join(str(self.AMR_files_path), AMR_info.txt)
+        shutil.move(src, dst)
 
 
 # copy of the main ============================================================================================================================        

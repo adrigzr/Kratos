@@ -1,13 +1,11 @@
-BOOK: Parts
-
-CONDITION: Body_Part
-CONDTYPE: over groups
-CONDMESHTYPE: over body elements
-GROUPALLOW: surfaces 
+BOOK:Parts
+NUMBER: 1 CONDITION: Body_Part
+CONDTYPE: over group
+GROUPALLOW: surfaces
 QUESTION: Yield_Surface#CB#(ModifiedMohrCoulomb,SimoJu,Rankine,DruckerPrager)
 VALUE: ModifiedMohrCoulomb
 QUESTION: Young_Modulus
-VALUE: 35.00e9
+VALUE: 3.0e7
 HELP: Units in IS: N/m2
 QUESTION: Density
 VALUE: 2400
@@ -40,13 +38,10 @@ QUESTION: Characteristic_length
 VALUE: 0.02
 HELP: Units in IS: m // Radius of the averaged mapping circle
 END CONDITION
-
-BOOK: Dirichlet_Constraints
-
-CONDITION: Solid_Displacement
-CONDTYPE: over groups
-CONDMESHTYPE: over nodes
-GROUPALLOW: points lines 
+BOOK:Dirichlet_Constraints
+NUMBER: 2 CONDITION: Solid_Displacement
+CONDTYPE: over group
+GROUPALLOW: points lines
 QUESTION: SOLID_DISPLACEMENT_X#CB#(true,false)
 VALUE: true
 DEPENDENCIES: (false,HIDE,X_Value,0.0,HIDE,Fix_X,false)(true,RESTORE,X_Value,#CURRENT#,RESTORE,Fix_X,#CURRENT#)
@@ -97,12 +92,9 @@ VALUE: 0.0
 QUESTION: End_Time
 VALUE: "End"
 END CONDITION
-
-BOOK: Loads
-
-CONDITION: Force
-CONDTYPE: over groups
-CONDMESHTYPE: over nodes
+BOOK:Loads
+NUMBER: 3 CONDITION: Force
+CONDTYPE: over group
 GROUPALLOW: points
 QUESTION: Modulus
 VALUE: 0.0
@@ -145,13 +137,11 @@ VALUE: 0.0
 QUESTION: End_Time
 VALUE: "End"
 END CONDITION
-
-CONDITION: Face_Load
-CONDTYPE: over groups
-CONDMESHTYPE: over face elements
+NUMBER: 4 CONDITION: Face_Load
+CONDTYPE: over group
 GROUPALLOW: lines
 QUESTION: Modulus
-VALUE: 0.0 
+VALUE: 0.0
 HELP: If it is a function write the expression between ""
 QUESTION: FACE_LOAD_X#CB#(true,false)
 VALUE: true
@@ -191,11 +181,9 @@ VALUE: 0.0
 QUESTION: End_Time
 VALUE: "End"
 END CONDITION
-
-CONDITION: Normal_Load
-CONDTYPE: over groups
-CONDMESHTYPE: over face elements
-GROUPALLOW: lines 
+NUMBER: 5 CONDITION: Normal_Load
+CONDTYPE: over group
+GROUPALLOW: lines
 QUESTION: NORMAL_LOAD#CB#(true,false)
 VALUE: true
 DEPENDENCIES: (false,HIDE,Normal_Load_Distribution,Uniform,HIDE,Normal_Pressure_Value,0.0,HIDE,Imposed_Normal_Load,Constant)(true,RESTORE,Normal_Load_Distribution,#CURRENT#,RESTORE,Normal_Pressure_Value,#CURRENT#,RESTORE,Imposed_Normal_Load,#CURRENT#)
@@ -236,11 +224,9 @@ VALUE: 0.0
 QUESTION: End_Time
 VALUE: "End"
 END CONDITION
-
-CONDITION: Body_Acceleration
-CONDTYPE: over groups
-CONDMESHTYPE: over nodes
-GROUPALLOW: surfaces 
+NUMBER: 6 CONDITION: Body_Acceleration
+CONDTYPE: over group
+GROUPALLOW: surfaces
 QUESTION: Modulus
 VALUE: 9.81
 HELP: If it is a function write the expression between ""

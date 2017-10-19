@@ -1,0 +1,99 @@
+{
+   "AMR_data": {
+        "activate_AMR":                    true,
+        "plane_state":                    "Plane_Strain",
+        "mesh_optimality_criteria":       "Global_Error_Equidistribution",
+        "permissible_error":               0.09,
+        "refinement_frequency":            2.0,
+        "gid_path":                       "D:\\Program Files (x86)\\GiD 13.1.8d\\gid.exe"
+    },
+   "problem_data": {
+        "problem_name":         "pruebasDynMapeo",
+        "model_part_name":      "Structure",
+        "domain_size":          2,
+        "start_time":           0.0,
+        "end_time":             5.0,
+        "time_step":            1.0,
+        "echo_level":           1
+    },
+   "solver_settings": {
+            "solver_type":                       "solid_mechanics_implicit_dynamic_solver",
+            "solution_type":                     "Dynamic",
+            "time_integration_method":           "Implicit",
+            "scheme_type":                       "Newmark",
+            "echo_level":                         1,
+            "model_import_settings":              {
+                 "input_type":         "mdpa",
+                 "input_filename":     "pruebasDynMapeo",
+                 "input_file_label":    0
+            },
+            "line_search":                          false,
+            "convergence_criterion":               "Residual_criterion",
+            "displacement_relative_tolerance":      1.0E-4,
+            "displacement_absolute_tolerance":      1.0E-9,
+            "residual_relative_tolerance":          1.0E-3,
+            "residual_absolute_tolerance":          1.0E-9,
+            "max_iteration":                        25,
+            "linear_solver_settings":     {
+                 "solver_type":      "SuperLUSolver",
+                 "scaling":           false
+            },
+        "problem_domain_sub_model_part_list": ["Body_Part-auto-1"],
+        "processes_sub_model_part_list":      ["Solid_Displacement-auto-1","Body_Acceleration-auto-1"]
+   },
+    "constraints_process_list": [{
+        "python_module": "assign_vector_components_to_nodes_process",
+        "kratos_module": "KratosMultiphysics.SolidMechanicsApplication",
+        "process_name":  "AssignVectorComponentsToNodesProcess",
+        "Parameters":    {
+            "mesh_id":         0,
+            "model_part_name": "Solid_Displacement-auto-1",
+            "variable_name":   "DISPLACEMENT",
+            "value":           [0.0,0.0,0.0],
+            "interval":        [0.0,"End"]
+        }
+    }],
+    "loads_process_list": [{
+        "python_module": "assign_modulus_and_direction_to_nodes_process",
+        "kratos_module": "KratosMultiphysics.SolidMechanicsApplication",
+        "process_name":  "AssignModulusAndDirectionToNodesProcess",
+        "Parameters":    {
+            "mesh_id":         0,
+            "model_part_name": "Body_Acceleration-auto-1",
+            "variable_name":   "VOLUME_ACCELERATION",
+            "modulus":             9.81,
+            "direction":           [0.0,-1.0,0.0],
+            "interval":            [0.0,"End"]
+        }
+    }],
+    "output_configuration": {
+        "result_file_configuration": {
+            "gidpost_flags":       {
+                "WriteDeformedMeshFlag": "WriteDeformed",
+                "WriteConditionsFlag":   "WriteElementsOnly",
+                "GiDPostMode":           "GiD_PostAscii",
+                "MultiFileFlag":         "MultipleFiles"
+            },
+            "file_label":          "step",
+            "output_control_type": "step",
+            "output_frequency":     1,
+            "body_output":          true,
+            "node_output":          false,
+            "skin_output":          false,
+            "plane_output":         [],
+            "nodal_results":       ["DISPLACEMENT","VELOCITY","ACCELERATION"],
+            "gauss_point_results": ["GREEN_LAGRANGE_STRAIN_TENSOR","CAUCHY_STRESS_TENSOR","STRESS_VECTOR","STRESS_VECTOR_INTEGRATED","DAMAGE_ELEMENT","IS_DAMAGED"]
+        },
+        "point_data_configuration":  []
+    },
+    "restart_options":     {
+        "SaveRestart":        false,
+        "RestartFrequency":   0,
+        "LoadRestart":        false,
+        "Restart_Step":       0
+    },
+    "constraints_data":     {
+        "incremental_load":                false,
+        "incremental_displacement":        false
+    }
+}

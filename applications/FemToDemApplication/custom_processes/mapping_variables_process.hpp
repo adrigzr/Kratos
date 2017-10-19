@@ -30,7 +30,7 @@ protected:
       Element::GeometryType::PointType& rNode;
       int Row,Column;
        
-      NodeNew(Element::GeometryType::PointType& NodeReference,int Row_i,int Column_j) : rNode(NodeReference)
+      NodeNew(Element::GeometryType::PointType& NodeReference, int Row_i, int Column_j) : rNode(NodeReference)
       {
         Row = Row_i;
         Column = Column_j;
@@ -48,13 +48,15 @@ protected:
     
     struct GaussPointNew
     {
-      ConstitutiveLaw::Pointer pConstitutiveLaw;
+      //ConstitutiveLaw::Pointer pConstitutiveLaw;
+      Element::Pointer pElement;
       double X_coord,Y_coord;
       int Row,Column;
       
-      GaussPointNew(ConstitutiveLaw::Pointer ConstitutiveLawPointer,double X,double Y,int Row_i,int Column_j)
+      GaussPointNew(Element::Pointer ElementPointer, double X, double Y ,int Row_i, int Column_j)
       {
-        pConstitutiveLaw = ConstitutiveLawPointer;
+        //pConstitutiveLaw = ConstitutiveLawPointer;
+        pElement = ElementPointer;
         X_coord = X;
         Y_coord = Y;
         Row = Row_i;
@@ -66,12 +68,14 @@ protected:
     
     struct GaussPointOld
     {
-      ConstitutiveLaw::Pointer pConstitutiveLaw;
+      //ConstitutiveLaw::Pointer pConstitutiveLaw;
+      Element::Pointer pElement;
       double X_coord,Y_coord;
       
-      GaussPointOld(ConstitutiveLaw::Pointer ConstitutiveLawPointer, double X, double Y)  // TODO modify CL pointer with Element pointer
+      GaussPointOld(Element::Pointer ElementPointer, double X, double Y)  // TODO modify CL pointer with Element pointer
       {
-        pConstitutiveLaw = ConstitutiveLawPointer;
+        // pConstitutiveLaw = ConstitutiveLawPointer;
+        pElement = ElementPointer;
         X_coord = X;
         Y_coord = Y;
       }
@@ -111,13 +115,13 @@ public:
     {
         double X_max = 0.0, X_min = 0.0, Y_max = 0.0, Y_min = 0.0;
     
-        double DamageThreshold, CharacteristicLength = 0.0;
+        double DamageThreshold = 0.0, CharacteristicLength = 0.0;
     
-        this->Initialize(X_max,X_min,Y_max,Y_min,CharacteristicLength,DamageThreshold);
+        this->Initialize(X_max, X_min, Y_max, Y_min, CharacteristicLength, DamageThreshold);
     
-        this->NodalDisplacementsMapping(X_max,X_min,Y_max,Y_min);
+        this->NodalDisplacementsMapping(X_max, X_min, Y_max, Y_min);
     
-        this->GaussPointStateVariableMapping(X_max,X_min,Y_max,Y_min,CharacteristicLength,DamageThreshold);
+        this->GaussPointStateVariableMapping(X_max, X_min, Y_max, Y_min, CharacteristicLength, DamageThreshold);
     
         this->TransferProcessInfoVariables();
     }
@@ -162,7 +166,8 @@ protected:
         }
         
         rCharacteristicLength = (*(mmodel_part_old.Elements().ptr_begin()))->GetProperties()[CHARACTERISTIC_LENGTH];
-        rDamageThreshold = (*(mmodel_part_old.Elements().ptr_begin()))->GetProperties()[DAMAGE_THRESHOLD];
+        //rDamageThreshold = (*(mmodel_part_old.Elements().ptr_begin()))->GetProperties()[DAMAGE_THRESHOLD];
+        rDamageThreshold = (*(mmodel_part_old.Elements().ptr_begin()))->GetValue(STRESS_THRESHOLD);
     }
   
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -175,13 +180,13 @@ protected:
         {
             AverageElementLength += (*it)->GetGeometry().Length();
         }
-        AverageElementLength = AverageElementLength/mmodel_part_old.NumberOfElements();
+        AverageElementLength = AverageElementLength / mmodel_part_old.NumberOfElements();
     
-        int NRows = int((Y_max-Y_min)/AverageElementLength);
-        int NColumns = int((X_max-X_min)/AverageElementLength);
+        int NRows = int((Y_max - Y_min) / AverageElementLength);
+        int NColumns = int((X_max - X_min) / AverageElementLength);
     
-        double RowSize = (Y_max-Y_min)/NRows;
-        double ColumnSize = (X_max-X_min)/NColumns;
+        double RowSize = (Y_max - Y_min) / NRows;
+        double ColumnSize = (X_max - X_min) / NColumns;
 
         ElementOldCell** ElementOldMatrix;
         ElementOldMatrix = new ElementOldCell*[NRows];
@@ -291,8 +296,8 @@ protected:
                     ElementDisplacements[2] = pElementOld->GetGeometry().GetPoint(2).FastGetSolutionStepValue(DISPLACEMENT)[0];
                     NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[0] = inner_prod(ElementShapeFunctions,ElementDisplacements);
                 }
-                else if( mImposedDisplacement == "Linearly_Incremented" )
-                    NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[0] = mmodel_part_old.GetProcessInfo()[TIME_STEPS] * NodeNew_i.FastGetSolutionStepValue(IMPOSED_DISPLACEMENT)[0];
+                // else if( mImposedDisplacement == "Linearly_Incremented" )
+                //     NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[0] = mmodel_part_old.GetProcessInfo()[TIME_STEPS] * NodeNew_i.FastGetSolutionStepValue(IMPOSED_DISPLACEMENT)[0];
                 
                 if( (NodeNew_i.pGetDof(DISPLACEMENT_Y))->IsFixed() == false )
                 {
@@ -301,10 +306,10 @@ protected:
                     ElementDisplacements[2] = pElementOld->GetGeometry().GetPoint(2).FastGetSolutionStepValue(DISPLACEMENT)[1];
                     NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[1] = inner_prod(ElementShapeFunctions,ElementDisplacements);
                 }
-                else if( mImposedDisplacement == "Linearly_Incremented" )
-                    NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[1] = mmodel_part_old.GetProcessInfo()[TIME_STEPS] * NodeNew_i.FastGetSolutionStepValue(IMPOSED_DISPLACEMENT)[1];
+             //     else if( mImposedDisplacement == "Linearly_Incremented" )
+             //         NodeNew_i.FastGetSolutionStepValue(DISPLACEMENT)[1] = mmodel_part_old.GetProcessInfo()[TIME_STEPS] * NodeNew_i.FastGetSolutionStepValue(IMPOSED_DISPLACEMENT)[1];
             }
-        }
+        //}
         // else //Quadrilateral2D4N
         // {
         //     ElementDisplacements = ZeroVector(4);
@@ -396,15 +401,15 @@ protected:
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    void GaussPointStateVariableMapping(const double& X_max,const double& X_min,const double& Y_max,const double& Y_min,const double& rCharacteristicLength,const double& rDamageThreshold)
+    void GaussPointStateVariableMapping(const double& X_max, const double& X_min, const double& Y_max, const double& Y_min, const double& rCharacteristicLength, const double& rDamageThreshold)
     {
-        std::vector<ConstitutiveLaw::Pointer> ConstitutiveLawVector;
+       // std::vector<ConstitutiveLaw::Pointer> ConstitutiveLawVector;
         int Row, Column;
         double X_me, Y_me, X_other, Y_other, Distance;
-        ConstitutiveLaw::Pointer Me;
-        ConstitutiveLaw::Pointer Other;
+        Element::Pointer Me;
+        Element::Pointer Other;
         Vector Trian_GPLocalCoord = ZeroVector(3);
-        std::vector<Vector> Quad_GPLocalCoordVector(4);
+        //std::vector<Vector> Quad_GPLocalCoordVector(4);
         Element::GeometryType::CoordinatesArrayType GPGlobalCoord;
         std::vector<GaussPointNew*> GaussPointNewVector;
 
@@ -429,7 +434,7 @@ protected:
             
             for(ElementsArrayType::ptr_iterator it = mmodel_part_old.Elements().ptr_begin(); it != mmodel_part_old.Elements().ptr_end(); ++it)
             {
-                (*it)->GetValueOnIntegrationPoints(CONSTITUTIVE_LAW_POINTER,ConstitutiveLawVector,mmodel_part_old.GetProcessInfo());
+                //(*it)->GetValueOnIntegrationPoints(CONSTITUTIVE_LAW_POINTER,ConstitutiveLawVector,mmodel_part_old.GetProcessInfo());
 
                 (*it)->GetGeometry().GlobalCoordinates(GPGlobalCoord,GPLocalCoord);
 
@@ -442,7 +447,8 @@ protected:
                 if(Row == NRows) Row = NRows - 1;
                 if(Column == NColumns) Column = NColumns - 1;
 
-                pGaussPointOldMatrix[Row][Column].GaussPointOldVector.push_back(GaussPointOld(ConstitutiveLawVector[0], X_me, Y_me));
+                //pGaussPointOldMatrix[Row][Column].GaussPointOldVector.push_back(GaussPointOld(ConstitutiveLawVector[0], X_me, Y_me));
+                pGaussPointOldMatrix[Row][Column].GaussPointOldVector.push_back(GaussPointOld(*it, X_me, Y_me));
             }
         //}
         // else //Quadrilateral2D4N
@@ -489,11 +495,11 @@ protected:
         //Triangles2D3N
         //if((*mmodel_part_new.Elements().ptr_begin())->GetGeometry().PointsNumber()==3)
         //{
-            const Element::GeometryType::CoordinatesArrayType GPLocalCoord = Trian_GPLocalCoord;
+            //const Element::GeometryType::CoordinatesArrayType GPLocalCoord = Trian_GPLocalCoord;
             
             for(ElementsArrayType::ptr_iterator it = mmodel_part_new.Elements().ptr_begin(); it != mmodel_part_new.Elements().ptr_end(); ++it)
             {
-                (*it)->GetValueOnIntegrationPoints(CONSTITUTIVE_LAW_POINTER,ConstitutiveLawVector,mmodel_part_new.GetProcessInfo());
+                //(*it)->GetValueOnIntegrationPoints(CONSTITUTIVE_LAW_POINTER,ConstitutiveLawVector,mmodel_part_new.GetProcessInfo());
                 
                 (*it)->GetGeometry().GlobalCoordinates(GPGlobalCoord,GPLocalCoord);
                 
@@ -506,7 +512,8 @@ protected:
                 if(Row == NRows) Row = NRows - 1;
                 if(Column == NColumns) Column = NColumns - 1;
 
-                GaussPointNewVector.push_back(new GaussPointNew(ConstitutiveLawVector[0], X_me, Y_me, Row, Column));
+                //GaussPointNewVector.push_back(new GaussPointNew(ConstitutiveLawVector[0], X_me, Y_me, Row, Column));
+                GaussPointNewVector.push_back(new GaussPointNew(*it, X_me, Y_me, Row, Column));
             }
         //}
         // else //Quadrilateral2D4N
@@ -537,21 +544,24 @@ protected:
     
 
         //Transfer state variables from old Gauss points to new Gauss Points (nonlocal average)
-        double IntegrationCoefficient, StateVariable, Numerator, WeightingFunctionDenominator;
+        double IntegrationCoefficient;     //StateVariable, Numerator, WeightingFunctionDenominator;
+        double DamageVariable, StressThreshold, DamageNumerator, ThresholdNumerator, WeightingFunctionDenominator;
+
         for(unsigned int i = 0; i < GaussPointNewVector.size(); i++)
         {
-            Me   = GaussPointNewVector[i]->pConstitutiveLaw;
+			Me   = GaussPointNewVector[i]->pElement;
             X_me = GaussPointNewVector[i]->X_coord;
             Y_me = GaussPointNewVector[i]->Y_coord;
             Row  = GaussPointNewVector[i]->Row;
             Column = GaussPointNewVector[i]->Column;
-            Numerator = 0.0;
+            DamageNumerator = 0.0;
+            ThresholdNumerator  = 0.0;
             WeightingFunctionDenominator = 0.0;
             
             //Search in my cell
             for(unsigned int j = 0; j < pGaussPointOldMatrix[Row][Column].GaussPointOldVector.size(); j++)
             {
-                Other   = pGaussPointOldMatrix[Row][Column].GaussPointOldVector[j].pConstitutiveLaw;
+				Other   = pGaussPointOldMatrix[Row][Column].GaussPointOldVector[j].pElement;
                 X_other = pGaussPointOldMatrix[Row][Column].GaussPointOldVector[j].X_coord;
                 Y_other = pGaussPointOldMatrix[Row][Column].GaussPointOldVector[j].Y_coord;
         
@@ -559,64 +569,73 @@ protected:
 
                 if(Distance <= rCharacteristicLength) //TODO: es podria calcular amb tots els de la teva cel·la...
                 {
-                    IntegrationCoefficient = Other->GetValue(INTEGRATION_COEFFICIENT,IntegrationCoefficient);
-                    StateVariable = Other->GetValue(STATE_VARIABLE,StateVariable);
-
-                    Numerator += IntegrationCoefficient * exp(- 4 * Distance * Distance / (rCharacteristicLength * rCharacteristicLength)) * StateVariable;
+                    IntegrationCoefficient = Other->GetValue(INTEGRATION_COEFFICIENT);
+                    DamageVariable = Other->GetValue(DAMAGE_ELEMENT);
+                    StressThreshold = Other->GetValue(STRESS_THRESHOLD);
+                    
+                    // Mapping of the damage and the threshold GP variables
+                    DamageNumerator    += IntegrationCoefficient * exp(- 4 * Distance * Distance / (rCharacteristicLength * rCharacteristicLength)) * DamageVariable;
+                    ThresholdNumerator += IntegrationCoefficient * exp(- 4 * Distance * Distance / (rCharacteristicLength * rCharacteristicLength)) * StressThreshold;
                     WeightingFunctionDenominator += IntegrationCoefficient * exp(- 4 * Distance * Distance / (rCharacteristicLength * rCharacteristicLength));
                 }
             }
             
             //Search in adjacent cells
-            if(sqrt((X_min+ColumnSize*(Column+1)-X_me)*(X_min+ColumnSize*(Column+1)-X_me) + (Y_max-RowSize*(Row+1)-Y_me)*(Y_max-RowSize*(Row+1)-Y_me)) < rCharacteristicLength)
+			if (sqrt((X_min + ColumnSize*(Column + 1) - X_me)*(X_min + ColumnSize*(Column + 1) - X_me) + (Y_max - RowSize*(Row + 1) - Y_me)*(Y_max - RowSize*(Row + 1) - Y_me)) < rCharacteristicLength)
             {
-                if((Row+1)<NRows)  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row+1][Column],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                if((Column+1)<NColumns)  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row][Column+1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                if(((Row+1)<NRows) && ((Column+1)<NColumns))  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row+1][Column+1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
+				if ((Row + 1) < NRows)  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row + 1][Column], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				if ((Column + 1) < NColumns)  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row][Column + 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				if (((Row + 1) < NRows) && ((Column + 1) < NColumns))  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row + 1][Column + 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
             }
-            else if( sqrt((X_min+ColumnSize*(Column)-X_me)*(X_min+ColumnSize*(Column)-X_me) + (Y_max-RowSize*(Row+1)-Y_me)*(Y_max-RowSize*(Row+1)-Y_me)) < rCharacteristicLength)
+			else if (sqrt((X_min + ColumnSize*(Column)-X_me)*(X_min + ColumnSize*(Column)-X_me) + (Y_max - RowSize*(Row + 1) - Y_me)*(Y_max - RowSize*(Row + 1) - Y_me)) < rCharacteristicLength)
             {
-                if((Row+1)<NRows)  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row+1][Column],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                if((Column-1)>=0)  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row][Column-1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                if(((Row+1)<NRows) && ((Column-1)>=0))  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row+1][Column-1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
+				if ((Row + 1) < NRows)  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row + 1][Column], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				if ((Column - 1) >= 0)  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row][Column - 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				if (((Row + 1) < NRows) && ((Column - 1) >= 0))  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row + 1][Column - 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
             }
-            else if( sqrt((X_min+ColumnSize*(Column)-X_me)*(X_min+ColumnSize*(Column)-X_me) + (Y_max-RowSize*(Row)-Y_me)*(Y_max-RowSize*(Row)-Y_me)) < rCharacteristicLength)
+			else if (sqrt((X_min + ColumnSize*(Column)-X_me)*(X_min + ColumnSize*(Column)-X_me) + (Y_max - RowSize*(Row)-Y_me)*(Y_max - RowSize*(Row)-Y_me)) < rCharacteristicLength)
             {
-                if((Row-1)>=0)  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row-1][Column],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                if((Column-1)>=0)  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row][Column-1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                if(((Row-1)>=0) && ((Column-1)>=0))  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row-1][Column-1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
+				if ((Row - 1) >= 0)  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row - 1][Column], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				if ((Column - 1) >= 0)  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row][Column - 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				if (((Row - 1) >= 0) && ((Column - 1) >= 0))  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row - 1][Column - 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
             }
-            else if( sqrt((X_min+ColumnSize*(Column+1)-X_me)*(X_min+ColumnSize*(Column+1)-X_me) + (Y_max-RowSize*(Row)-Y_me)*(Y_max-RowSize*(Row)-Y_me)) < rCharacteristicLength)
+			else if (sqrt((X_min + ColumnSize*(Column + 1) - X_me)*(X_min + ColumnSize*(Column + 1) - X_me) + (Y_max - RowSize*(Row)-Y_me)*(Y_max - RowSize*(Row)-Y_me)) < rCharacteristicLength)
             {
-                if((Row-1)>=0)  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row-1][Column],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                if((Column+1)<NColumns)  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row][Column+1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                if(((Row-1)>=0) && ((Column+1)<NColumns))  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row-1][Column+1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
+				if ((Row - 1) >= 0)  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row - 1][Column], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				if ((Column + 1) < NColumns)  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row][Column + 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				if (((Row - 1) >= 0) && ((Column + 1) < NColumns))  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row - 1][Column + 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
             }
             else
             {
-                if((int((X_me-X_min+rCharacteristicLength)/ColumnSize)>Column) && ((Column+1)<NColumns))  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row][Column+1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                else if((int((X_me-X_min-rCharacteristicLength)/ColumnSize)<Column) && ((Column-1)>=0))  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row][Column-1],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
+				if ((int((X_me - X_min + rCharacteristicLength) / ColumnSize) > Column) && ((Column + 1) < NColumns))  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row][Column + 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				else if ((int((X_me - X_min - rCharacteristicLength) / ColumnSize) < Column) && ((Column - 1) >= 0))  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row][Column - 1], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
         
-                if((int((Y_max-Y_me+rCharacteristicLength)/RowSize)>Row) && ((Row+1)<NRows))  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row+1][Column],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
-                else if((int((Y_max-Y_me-rCharacteristicLength)/RowSize)<Row) && ((Row-1)>=0))  this->SearchInAdjacentCell(GaussPointNewVector[i],pGaussPointOldMatrix[Row-1][Column],Numerator,WeightingFunctionDenominator,rCharacteristicLength);
+				if ((int((Y_max - Y_me + rCharacteristicLength) / RowSize) > Row) && ((Row + 1) < NRows))  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row + 1][Column], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
+				else if ((int((Y_max - Y_me - rCharacteristicLength) / RowSize) < Row) && ((Row - 1) >= 0))  this->SearchInAdjacentCell(GaussPointNewVector[i], pGaussPointOldMatrix[Row - 1][Column], DamageNumerator,ThresholdNumerator, WeightingFunctionDenominator, rCharacteristicLength);
             }
       
-            if(fabs(WeightingFunctionDenominator) < 1e-15)
-                StateVariable = rDamageThreshold;
-            else  
-                StateVariable = Numerator/WeightingFunctionDenominator;
-      
-            Me->SetValue(STATE_VARIABLE,StateVariable,mmodel_part_new.GetProcessInfo());
-            Me->SetValue(STATE_VARIABLE_EQUILIBRIUM,StateVariable,mmodel_part_new.GetProcessInfo());
+            if (fabs(WeightingFunctionDenominator) < 1e-15) 
+            { // TODO-> CHECK WHY
+                StressThreshold = rDamageThreshold;
+                DamageVariable = 0.0;
+            }
+            else 
+            {
+                DamageVariable  = DamageNumerator / WeightingFunctionDenominator;
+                StressThreshold = ThresholdNumerator / WeightingFunctionDenominator;
+            }
+            
+			Me->SetValue(DAMAGE_ELEMENT, DamageVariable);
+			Me->SetValue(STRESS_THRESHOLD, StressThreshold);
         }
 
         //Deallocate memory
-        for(int i=0;i<NRows;i++)
-            delete [] pGaussPointOldMatrix[i];
-        delete [] pGaussPointOldMatrix;
+		for (int i = 0;i < NRows;i++)
+			delete[] pGaussPointOldMatrix[i];
+		delete[] pGaussPointOldMatrix;
     
-        for(unsigned int i=0;i<GaussPointNewVector.size(); i++) 
-            delete GaussPointNewVector[i];
+		for (unsigned int i = 0;i < GaussPointNewVector.size(); i++)
+			delete GaussPointNewVector[i];
     
         std::cout << "Gauss Point State Variable Mapped" << std::endl;
     
@@ -624,30 +643,34 @@ protected:
 
     //------------------------------------------------------------------------------------
     
-    void SearchInAdjacentCell(const GaussPointNew* pGaussPointNew, const GaussPointOldCell& NeighbourCell, double& rNumerator, double& rWeightingFunctionDenominator, const double& rCharacteristicLength)
+    void SearchInAdjacentCell(const GaussPointNew* pGaussPointNew, const GaussPointOldCell& NeighbourCell, double& rDamageNumerator,double& rThresholdNumerator,
+         double& rWeightingFunctionDenominator, const double& rCharacteristicLength)
     {
         double X_me = pGaussPointNew->X_coord;
         double Y_me = pGaussPointNew->Y_coord;
     
-        ConstitutiveLaw::Pointer Other;
-        double X_other,Y_other,Distance;
-        double IntegrationCoefficient, StateVariable;
-    
-        for(unsigned int j=0; j<NeighbourCell.GaussPointOldVector.size(); j++)
+        Element::Pointer Other;
+        double X_other, Y_other, Distance;
+		double IntegrationCoefficient, DamageVariable, StressThreshold;
+                    
+		for (unsigned int j = 0; j < NeighbourCell.GaussPointOldVector.size(); j++)
         {
-            Other = NeighbourCell.GaussPointOldVector[j].pConstitutiveLaw;
+			Other = NeighbourCell.GaussPointOldVector[j].pElement;
             X_other = NeighbourCell.GaussPointOldVector[j].X_coord;
             Y_other = NeighbourCell.GaussPointOldVector[j].Y_coord;
 
-            Distance = sqrt((X_other-X_me)*(X_other-X_me) + (Y_other-Y_me)*(Y_other-Y_me));
+			Distance = sqrt((X_other - X_me)*(X_other - X_me) + (Y_other - Y_me)*(Y_other - Y_me));
       
             if(Distance <= rCharacteristicLength) //TODO: es podria calcular amb tots els de les cel·les vehines...
             {
-                IntegrationCoefficient = Other->GetValue(INTEGRATION_COEFFICIENT,IntegrationCoefficient);
-                StateVariable = Other->GetValue(STATE_VARIABLE,StateVariable);
+                IntegrationCoefficient = Other->GetValue(INTEGRATION_COEFFICIENT);
+                //StateVariable = Other->GetValue(STATE_VARIABLE,StateVariable);
+                DamageVariable = Other->GetValue(DAMAGE_ELEMENT);
+                StressThreshold = Other->GetValue(STRESS_THRESHOLD);
 
-                rNumerator += IntegrationCoefficient*exp(-4*Distance*Distance/(rCharacteristicLength*rCharacteristicLength))*StateVariable;
-                rWeightingFunctionDenominator += IntegrationCoefficient*exp(-4*Distance*Distance/(rCharacteristicLength*rCharacteristicLength));
+				rDamageNumerator += IntegrationCoefficient*exp(-4 * Distance*Distance / (rCharacteristicLength*rCharacteristicLength))*DamageVariable;
+				rThresholdNumerator += IntegrationCoefficient * exp(-4 * Distance * Distance / (rCharacteristicLength * rCharacteristicLength)) * StressThreshold;
+				rWeightingFunctionDenominator += IntegrationCoefficient*exp(-4 * Distance*Distance / (rCharacteristicLength*rCharacteristicLength));
             }
         }
     }
@@ -657,11 +680,11 @@ protected:
     void TransferProcessInfoVariables()
     {
         //Arc-length parameters
-        mmodel_part_new.GetProcessInfo()[LOAD_FACTOR] = mmodel_part_old.GetProcessInfo()[LOAD_FACTOR];
-        mmodel_part_new.GetProcessInfo()[RADIUS_FACTOR] = mmodel_part_old.GetProcessInfo()[RADIUS_FACTOR];
+        /*mmodel_part_new.GetProcessInfo()[LOAD_FACTOR] = mmodel_part_old.GetProcessInfo()[LOAD_FACTOR];
+        mmodel_part_new.GetProcessInfo()[RADIUS_FACTOR] = mmodel_part_old.GetProcessInfo()[RADIUS_FACTOR];*/
         
         //To compute linearly incremented loads
-        mmodel_part_new.GetProcessInfo()[TIME_STEPS] = mmodel_part_old.GetProcessInfo()[TIME_STEPS];
+        //mmodel_part_new.GetProcessInfo()[TIME_STEPS] = mmodel_part_old.GetProcessInfo()[TIME_STEPS];
     }
 
 };//Class

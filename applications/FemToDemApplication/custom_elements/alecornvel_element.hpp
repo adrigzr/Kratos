@@ -84,61 +84,61 @@ namespace Kratos
 		void Get2MaxValues(Vector& MaxValues, double a, double b, double c);
 
 		void IntegrateStressDamageMechanics(Vector& rIntegratedStress, 
-			double& damage, const Vector StrainVector, const Vector StressVector, int cont, double l_char);
+			double& Damage, const Vector StrainVector, const Vector StressVector, int cont, double L_char);
 
 
-		void ModifiedMohrCoulombCriterion(Vector& rIntegratedStress, double& damage, const Vector& StressVector, int cont, double l_char);
-		void RankineCriterion(Vector& rIntegratedStress, double& damage, const Vector& StressVector, int cont, double l_char);
-		void DruckerPragerCriterion(Vector& rIntegratedStress, double& damage, const Vector& StressVector, int cont, double l_char);
-		void SimoJuCriterion(Vector& rIntegratedStress, double& damage, const Vector& StrainVector, const Vector& StressVector, int cont, double l_char);
+		void ModifiedMohrCoulombCriterion(Vector& rIntegratedStress, double& Damage, const Vector& StressVector, int cont, double L_char);
+		void RankineCriterion(Vector& rIntegratedStress, double& Damage, const Vector& StressVector, int cont, double L_char);
+		void DruckerPragerCriterion(Vector& rIntegratedStress, double& Damage, const Vector& StressVector, int cont, double L_char);
+		void SimoJuCriterion(Vector& rIntegratedStress, double& Damage, const Vector& StrainVector, const Vector& StressVector, int cont, double L_char);
 
-		void TangentModifiedMohrCoulombCriterion(Vector& rIntegratedStress, double& damage, const Vector& StressVector, int cont, double l_char);
+		void TangentModifiedMohrCoulombCriterion(Vector& rIntegratedStress, double& Damage, const Vector& StressVector, int cont, double L_char);
 
 		// Stress Invariants in 2D
 		double Calculate_I1_Invariant(double sigma1, double sigma2);
 		double Calculate_J2_Invariant(double sigma1, double sigma2);
 		double Calculate_J3_Invariant(double sigma1, double sigma2, double I1);
 
-		void CalculateIntegratedStressVector(Vector& rIntegratedStressVector,const Vector& StressVector, const double damage)
+		void CalculateIntegratedStressVector(Vector& rIntegratedStressVector, const Vector rStressVector, const double Damage)
 		{
 			Vector res = ZeroVector(3);
-			res = (1 - damage)*StressVector;
+			res = (1 - Damage) * rStressVector;
 		}
 
 		// Lode's angle
 		double Calculate_Theta_Angle(double J2, double J3);
 
 		// Converged values
-		void   Set_threshold(double af, int cont) { thresholds[cont] = af; }
-		double Get_threshold(int cont) { return thresholds[cont]; }
+		void   Set_threshold(double af, int cont) { mThresholds[cont] = af; }
+		double Get_threshold(int cont) { return mThresholds[cont]; }
 
-		void   Set_threshold(double af) { threshold = af; }
-		double Get_threshold() { return threshold; }
+		void   Set_threshold(double af) { mThreshold = af; }
+		double Get_threshold() { return mThreshold; }
 
-		void   Set_Convergeddamage(double af) { damage = af; }
-		double Get_Convergeddamage() { return damage; }
+		void   Set_Convergeddamage(double af) { mDamage = af; }
+		double Get_Convergeddamage() { return mDamage; }
 
-		void   SetConverged_f_sigma(double af) { f_sigma = af; }
-		double GetConverged_f_sigma() { return f_sigma; }
+		void   SetConverged_f_sigma(double af) { mF_sigma = af; }
+		double GetConverged_f_sigma() { return mF_sigma; }
 
-		void   SetConverged_f_sigmas(double af, int cont) { f_sigmas[cont] = af; }
-		double GetConverged_f_sigmas(int cont) { return f_sigmas[cont]; }
+		void   SetConverged_f_sigmas(double af, int cont) { mF_sigmas[cont] = af; }
+		double GetConverged_f_sigmas(int cont) { return mF_sigmas[cont]; }
 
-		void   Set_Convergeddamages(double af, int cont) { damages[cont] = af; }
-		double Get_Convergeddamages(int cont) { return damages[cont]; }
+		void   Set_Convergeddamages(double af, int cont) { mDamages[cont] = af; }
+		double Get_Convergeddamages(int cont) { return mDamages[cont]; }
 
 		// Non Converged values
-		void   Set_NonConvergeddamages(double af, int cont) { NonConvergeddamages[cont] = af; }
-		double Get_NonConvergeddamages(int cont) { return NonConvergeddamages[cont]; }
+		void   Set_NonConvergeddamages(double af, int cont) { mNonConvergedDamages[cont] = af; }
+		double Get_NonConvergeddamages(int cont) { return mNonConvergedDamages[cont]; }
 
-		void   Set_NonConvergeddamage(double af) { NonConvergeddamage = af; }
-		double Get_NonConvergeddamage() { return NonConvergeddamage; }
+		void   Set_NonConvergeddamage(double af) { mNonConvergedDamage = af; }
+		double Get_NonConvergeddamage() { return mNonConvergedDamage; }
 
-		void   Set_NonConvergedf_sigma(double af, int cont) { NonConverged_f_sigma[cont] = af; }
-		double Get_NonConvergedf_sigma(int cont) { return NonConverged_f_sigma[cont]; }
+		void   Set_NonConvergedf_sigma(double af, int cont) { mNonConvergedFsigmas[cont] = af; }
+		double Get_NonConvergedf_sigma(int cont) { return mNonConvergedFsigmas[cont]; }
 
-		void   Set_NonConvergedf_sigma(double af) { NonConvergedf_sigma = af; }
-		double Get_NonConvergedf_sigma() { return NonConvergedf_sigma; }
+		void   Set_NonConvergedf_sigma(double af) { mNonConvergedFsigma = af; }
+		double Get_NonConvergedf_sigma() { return mNonConvergedFsigma; }
 
 		void   ResetNonConvergedVars()
 		{
@@ -153,11 +153,11 @@ namespace Kratos
 		}
 
 		// Characteristic length Calculations
-		void   Set_l_char(double af, int cont) { l_char[cont] = af; }
-		double Get_l_char(int cont) { return l_char[cont]; }
+		void   Set_l_char(double af, int cont) { mL_char[cont] = af; }
+		double Get_l_char(int cont) { return mL_char[cont]; }
 
-		void   SetJ(double af) { Jac = af; }
-		double GetJ() { return Jac; }
+		void   SetJ(double af) { mJac = af; }
+		double GetJ() { return mJac; }
 
 		// Auxiliar functions...
 		void IterationPlus() { iteration++; }
@@ -174,53 +174,54 @@ namespace Kratos
 		double GetMinAbsValue(Vector Strain);
 		void PerturbateStrainComponent(const Vector& rStrainVector, Vector& PertubatedStrain, const double& perturbation, int component);
 		double CalculatePerturbation(const Vector& StrainVector, int component);
-		void CalculateTangentTensor(Matrix& rTangentTensor, const Vector& StrainVector, const Vector& IntegratedStressVector ,int cont, double l_char);
+		void CalculateTangentTensor(Matrix& rTangentTensor, const Vector& StrainVector, const Vector& IntegratedStressVector ,int cont, double L_char);
 
-		void SetStressVector(Vector toStressVector) { toStressVector.resize(3);StressVector = toStressVector; }
-		Vector GetStressVector() { return StressVector; }
+		void SetStressVector(Vector toStressVector) { toStressVector.resize(3); mStressVector = toStressVector; }
+		Vector GetStressVector() { return mStressVector; }
 
-		void SetStrainVector(Vector toStrainVector) { toStrainVector.resize(3); StrainVector = toStrainVector; }
-		Vector GetStrainVector() { return StrainVector; }
+		void SetStrainVector(Vector toStrainVector) { toStrainVector.resize(3); mStrainVector = toStrainVector; }
+		Vector GetStrainVector() { return mStrainVector; }
 
-		void SetIntegratedStressVector(Vector toIntegratedStressVector) { toIntegratedStressVector.resize(3);IntegratedStressVector = toIntegratedStressVector; }
-		Vector GetIntegratedStressVector() { return IntegratedStressVector; }
+		void SetIntegratedStressVector(Vector toIntegratedStressVector) { toIntegratedStressVector.resize(3); mIntegratedStressVector = toIntegratedStressVector; }
+		Vector GetIntegratedStressVector() { return mIntegratedStressVector; }
 
-		void SetBMatrix(Matrix toBMatrix) { toBMatrix.resize(3, 6); B = toBMatrix; }
-		Matrix GetBMatrix(){ return B; }
+		void SetBMatrix(Matrix toBMatrix) { toBMatrix.resize(3, 6); mB = toBMatrix; }
+		Matrix GetBMatrix(){ return mB; }
 
 		void CalculateDeformationMatrix(Matrix& rB, const Matrix& rDN_DX);
 
-		void SetIntegrationCoefficient(double tomIntegrationCoefficient){ mIntegrationCoefficient = tomIntegrationCoefficient; }
+		void SetIntegrationCoefficient(double tomIntegrationCoefficient){ mIntegrationCoefficient = tomIntegrationCoefficient;}
 		double GetIntegrationCoefficient(){ return mIntegrationCoefficient; }
 		
 	private:
 		int iteration = 0;
 
 		// Each component == Each edge
-		double f_sigmas[4] = { 0.0, 0.0, 0.0,0.0 };   // Mohr-Coulomb equivalent stress
-		double thresholds[4] = { 0.0, 0.0, 0.0, 0.0 };   // Stress Threshold on edge
+		double mF_sigmas[3] = { 0.0, 0.0, 0.0 };   // Mohr-Coulomb equivalent stress
+		double mThresholds[3] = { 0.0, 0.0, 0.0 };   // Stress mThreshold on edge
 
-		double threshold = 0.0;
-		double f_sigma   = 0.0;
+		double mThreshold = 0.0;
+		double mF_sigma   = 0.0;
 
-		double damages[4] = { 0.0, 0.0, 0.0, 0.0 };     // Converged damage on each edge
-		double damage = 0.0;                            // Converged damage
+		double mDamages[3] = { 0.0, 0.0, 0.0 };     // Converged mDamage on each edge
+		double mDamage = 0.0;                            // Converged mDamage
 
-		double NonConvergeddamages[4] = { 0.0, 0.0, 0.0, 0.0 };    // Damages on edges of "i" iteration
-		double NonConverged_f_sigma[4] = { 0.0, 0.0, 0.0, 0.0 };   // Equivalent stress of "i" iteration
+		double mNonConvergedDamages[3] = { 0.0, 0.0, 0.0 };    // mDamages on edges of "i" iteration
+		double mNonConvergedFsigmas[3]  = { 0.0, 0.0, 0.0 };   // Equivalent stress of "i" iteration
 
-		double NonConvergedf_sigma = 0.0;
-		double NonConvergeddamage = 0.0;       // Damage of the element of "i" iteration
+		double mNonConvergedFsigma = 0.0;
+		double mNonConvergedDamage = 0.0;       // mDamage of the element of "i" iteration
 
-		double l_char[3] = { 0.0, 0.0, 0.0 };  // Characteristic length on each edge
+		double mL_char[3] = { 0.0, 0.0, 0.0 };  // Characteristic length on each edge
 
-		Vector StressVector = ZeroVector(3);
-		Vector StrainVector = ZeroVector(3);
-		Vector IntegratedStressVector = ZeroVector(3);
-		Matrix B = ZeroMatrix(3, 6);
+		Vector mStressVector = ZeroVector(3);
+		Vector mStrainVector = ZeroVector(3);
+		Vector mIntegratedStressVector = ZeroVector(3);
+		Matrix mB = ZeroMatrix(3, 6);
 
-		double Jac = 0.0;
-		double mIntegrationCoefficient
+		double mJac = 0.0;
+		double mIntegrationCoefficient = 0.0;
+
 	};// Class AleCornVelElement
 	
 }// Namespace Kratos

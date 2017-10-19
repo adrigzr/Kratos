@@ -1,3 +1,5 @@
+
+
 #include "includes/define.h"
 #include <string>
 #include "includes/constitutive_law.h"
@@ -261,7 +263,7 @@ namespace Kratos
 
 			double IntegrationWeight = integration_points[PointNumber].Weight() * detJ;
 			if (dimension == 2) IntegrationWeight *= GetProperties()[THICKNESS];
-			this->SetIntegrationCoefficient(IntegrationWeight)
+			this->SetValue(INTEGRATION_COEFFICIENT, IntegrationWeight);
 
 			Matrix B = ZeroMatrix(voigt_size, dimension*number_of_nodes);
 			B = this->GetBMatrix();
@@ -291,8 +293,8 @@ namespace Kratos
 				this->AverageVector(AverageStress, Stress1, Stress2);
 				this->AverageVector(AverageStrain, Strain1, Strain2);
 
-				if (this->GetIteration() < 3) // Computes the l_char on each side only once
-				{
+				//if (this->GetIteration() < 3) // Computes the l_char on each side only once
+				//{
 					Geometry< Node < 3 > >& NodesElem1 = this->GetGeometry();  // 3 nodes of the Element 1
 					Geometry< Node < 3 > >& NodesElem2 = elem_neigb[cont].GetGeometry();  // "         " 2
 					Vector Xcoord, Ycoord;
@@ -329,9 +331,9 @@ namespace Kratos
 					} // l_char computed
 
 					this->Set_l_char(l_char, cont);  // Storages the l_char of this side
-					this->IterationPlus();
-				}
-				double l_char = this->Get_l_char(cont);
+					//this->IterationPlus();
+				//}
+				//l_char = this->Get_l_char(cont);
 				this->IntegrateStressDamageMechanics(IntegratedStressVector, damagee, AverageStrain, AverageStress, cont, l_char);
 				damage[cont] = damagee;
 				this->Set_NonConvergeddamages(damagee, cont);
@@ -344,6 +346,7 @@ namespace Kratos
 			if (damage_element >= 0.999) { damage_element = 0.999; }
 			this->Set_NonConvergeddamage(damage_element);
 
+			Vector StressVector = ZeroVector(3);
 			StressVector = this->GetValue(STRESS_VECTOR);
 			IntegratedStressVector = (1 - damage_element)*StressVector;
 			this->SetIntegratedStressVector(IntegratedStressVector);
@@ -949,7 +952,7 @@ namespace Kratos
 	// ****** Tangent Constitutive Tensor by Numerical Derivation ******
 	void AleCornVelElement::PerturbateStrainComponent(const Vector& rStrainVector, Vector& PertubatedStrain, const double& perturbation, int component)
 	{
-		PertubatedStrain = StrainVector;
+		PertubatedStrain = rStrainVector;
 		PertubatedStrain[component] += perturbation;
 	}
 

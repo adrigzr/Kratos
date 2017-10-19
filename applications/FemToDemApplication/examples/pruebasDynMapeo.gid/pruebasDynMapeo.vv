@@ -1,0 +1,37 @@
+BeginZE D:/FemDem/applications/FemToDemApplication/examples/pruebasDynMapeo.gid/pruebasDynMapeo.vv
+   x -7.15536737442016602 2.57635307312011719
+   y 4.21627187728881836 -2.48755335807800293
+   z -12.5402908325195313 12.5402908325195313
+   e 4.18009710311889648
+   v 0 0 0
+   r 1
+   m 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1
+   c -2.26693558692932129 1.34773385524749756 0
+   pd 0
+   pno 0
+   pfo 0
+   pf 4
+   pv 0
+   NowUse 1
+   DrawingType 0
+   LightVector -9.375 -11.4565000534057617 149.4739990234375 0
+   OGLShadow(UseShadows) 0
+   OGLShadow(RenderMode) RenderNice
+   OGLShadow(ShadowBias) -0.002
+   OGLShadow(AmbientShadows) 1
+   OGLShadow(UseFBO) 0
+   OGLShadow(FBOSize) 2048
+   OGLShadow(DimmedLightFactor) 0.02
+   OGLStereo(UseStereo) 0
+   OGLStereo(RelativeEyeDistance) 1
+   OGLStereo(FlipEyes) 0
+   OGLStereo(StereoMode) AnaglyphColors
+   OGLStereo(EyeDistance) 0.075
+   OGLStereo(LeftEyeDistance) 1 0 0 1
+   OGLStereo(RightEyeDistance) 0 1 1 1
+EndZE D:/FemDem/applications/FemToDemApplication/examples/pruebasDynMapeo.gid/pruebasDynMapeo.vv
+
+BeginMirror
+   Mirror 0 Angle 0.0 AngleFake -15.0 SizeFactor 2.0 HeightOffset 0.25 Color #d9e5f24d Backlight Off EdgeStyle No Type Scene DrawMode Mirror
+EndMirror
+

@@ -18,7 +18,7 @@
 
 #include "processes/find_elements_neighbours_process.h"
 #include "custom_processes/adaptive_mesh_refinement_process.hpp"
-//#include "custom_processes/mapping_variables_process.hpp"  //TODO when p.type done uncomment
+#include "custom_processes/mapping_variables_process.hpp"  
 
 namespace Kratos
 {
@@ -32,22 +32,22 @@ namespace Kratos
 		{
 			typedef Process                           ProcessBaseType;
 			typedef AdaptiveMeshRefinementProcess     AdaptiveMeshRefinementProcessType;
-		//	typedef MappingVariablesProcess           MappingVariablesProcessType;
+			typedef MappingVariablesProcess           MappingVariablesProcessType;
 
 			class_<FindElementalNeighboursProcess, bases<ProcessBaseType>, boost::noncopyable >
 				("FindElementalNeighboursProcess", init<ModelPart&, int, unsigned int>())
 				.def("Execute", &FindElementalNeighboursProcess::Execute);
 				
-			//Adaptive Mesh Refinement Process
+			// Adaptive Mesh Refinement Process
 			class_<AdaptiveMeshRefinementProcessType, bases< ProcessBaseType >, boost::noncopyable >
 				("AdaptiveMeshRefinementProcess",
 			     init < ModelPart&, std::string, std::string, std::string, std::string, double, int >());
 				//.def("Execute", &AdaptiveMeshRefinementProcess::Execute);
 				
 			// Mapping Variables Process
-			//  class_< MappingVariablesProcessType, bases< ProcessBaseType >, boost::noncopyable >
-			//   ( "MappingVariablesProcess",
-			//  	init < ModelPart&,ModelPart&,std::string >());
+			class_< MappingVariablesProcessType, bases< ProcessBaseType >, boost::noncopyable >
+			  ( "MappingVariablesProcess",
+			 	init < ModelPart&,ModelPart&, std::string >());
 
 
 		}

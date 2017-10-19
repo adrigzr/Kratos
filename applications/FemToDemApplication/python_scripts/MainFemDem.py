@@ -5,7 +5,6 @@ import time as timer
 import os
 
 # Import kratos core and applications
-import KratosMultiphysics
 import KratosMultiphysics.SolidMechanicsApplication	 as KratosSolid
 import KratosMultiphysics.DEMApplication
 import KratosMultiphysics.ExternalSolversApplication as KratosSolvers
@@ -191,7 +190,7 @@ class FEM_Solution(MainSolidFEM.Solution):
 		#### START SOLUTION ####
 
 		self.computing_model_part = self.solver.GetComputingModelPart()
-		
+
 		## Sets strategies, builders, linear solvers, schemes and solving info, and fills the buffer
 		self.solver.Initialize()
 		#self.solver.InitializeStrategy()
